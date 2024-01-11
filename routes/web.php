@@ -1,6 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\RawMaterialCategoryController;
+use App\Http\Controllers\RawMaterialController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,4 +25,7 @@ Route::resources([
     'roles' => RoleController::class,
     'users' => UserController::class,
     'products' => ProductController::class,
+    'department' => DepartmentController::class,
+    'raw_material_category' => RawMaterialCategoryController::class,
+    'raw_material' => RawMaterialController::class,
 ]);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Department;
 use App\Http\Requests\StoreDepartmentRequest;
 use App\Http\Requests\UpdateDepartmentRequest;
+use DB;
 
 class DepartmentController extends Controller
 {
@@ -13,7 +14,8 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        //
+        $departments = Department::all();
+        return view('department.index',compact('departments'));
     }
 
     /**
@@ -21,7 +23,7 @@ class DepartmentController extends Controller
      */
     public function create()
     {
-        //
+        return view('department.create');
     }
 
     /**
@@ -29,7 +31,18 @@ class DepartmentController extends Controller
      */
     public function store(StoreDepartmentRequest $request)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $department = new Department;
+            $department->name = $request->name;
+            $department->save();
+            DB::commit();
+            return back()->withSuccess('Department Added Successfully!');
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return back()->withErrors($th->getMessage());
+        }
+        
     }
 
     /**
@@ -45,7 +58,7 @@ class DepartmentController extends Controller
      */
     public function edit(Department $department)
     {
-        //
+        return view('department.edit',compact('department'));
     }
 
     /**
@@ -53,7 +66,19 @@ class DepartmentController extends Controller
      */
     public function update(UpdateDepartmentRequest $request, Department $department)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $department->name = $request->name;
+            $department->status = $request->status;
+            $department->save();
+            DB::commit();
+            return back()->withSuccess('Department Updated Successfully!');
+
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollback();
+            return back()->withErrors($th->getMessage());
+        }
     }
 
     /**

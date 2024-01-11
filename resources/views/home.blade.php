@@ -7,9 +7,10 @@
                 <div class="card-header">Purchase Order</div>
                 <div class="card-body text-primary">
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item">An item</li>
-                        <li class="list-group-item">A second item</li>
-                        <li class="list-group-item">A third item</li>
+                        <li class="list-group-item"><a href="{{route('department.index')}}">Department</a></li>
+                        <li class="list-group-item"><a href="{{route('raw_material_category.index')}}">Raw Material Category</a></li>
+                        <li class="list-group-item"><a href="{{route('raw_material.index')}}">Raw Materials</a></li>
+                        <li class="list-group-item"><a href="">Suppliers</a></li>
                     </ul>
                 </div>
             </div>

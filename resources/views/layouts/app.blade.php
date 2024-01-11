@@ -35,7 +35,7 @@
                     </svg>
                 </a>
                 <ul class="header-nav d-none d-md-flex">
-                    <li class="nav-item"><h3>VSSIPL</h3></li>
+                    <li class="nav-item"><a href="{{route('home')}}"><h3>VSSIPL</h3></a></li>
                     <!-- <li class="nav-item"><a class="nav-link" href="#">Dashboard</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">{{ Auth::user()->name }}</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Settings</a></li> -->
@@ -90,7 +90,11 @@
     @endguest
     <script src="{{asset('vendors/simplebar/js/simplebar.min.js')}}"></script>
     <script src="{{asset('vendors/@coreui/coreui/js/coreui.bundle.min.js')}}"></script>
+    <script src="{{asset('js/jquery.min.js')}}"></script>
     <script>
+         setTimeout(() => {
+    $('.alert').alert('close');
+  }, 2000);
     </script>
 </body>
 </html>

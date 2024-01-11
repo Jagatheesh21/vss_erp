@@ -4,8 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-
-class UpdateDepartmentRequest extends FormRequest
+class StoreRawMaterialRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,7 +22,8 @@ class UpdateDepartmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|unique:departments,name,'. $this->department->id,
+            'raw_material_category_id'=> 'required',
+            'name'=>'required|unique:raw_materials,name'
         ];
     }
 }
