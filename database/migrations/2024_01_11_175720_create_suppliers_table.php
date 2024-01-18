@@ -13,10 +13,18 @@ return new class extends Migration
     {
         Schema::create('suppliers', function (Blueprint $table) {
             $table->id();
+            $table->string('supplier_code');
             $table->string('name');
             $table->string('gst_number');
             $table->string('address');
             $table->integer('contact_number')->nullable();
+            $table->string('packing_charges');
+            $table->string('trans_mode');
+            $table->integer('cgst')->default(0);
+            $table->integer('sgst')->default(0);
+            $table->integer('igst')->default(0);
+            $table->text('remarks')->nullable();
+            $table->integer('currency_id');
             $table->integer('status')->default(1);
             $table->timestamps();
         });
