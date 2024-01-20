@@ -15,7 +15,11 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="supplier_code">Supplier Code *</label>
-                                    <select name="supplier_code" id="supplier_code" class="form-control select2  @error('supplier_code') is-invalid @enderror"></select>
+                                    <select name="supplier_code" id="supplier_code" class="form-control select2  @error('supplier_code') is-invalid @enderror">
+                                    @foreach ($supplier_codes as $code)
+
+                                    @endforeach
+                                    </select>
                                     @error('supplier_code')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
