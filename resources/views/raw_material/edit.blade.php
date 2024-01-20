@@ -3,7 +3,7 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card">
-            <div class="card-header d-flex" style="justify-content:space-around">Edit Material <a href="{{route('raw_material.index')}}" class="btn btn-sm btn-primary">Material List</a></div>
+            <div class="card-header d-flex text-center" style="justify-content:space-around"><b>Material Updation</b><a href="{{route('raw_material.index')}}" class="btn btn-sm btn-primary">Material List</a></div>
             <div class="card-body">
                 @if(Session::has('success'))
                     <div class="alert alert-success mt-4">
@@ -18,10 +18,12 @@
                 <form action="{{route('raw_material.update',$rawMaterial->id)}}" method="POST">
                     @csrf
                     @method('PUT')
+                  <input type="hidden" name="id" value="{{$rawMaterial->id}}">
+
                     <div class="row justify-content-center">
-                    <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
-                                <label>Name *</label>
+                                <label>Category *</label>
                                 <select name="raw_material_category_id" id="" class="form-control">
                                     <option value=""></option>
                                     @forelse ($categories as $category)
@@ -37,9 +39,9 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
-                                <label>Name *</label>
+                                <label>Material Description *</label>
                                 <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{$rawMaterial->name}}">
                                 @error('name')
                                     <span class="invalid-feedback" role="alert">
@@ -48,7 +50,31 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="">Material Code *</label>
+                                <input type="text" name="material_code"  value="{{$rawMaterial->material_code}}" readonly class="form-control bg-light @error('material_code') is-invalid @enderror" >
+                                @error('material_code')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="">Minimum Stock *</label>
+                                <input type="number" name="minimum_stock" min="0.10" step="0.01" value="{{$rawMaterial->minimum_stock}}" class="form-control @error('minimum_stock') is-invalid @enderror" >
+                                @error('minimum_stock')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label>Status *</label>
                                 <select name="status" class="form-control">

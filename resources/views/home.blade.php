@@ -10,7 +10,8 @@
                         <li class="list-group-item"><a href="{{route('department.index')}}">Department</a></li>
                         <li class="list-group-item"><a href="{{route('raw_material_category.index')}}">Raw Material Category</a></li>
                         <li class="list-group-item"><a href="{{route('raw_material.index')}}">Raw Materials</a></li>
-                        <li class="list-group-item"><a href="">Suppliers</a></li>
+                        <li class="list-group-item"><a href="{{route('supplier.index')}}">Suppliers</a></li>
+                        <li class="list-group-item"><a href="{{route('supplier-products.index')}}">Supplier Products</a></li>
                     </ul>
                 </div>
             </div>

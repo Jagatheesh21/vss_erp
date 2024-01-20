@@ -22,8 +22,10 @@ class UpdateRawMaterialRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'raw_material_category_id'=> 'required',
             'name' => 'required|unique:raw_materials,name,'.$this->raw_material->id,
-            'raw_material_category_id' => 'required',
+            'material_code'=>'required|unique:raw_materials,material_code,'.$this->raw_material->id,
+            'minimum_stock'=>'required|min:0',
             'status' => 'required'
         ];
     }

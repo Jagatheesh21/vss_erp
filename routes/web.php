@@ -5,6 +5,8 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\RawMaterialCategoryController;
 use App\Http\Controllers\RawMaterialController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\SupplierProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,6 +22,7 @@ use App\Http\Controllers\RawMaterialController;
 Auth::routes();
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/suppliers-data/id', [SupplierController::class,'suppliersdata'])->name('suppliersdata');
 
 Route::resources([
     'roles' => RoleController::class,
@@ -28,4 +31,6 @@ Route::resources([
     'department' => DepartmentController::class,
     'raw_material_category' => RawMaterialCategoryController::class,
     'raw_material' => RawMaterialController::class,
+    'supplier' => SupplierController::class,
+    'supplier-products' => SupplierProductController::class,
 ]);

@@ -1,12 +1,16 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Http\Request;
 
 use App\Models\RawMaterialCategory;
 use App\Models\RawMaterial;
 use App\Http\Requests\StoreRawMaterialRequest;
 use App\Http\Requests\UpdateRawMaterialRequest;
 use DB;
+// use Illuminate\Support\Facades\DB;
+
+
 
 class RawMaterialController extends Controller
 {
@@ -16,7 +20,8 @@ class RawMaterialController extends Controller
     public function index()
     {
         $raw_materials = RawMaterial::with('category')->get();
-        return view('raw_material.index',compact('raw_materials'));
+        $avl_stock=0;
+        return view('raw_material.index',compact('raw_materials','avl_stock'));
     }
 
     /**
@@ -25,7 +30,16 @@ class RawMaterialController extends Controller
     public function create()
     {
         $categories = RawMaterialCategory::where('status',1)->get();
-        return view('raw_material.create',compact('categories'));
+        $categories2 = RawMaterial::orderBy('material_code', 'DESC')->first();
+        $code=$categories2['material_code']??NULL;
+            if($code==NULL){
+              $new_material_code='RM000000001';
+            }else{
+                $old_code=str_replace("RM","",$code);
+                $old_code_data=str_pad($old_code+1,9,0,STR_PAD_LEFT);
+                $new_material_code='RM'.$old_code_data;
+            }
+        return view('raw_material.create',compact('categories','new_material_code'));
     }
 
     /**
@@ -38,9 +52,11 @@ class RawMaterialController extends Controller
             $raw_material = new RawMaterial;
             $raw_material->raw_material_category_id = $request->raw_material_category_id;
             $raw_material->name = $request->name;
+            $raw_material->material_code = $request->material_code;
+            $raw_material->minimum_stock = $request->minimum_stock;
             $raw_material->save();
             DB::commit();
-            return redirect()->back()->withSuccess('Raw Material Created Successfully!');
+            return redirect()->route('raw_material.index')->withSuccess('Raw Material Created Successfully!');
         } catch (\Throwable $th) {
             //throw $th;
             DB::rollback();
@@ -70,14 +86,19 @@ class RawMaterialController extends Controller
      */
     public function update(UpdateRawMaterialRequest $request, RawMaterial $rawMaterial)
     {
+        // dd($rawMaterial);
         DB::beginTransaction();
         try {
+            $id=$request->id;
+            $rawMaterial=RawMaterial::find($id);
             $rawMaterial->raw_material_category_id = $request->raw_material_category_id;
             $rawMaterial->name = $request->name;
             $rawMaterial->status = $request->status;
-            $rawMaterial->save();
+            $rawMaterial->material_code = $request->material_code;
+            $rawMaterial->minimum_stock = $request->minimum_stock;
+            $rawMaterial->update();
             DB::commit();
-            return redirect()->back()->withSuccess('Rawmaterial Updated Successfully!');
+            return redirect()->route('raw_material.index')->withSuccess('Rawmaterial Updated Successfully!');
         } catch (\Throwable $th) {
             //throw $th;
             DB::rollback();

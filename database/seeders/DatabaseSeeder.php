@@ -16,6 +16,13 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             RoleSeeder::class,
             SuperAdminSeeder::class,
+            DepartmentSeeder::class,
+            RawMaterialCategorySeeder::class,
+            RawMaterialSeeder::class,
+            CurrencySeeder::class,
+            ModeOfUnitSeeder::class,
+            SupplierSeeder::class,
+            SupplierProductSeeder::class,
         ]);
     }
 }

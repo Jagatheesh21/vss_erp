@@ -13,7 +13,10 @@
                         <thead>
                             <tr>
                                 <th>S.No</th>
-                                <th>Name</th>                                
+                                <th>Category</th>                                
+                                <th>Material Code</th>                                
+                                <th>Material Description</th>                             
+                                <th>Minimum Stock</th>                             
                                 <th>Status</th>                                
                                 <th>Action</th>
                             </tr>
@@ -22,7 +25,10 @@
                             @forelse ($departments as $department)
                             <tr>
                                 <td>{{$loop->iteration}}</td>
+                                <td>{{$department->category->name}}</td>
+                                <td>{{$department->material_code}}</td>
                                 <td>{{$department->name}}</td>
+                                <td>{{$department->minimum_stock}}</td>                                
                                 <td>@if ($department->status==1)
                                     <span class="btn btn-sm btn-success">Active</span>
                                     @else

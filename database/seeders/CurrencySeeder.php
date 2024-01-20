@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Currency;
 
 class CurrencySeeder extends Seeder
 {
@@ -12,11 +13,13 @@ class CurrencySeeder extends Seeder
      */
     public function run(): void
     {
-        Currency::create([
-            'name' => 'INR', 
+        $currency1=Currency::create([
+            'name' => 'INR',
+            'prepared_by'=>'1'
         ]);
-        Currency::create([
-            'name' => 'USD', 
+        $currency2=Currency::create([
+            'name' => 'USD',
+            'prepared_by'=>'1'
         ]);
     }
 }

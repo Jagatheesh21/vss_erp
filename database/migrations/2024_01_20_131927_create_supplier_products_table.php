@@ -11,9 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('departments', function (Blueprint $table) {
+        Schema::create('supplier_products', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->integer('supplier_id');
+            $table->integer('raw_material_category_id');
+            $table->integer('raw_material_id');
+            $table->string('products_hsnc');
+            $table->string('uom_id');
+            $table->float('products_rate', 8, 2);
             $table->integer('status')->default(1);
             $table->integer('prepared_by');
             $table->integer('updated_by')->nullable();
@@ -26,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('departments');
+        Schema::dropIfExists('supplier_products');
     }
 };

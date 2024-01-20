@@ -4,9 +4,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\RawMaterial;
+use App\Models\SupplierProduct;
 
-class RawMaterialSeeder extends Seeder
+class SupplierProductSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,11 +14,13 @@ class RawMaterialSeeder extends Seeder
     public function run(): void
     {
         //
-        $rm=RawMaterial::create([
-            'material_code'=>'RM000000001',
+        $Supplier_product1=SupplierProduct::create([
+            'supplier_id'=>'1',
             'raw_material_category_id'=>'1',
-            'name' => '1.0 MM Spring Steel Wire',
-            'minimum_stock'=>'10',
+            'raw_material_id' => '1',
+            'products_hsnc'=>'73209090',
+            'uom_id'=>'1',
+            'products_rate'=>'5.50',
             'prepared_by'=>'1'
         ]);
     }

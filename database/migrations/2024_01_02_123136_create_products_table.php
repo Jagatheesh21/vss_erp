@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description');
+            $table->integer('status')->default(1);
+            $table->integer('prepared_by');
+            $table->integer('updated_by')->nullable();
             $table->timestamps();
         });
     }

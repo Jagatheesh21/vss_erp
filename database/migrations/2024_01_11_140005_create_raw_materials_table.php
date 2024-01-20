@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('name');
             $table->integer('minimum_stock');
             $table->integer('status')->default(1);
+            $table->integer('prepared_by');
+            $table->integer('updated_by')->nullable();
             $table->timestamps();
         });
     }

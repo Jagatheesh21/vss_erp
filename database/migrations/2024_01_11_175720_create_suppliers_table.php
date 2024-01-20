@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('suppliers', function (Blueprint $table) {
             $table->id();
-            $table->string('supplier_code');
+            $table->string('supplier_code')->unique();
             $table->string('name');
             $table->string('gst_number');
-            $table->string('address');
-            $table->integer('contact_number')->nullable();
+            $table->text('address');
+            $table->bigInteger('contact_number')->nullable();
             $table->string('packing_charges');
             $table->string('trans_mode');
             $table->integer('cgst')->default(0);
@@ -26,6 +26,8 @@ return new class extends Migration
             $table->text('remarks')->nullable();
             $table->integer('currency_id');
             $table->integer('status')->default(1);
+            $table->integer('prepared_by');
+            $table->integer('updated_by')->nullable();
             $table->timestamps();
         });
     }

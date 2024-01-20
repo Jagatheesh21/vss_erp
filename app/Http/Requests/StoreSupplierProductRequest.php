@@ -4,14 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreRawMaterialRequest extends FormRequest
+class StoreSupplierProductRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -22,10 +22,7 @@ class StoreRawMaterialRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'raw_material_category_id'=> 'required',
-            'name'=>'required|unique:raw_materials,name',
-            'material_code'=>'required|unique:raw_materials,material_code',
-            'minimum_stock'=>'required|min:0'
+            //
         ];
     }
 }

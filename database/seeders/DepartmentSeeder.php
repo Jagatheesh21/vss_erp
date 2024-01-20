@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Department;
 
 class DepartmentSeeder extends Seeder
 {
@@ -13,5 +14,17 @@ class DepartmentSeeder extends Seeder
     public function run(): void
     {
         //
+          // Creating Department
+          $purchaseDepartment = Department::create([
+            'name' => 'Purchase',
+            'prepared_by'=>'1'
+        ]);
+
+        // Creating Department
+        $maintenanceDepartment = Department::create([
+            'name' => 'Maintenance',
+            'prepared_by'=>'1'
+        ]);
+
     }
 }
