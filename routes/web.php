@@ -23,6 +23,7 @@ Auth::routes();
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/suppliers-data/id', [SupplierController::class,'suppliersdata'])->name('suppliersdata');
+Route::get('/rmcategorydata-data/id', [SupplierProductController::class,'rmcategorydata'])->name('rmcategorydata');
 
 Route::resources([
     'roles' => RoleController::class,

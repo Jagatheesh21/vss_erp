@@ -6,6 +6,7 @@ use App\Models\RawMaterialCategory;
 use App\Http\Requests\StoreRawMaterialCategoryRequest;
 use App\Http\Requests\UpdateRawMaterialCategoryRequest;
 use DB;
+use Auth;
 
 class RawMaterialCategoryController extends Controller
 {
@@ -35,6 +36,7 @@ class RawMaterialCategoryController extends Controller
         try {
             $category = new RawMaterialCategory;
             $category->name = $request->name;
+            $category->prepared_by = auth()->user()->id;
             $category->save();
             DB::commit();
             return redirect()->route('raw_material_category.index')->withSuccess('Raw Material Category Created Successfully!');
@@ -70,10 +72,11 @@ class RawMaterialCategoryController extends Controller
         try {
             $rawMaterialCategory->name = $request->name;
             $rawMaterialCategory->status = $request->status;
+            $rawMaterialCategory->updated_by = auth()->user()->id;
             $rawMaterialCategory->save();
             DB::commit();
             return redirect()->back(route('raw_material_category.index'))->withSuccess('Raw Material Category Updated Successfully!');
-        
+
         } catch (\Throwable $th) {
             //throw $th;
             DB::rollback();

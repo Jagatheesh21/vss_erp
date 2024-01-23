@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('gst_number');
             $table->text('address');
+            $table->string('contact_person')->nullable();
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
             $table->bigInteger('contact_number')->nullable();
             $table->string('packing_charges');
             $table->string('trans_mode');

@@ -13,11 +13,8 @@
                         <thead>
                             <tr>
                                 <th>S.No</th>
-                                <th>Category</th>                                
-                                <th>Material Code</th>                                
-                                <th>Material Description</th>                             
-                                <th>Minimum Stock</th>                             
-                                <th>Status</th>                                
+                                <th>Name</th>
+                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -25,23 +22,20 @@
                             @forelse ($departments as $department)
                             <tr>
                                 <td>{{$loop->iteration}}</td>
-                                <td>{{$department->category->name}}</td>
-                                <td>{{$department->material_code}}</td>
                                 <td>{{$department->name}}</td>
-                                <td>{{$department->minimum_stock}}</td>                                
                                 <td>@if ($department->status==1)
                                     <span class="btn btn-sm btn-success">Active</span>
                                     @else
                                     <span class="btn btn-sm btn-danger">Inactive</span>
                                 @endif</td>
                                 <td><a href="{{route('department.edit',$department->id)}}" class="btn btn-sm btn-primary">Edit</a></td>
-                            </tr>    
+                            </tr>
                             @empty
                             <tr>
                                 <td colspan="3" align="center">No Records Found!</td>
-                            </tr>    
+                            </tr>
                             @endforelse
-                            
+
                         </tbody>
                     </table>
                 </div>

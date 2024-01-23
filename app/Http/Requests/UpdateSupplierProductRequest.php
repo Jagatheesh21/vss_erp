@@ -11,7 +11,7 @@ class UpdateSupplierProductRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,6 +23,12 @@ class UpdateSupplierProductRequest extends FormRequest
     {
         return [
             //
+            'supplier_id' => 'required',
+            'raw_material_category_id' => 'required',
+            'raw_material_id' => 'required',
+            'uom_id'=> 'required',
+            'products_rate'=> 'required|numeric|min:0',
+            'products_hsnc'=> 'required|numeric|digits_between:6,8',
         ];
     }
 }

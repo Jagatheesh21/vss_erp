@@ -11,6 +11,8 @@ use App\Models\RawMaterial;
 use App\Models\RawMaterialCategory;
 use App\Http\Requests\StoreSupplierProductRequest;
 use App\Http\Requests\UpdateSupplierProductRequest;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
 
 class SupplierProductController extends Controller
 {
@@ -30,6 +32,23 @@ class SupplierProductController extends Controller
     public function create()
     {
         //
+        $categories = RawMaterialCategory::where('status','=',1)->get();
+        $supplier_codes=Supplier::where('status','=',1)->get();
+        $units=ModeOfUnit::where('status','=',1)->get();
+        return view('supplier-products.create', compact('supplier_codes','categories','units'));
+    }
+
+    public function rmcategorydata(Request $request){
+        $id=$request->id;
+        $count = RawMaterial::where('raw_material_category_id',$id)->where('status','=',1)->get()->count();
+        if ($count>0) {
+            $rm_datas = RawMaterial::where('raw_material_category_id',$id)->where('status','=',1)->get();
+            $rm='<option></option>';
+            foreach ($rm_datas as $key => $rm_data) {
+                $rm .= '<option value="'.$rm_data->id.'">'.$rm_data->name.'</option>';
+            }
+            return response()->json(['rm'=>$rm,'count'=>$count]);
+        }
     }
 
     /**
@@ -37,7 +56,24 @@ class SupplierProductController extends Controller
      */
     public function store(StoreSupplierProductRequest $request)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $supplier_product_data = new SupplierProduct;
+            $supplier_product_data->supplier_id = $request->supplier_id;
+            $supplier_product_data->raw_material_category_id = $request->raw_material_category_id;
+            $supplier_product_data->raw_material_id = $request->raw_material_id;
+            $supplier_product_data->products_hsnc = $request->products_hsnc;
+            $supplier_product_data->uom_id = $request->uom_id;
+            $supplier_product_data->products_rate = $request->products_rate;
+            $supplier_product_data->prepared_by = auth()->user()->id;
+            $supplier_product_data->save();
+            DB::commit();
+            return redirect()->route('supplier-products.index')->withSuccess('Supplier Products Created Successfully!');
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollback();
+            return redirect()->back()->withErrors($th->getMessage());
+        }
     }
 
     /**
@@ -54,6 +90,12 @@ class SupplierProductController extends Controller
     public function edit(SupplierProduct $supplierProduct)
     {
         //
+        // dd($supplierProduct->raw_material_category_id);
+        $categories = RawMaterialCategory::where('status','=',1)->get();
+        $supplier_codes=Supplier::where('status','=',1)->get();
+        $units=ModeOfUnit::where('status','=',1)->get();
+        $rm_datas = RawMaterial::where('raw_material_category_id',$supplierProduct->raw_material_category_id)->get();
+        return view('supplier-products.edit', compact('supplierProduct','supplier_codes','categories','units','rm_datas'));
     }
 
     /**
@@ -62,6 +104,27 @@ class SupplierProductController extends Controller
     public function update(UpdateSupplierProductRequest $request, SupplierProduct $supplierProduct)
     {
         //
+        // dd($request);
+        DB::beginTransaction();
+        try {
+            $id=$request->id;
+            $supplier_product_data=SupplierProduct::find($id);
+            $supplier_product_data->supplier_id = $request->supplier_id;
+            $supplier_product_data->raw_material_category_id = $request->raw_material_category_id;
+            $supplier_product_data->raw_material_id = $request->raw_material_id;
+            $supplier_product_data->products_hsnc = $request->products_hsnc;
+            $supplier_product_data->uom_id = $request->uom_id;
+            $supplier_product_data->products_rate = $request->products_rate;
+            $supplier_product_data->status = $request->status;
+            $supplier_product_data->updated_by = auth()->user()->id;
+            $supplier_product_data->update();
+            DB::commit();
+            return redirect()->route('supplier-products.index')->withSuccess('Supplier Products Updated Successfully!');
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollback();
+            return redirect()->back()->withErrors($th->getMessage());
+        }
     }
 
     /**

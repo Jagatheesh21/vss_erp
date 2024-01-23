@@ -8,157 +8,98 @@
     <div id="data"></div>
     <div class="col-12">
         <div class="card">
-            <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Create Supplier Products</b></span><a class="btn btn-sm btn-primary" href="{{route('supplier.index')}}">Supplier List</a>
+            <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Create Supplier Products</b></span><a class="btn btn-sm btn-primary" href="{{route('supplier-products.index')}}">Supplier Products List</a>
             </div>
             <div class="card-body">
                         <div class="row d-flex justify-content-center">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="supplier_code">Supplier Code *</label>
-                                    <select name="supplier_code" id="supplier_code" class="form-control select2  @error('supplier_code') is-invalid @enderror">
-                                    @foreach ($supplier_codes as $code)
+                                    <label for="supplier_id">Supplier Code *</label>
+                                    <select name="supplier_id" id="supplier_id" class="form-control @error('supplier_id') is-invalid @enderror">
+                                    <option value=""></option>
+                                    @forelse ($supplier_codes as $code)
+                                        <option value="{{$code->id}}">{{$code->supplier_code}}</option>
+                                    @empty
+                                    @endforelse
+                                    </select>
+                                    @error('supplier_id')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="">RM Category *</label>
+                                    <select name="raw_material_category_id" id="raw_material_category_id" class="form-control @error('raw_material_category_id') is-invalid @enderror">
+                                        <option value=""></option>
+                                        @forelse ($categories as $category)
+                                            <option value="{{$category->id}}">{{$category->name}}</option>
+                                        @empty
+                                        @endforelse
+                                    </select>
+                                    @error('raw_material_category_id')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Material Description *</label>
+                                    <select name="raw_material_id" id="raw_material_id" class="form-control @error('raw_material_id') is-invalid @enderror"></select>
+                                    @error('raw_material_id')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="">Material HSN Code *</label>
+                                    <input type="number" name="products_hsnc" id="products_hsnc" class="form-control @error('products_hsnc') is-invalid @enderror" >
+                                    @error('products_hsnc')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row d-flex">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="">Unit of Measure (UOM) *</label>
+                                    <select name="uom_id" id="uom_id" class="form-control @error('uom_id') is-invalid @enderror">
+                                        <option value=""></option>
+                                        @forelse ($units as $unit)
+                                            <option value="{{$unit->id}}">{{$unit->name}}</option>
+                                        @empty
+                                        @endforelse
+                                    </select>
+                                    @error('uom_id')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="products_rate">Rate *</label>
+                                    <input type="number" name="products_rate" id="products_rate" min="0" step="0.01" class="form-control @error('products_rate') is-invalid @enderror" >
+                                    @error('products_rate')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
 
-                                    @endforeach
-                                    </select>
-                                    @error('supplier_code')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="">Name *</label>
-                                    <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" >
-                                    @error('name')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="">Contact *</label>
-                                    <input type="text" name="contact_number" id="contact_number" class="form-control @error('contact_number') is-invalid @enderror" >
-                                    @error('contact_number')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="">GST Number *</label>
-                                    <input type="text" name="gst_number" maxlength="15" minlength="15" id="gst_number" class="form-control @error('gst_number') is-invalid @enderror" >
-                                    @error('gst_number')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row d-flex justify-content-center">
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="">Address *</label>
-                                    <textarea name="address" id="address" class="form-control @error('address') is-invalid @enderror" id="" cols="20" rows="4"></textarea>
-                                    @error('address')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="trans_mode">Mode Of Transaction*</label>
-                                    <select name="trans_mode" id="trans_mode" class="form-control @error('trans_mode') is-invalid @enderror">
-                                        <option value="BY ROAD">BY ROAD</option>
-                                        <option value="BY COURIER">BY COURIER</option>
-                                    </select>
-                                    @error('trans_mode')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="cgst">CGST (%) *</label>
-                                    <input type="number" name="cgst" id="cgst" class="form-control @error('cgst') is-invalid @enderror" >
-                                    @error('cgst')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="sgst">SGST (%) *</label>
-                                    <input type="number" name="sgst" id="sgst" min="0" class="form-control @error('sgst') is-invalid @enderror" >
-                                    @error('sgst')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row d-flex justify-content-center">
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="igst">IGST (%) *</label>
-                                    <input type="number" name="igst" id="igst" class="form-control @error('igst') is-invalid @enderror" >
-                                    @error('igst')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="packing_charges">Packing Charge (%) *</label>
-                                    <input type="number" name="packing_charges" id="packing_charges" class="form-control @error('packing_charges') is-invalid @enderror" >
-                                    @error('packing_charges')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="currency_id">Mode Of Currency*</label>
-                                    <select name="currency_id" id="currency_id" class="form-control @error('currency_id') is-invalid @enderror">
-                                        <option value="0">INR</option>
-                                        <option value="1">USD</option>
-                                    </select>
-                                    @error('currency_id')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="">Remarks *</label>
-                                    <textarea name="remarks" id="remarks" class="form-control @error('remarks') is-invalid @enderror" id="" cols="20" rows="4"></textarea>
-                                    @error('remarks')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
                         <div class="row d-flex justify-content-center">
                             <div class="col-md-2 mt-4">
                                 <button class="btn btn-sm btn-primary" id="submit_btn" type="submit">Submit</button>
@@ -180,11 +121,12 @@ $(document).ready(function(){
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-    $("#supplier_code").change(function(e){
+    $("#raw_material_category_id").change(function(e){
         e.preventDefault();
-        var supplier_code=$(this).val();
+        var supplier_code=$('#supplier_id').val();
+        var rm_category=$('#raw_material_category_id').val();
         $.ajax({
-            url: "{{ route('suppliersdata') }}?id=" + $(this).val(),
+            url: "{{ route('rmcategorydata') }}?id=" + $(this).val(),
             method: 'GET',
             cache:false,
             processData:false,
@@ -192,39 +134,7 @@ $(document).ready(function(){
             success : function(result){
                 console.log(result);
                 if (result.count > 0) {
-                    $('#name').val(result.name);
-                    $('#contact_number').val(result.contact_number);
-                    $('#gst_number').val(result.gst_number);
-                    $('#address').val(result.address);
-                    $('#trans_mode').html(result.trans_mode);
-                    $('#cgst').val(result.cgst);
-                    $('#sgst').val(result.sgst);
-                    $('#igst').val(result.igst);
-                    $('#packing_charges').val(result.packing_charges);
-                    $('#currency_id').html(result.currency_id);
-                    $('#remarks').val(result.remarks);
-                    $("#submit_btn").attr('disabled',true);
-                    $("#submit_btn").val('Save');
-                    alert('This Supplier Code Already Exist!!!')
-                    setTimeout(() => {
-                        location.reload(true);
-                    }, 3000);
-                }else{
-                    // location.reload(true);
-                    // $('#supplier_code').val('abc');
-                    $('#name').val('');
-                    $('#contact_number').val('');
-                    $('#gst_number').val('');
-                    $('#address').val('');
-                    $('#trans_mode').html(result.trans_mode);
-                    $('#cgst').val('');
-                    $('#sgst').val('');
-                    $('#igst').val('');
-                    $('#packing_charges').val('');
-                    $('#currency_id').html(result.currency_id);
-                    $('#remarks').val('');
-                    $("#submit_btn").attr('disabled',false);
-
+                    $('#raw_material_id').html(result.rm);
                 }
             }
         });

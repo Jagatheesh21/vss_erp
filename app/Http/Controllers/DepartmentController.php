@@ -6,6 +6,8 @@ use App\Models\Department;
 use App\Http\Requests\StoreDepartmentRequest;
 use App\Http\Requests\UpdateDepartmentRequest;
 use DB;
+use Auth;
+
 
 class DepartmentController extends Controller
 {
@@ -14,7 +16,8 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        $departments = Department::all();
+        $departments = Department::get();
+        // dd($departments);
         return view('department.index',compact('departments'));
     }
 
@@ -35,6 +38,7 @@ class DepartmentController extends Controller
         try {
             $department = new Department;
             $department->name = $request->name;
+            $department->prepared_by = auth()->user()->id;
             $department->save();
             DB::commit();
             return back()->withSuccess('Department Added Successfully!');
@@ -42,7 +46,7 @@ class DepartmentController extends Controller
             DB::rollback();
             return back()->withErrors($th->getMessage());
         }
-        
+
     }
 
     /**
@@ -70,6 +74,7 @@ class DepartmentController extends Controller
         try {
             $department->name = $request->name;
             $department->status = $request->status;
+            $department->updated_by = auth()->user()->id;
             $department->save();
             DB::commit();
             return back()->withSuccess('Department Updated Successfully!');
