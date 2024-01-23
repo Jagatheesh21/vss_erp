@@ -20,6 +20,8 @@ class SupplierSeeder extends Seeder
             'name'=>'JAI SYSTEMS PVT LTD',
             'gst_number' => '33AAS56789FG97D',
             'address'=>'COVAI',
+            'contact_person'=>'Mukesh',
+            'email'=>'edp@venkateswarasteels.com',
             'contact_number'=>'9456220001',
             'packing_charges'=> 0,
             'trans_mode' => 'BY ROAD',
