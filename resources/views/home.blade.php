@@ -12,7 +12,7 @@
                         <li class="list-group-item"><a href="{{route('raw_material.index')}}">Raw Materials</a></li>
                         <li class="list-group-item"><a href="{{route('supplier.index')}}">Suppliers</a></li>
                         <li class="list-group-item"><a href="{{route('supplier-products.index')}}">Supplier Products</a></li>
-                        <li class="list-group-item"><a href="{{route('supplier-products.index')}}">Purchase Order</a></li>
+                        <li class="list-group-item"><a href="{{route('po.index')}}">Purchase Order</a></li>
                     </ul>
                 </div>
             </div>

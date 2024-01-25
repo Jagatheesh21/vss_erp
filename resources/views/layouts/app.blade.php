@@ -18,6 +18,9 @@
     <!-- Vendors styles-->
     <link rel="stylesheet" href="{{asset('vendors/simplebar/css/simplebar.css')}}">
     <link rel="stylesheet" href="{{asset('css/vendors/simplebar.css')}}">
+    <link  rel="stylesheet" href="{{asset('css/select2.min.css')}}" />
+
+	{{-- <link rel="stylesheet" type="text/css" href="{{asset('css/select2.min.css')}}"> --}}
     <!-- Main styles for this application-->
     <link href="{{asset('css/style.css')}}" rel="stylesheet">
     <!-- We use those styles to show code examples, you should remove them in your application.-->
@@ -90,7 +93,8 @@
     @endguest
     <script src="{{asset('vendors/simplebar/js/simplebar.min.js')}}"></script>
     <script src="{{asset('vendors/@coreui/coreui/js/coreui.bundle.min.js')}}"></script>
-    <script src="{{asset('js/jquery.min.js')}}"></script>
+    <script src="{{asset('js/jquery.min.js')}}" ></script>
+    <script src="{{asset('js/select2.min.js')}}"></script>
     <script>
          setTimeout(() => {
     $('.alert').alert('close');

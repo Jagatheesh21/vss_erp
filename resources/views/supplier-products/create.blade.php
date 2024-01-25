@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('content')
+
 <form action="{{route('supplier-products.store')}}" id="supplier-products_formdata" method="POST">
     @csrf
     @method('POST')
@@ -15,7 +16,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="supplier_id">Supplier Code *</label>
-                                    <select name="supplier_id" id="supplier_id" class="form-control @error('supplier_id') is-invalid @enderror">
+                                    <select name="supplier_id" id="supplier_id" class="form-control select2 @error('supplier_id') is-invalid @enderror">
                                     <option value=""></option>
                                     @forelse ($supplier_codes as $code)
                                         <option value="{{$code->id}}">{{$code->supplier_code}}</option>
@@ -100,22 +101,33 @@
                             </div>
                         </div>
 
-                        <div class="row d-flex justify-content-center">
+                        {{-- <div class="row d-flex justify-content-center">
                             <div class="col-md-2 mt-4">
                                 <button class="btn btn-sm btn-primary" id="submit_btn" type="submit">Submit</button>
                             </div>
-                        </div>
+                        </div> --}}
+
+                        <div class="row mb-3 clearfix">
+                            <div class="col-md-12 ">
+                                <input type="submit" class="btn btn-success align-center" id="btn" value="Save">
+                                <input class="btn btn-danger" id="reset" type="reset" value="Reset">
+                            </div>
+                          </div>
             </div>
         </div>
     </div>
 </div>
 </form>
 
-<script src="{{asset('js/jquery.min.js')}}"></script>
+<script src="{{asset('vendors/simplebar/js/simplebar.min.js')}}"></script>
+<script src="{{asset('vendors/@coreui/coreui/js/coreui.bundle.min.js')}}"></script>
+<script src="{{asset('js/jquery.min.js')}}" ></script>
 <script src="{{asset('js/select2.min.js')}}"></script>
 
 <script>
 $(document).ready(function(){
+    $("#supplier_id").select2();
+
     $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -135,6 +147,7 @@ $(document).ready(function(){
                 console.log(result);
                 if (result.count > 0) {
                     $('#raw_material_id').html(result.rm);
+                    $("#supplier_id").select2();
                 }
             }
         });

@@ -187,10 +187,15 @@
 </div>
 </form>
 
-<script src="{{asset('js/jquery.min.js')}}"></script>
+<script src="{{asset('vendors/simplebar/js/simplebar.min.js')}}"></script>
+<script src="{{asset('vendors/@coreui/coreui/js/coreui.bundle.min.js')}}"></script>
+<script src="{{asset('js/jquery.min.js')}}" ></script>
+<script src="{{asset('js/select2.min.js')}}"></script>
 
 <script>
 $(document).ready(function(){
+    $("#currency_id").select2();
+    $("#trans_mode").select2();
     $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

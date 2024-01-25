@@ -7,6 +7,8 @@ use App\Http\Controllers\RawMaterialCategoryController;
 use App\Http\Controllers\RawMaterialController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\SupplierProductController;
+use App\Http\Controllers\PODetailController;
+use App\Http\Controllers\POProductDetailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +26,7 @@ Auth::routes();
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/suppliers-data/id', [SupplierController::class,'suppliersdata'])->name('suppliersdata');
 Route::get('/rmcategorydata-data/id', [SupplierProductController::class,'rmcategorydata'])->name('rmcategorydata');
+Route::get('/posuppliers-data/id', [PODetailController::class,'posuppliersdata'])->name('posuppliersdata');
 
 Route::resources([
     'roles' => RoleController::class,
@@ -34,4 +37,6 @@ Route::resources([
     'raw_material' => RawMaterialController::class,
     'supplier' => SupplierController::class,
     'supplier-products' => SupplierProductController::class,
+    'po' => PODetailController::class,
+    'po-products' => POProductDetailController::class,
 ]);

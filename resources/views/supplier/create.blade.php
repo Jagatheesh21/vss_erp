@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('content')
+
 <form action="{{route('supplier.store')}}" id="supplier_formdata" method="POST">
     @csrf
     @method('POST')
@@ -166,10 +167,16 @@
 </div>
 </form>
 
-<script src="{{asset('js/jquery.min.js')}}"></script>
 
+<script src="{{asset('vendors/simplebar/js/simplebar.min.js')}}"></script>
+<script src="{{asset('vendors/@coreui/coreui/js/coreui.bundle.min.js')}}"></script>
+<script src="{{asset('js/jquery.min.js')}}" ></script>
+<script src="{{asset('js/select2.min.js')}}"></script>
 <script>
 $(document).ready(function(){
+    $("#currency_id").select2();
+    $("#trans_mode").select2();
+
     $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -192,6 +199,7 @@ $(document).ready(function(){
                     $('#gst_number').val(result.gst_number);
                     $('#address').val(result.address);
                     $('#trans_mode').html(result.trans_mode);
+                    $("#trans_mode").select2();
                     $('#cgst').val(result.cgst);
                     $('#sgst').val(result.sgst);
                     $('#igst').val(result.igst);
@@ -211,6 +219,7 @@ $(document).ready(function(){
                     $('#contact_number').val('');
                     $('#gst_number').val('');
                     $('#address').val('');
+                    $("#trans_mode").select2();
                     $('#trans_mode').html(result.trans_mode);
                     $('#cgst').val('');
                     $('#sgst').val('');

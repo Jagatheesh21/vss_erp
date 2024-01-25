@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('p_o_product_details', function (Blueprint $table) {
             $table->id();
             $table->integer('po_id');
+            $table->integer('supplier_id');
             $table->integer('supplier_product_id');
             $table->date('duedate')->nullable();
             $table->integer('qty');
