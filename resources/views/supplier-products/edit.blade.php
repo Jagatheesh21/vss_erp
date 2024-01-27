@@ -7,6 +7,8 @@
 <div class="row d-flex justify-content-center">
     <div id="data"></div>
     <div class="col-12">
+        <div class="row col-md-3"id="res"></div>
+
         <div class="card">
             <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Supplier Product Updattion</b></span><a class="btn btn-sm btn-primary" href="{{route('supplier-products.index')}}">Supplier Products List</a>
             </div>
@@ -121,11 +123,17 @@
                             </div>
                         </div>
 
-                        <div class="row d-flex justify-content-center">
+                        {{-- <div class="row d-flex justify-content-center">
                             <div class="col-md-2 mt-4">
                                 <button class="btn btn-sm btn-primary" id="submit_btn" type="submit">Submit</button>
                             </div>
-                        </div>
+                        </div> --}}
+                        <div class="row d-flex justify-content-center ">
+                            <div class="col-md-2 mt-4">
+                                <input type="submit" class="btn btn-success  text-white align-center" id="btn" value="Save">
+                                <input class="btn btn-danger text-white" id="reset" type="reset" value="Reset">
+                            </div>
+                          </div>
             </div>
         </div>
     </div>
@@ -160,6 +168,75 @@ $(document).ready(function(){
             }
         });
 	});
+    $("#supplier-products_formdata").submit(function (e) {
+        e.preventDefault();
+        var formData = new FormData($("#supplier-products_formdata")[0]);
+        $("#btn").attr('disabled',true);
+        $("#btn").val('Updating...');
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+            buttonsStyling: false
+        });
+
+        swalWithBootstrapButtons.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Update it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+        }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                                // url: editUrl,
+                url: this.action,
+                type:"POST",
+                data: formData,
+                cache:false,
+                processData:false,
+                contentType:false,
+                success: function(data) {
+                if (data.code==404||data.code==500) {
+                    let error ='<span class="alert alert-danger">'+data.msg+'</span>';
+                        $("#res").html(error);
+                                // $("#btn").attr('disabled',false);
+                                // $("#btn").val('Save');
+                }else{
+                    //    console.log(data);
+                    $("#btn").attr('disabled',false);
+                    $("#btn").val('Save');
+                    swalWithBootstrapButtons.fire(
+                        'Updated!',
+                        'Supplier Product is Updated Successfully!...',
+                        'success'
+                        );
+                        location.reload(true);
+                    }
+                }
+            });
+                            // ajax request completed
+        }else if (
+         /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+            ) {
+                $("#btn").attr('disabled',false);
+                $("#btn").val('Save');
+                swalWithBootstrapButtons.fire(
+                'Cancelled',
+                'Your Supplier Product Datas file is safe',
+                'error'
+                )
+            }
+        });
+    });
+    $("#reset").click(function (e) {
+        e.preventDefault();
+        location.reload(true);
+    });
 });
 </script>
 @endsection

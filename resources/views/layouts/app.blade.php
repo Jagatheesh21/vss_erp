@@ -25,6 +25,8 @@
     <link href="{{asset('css/style.css')}}" rel="stylesheet">
     <!-- We use those styles to show code examples, you should remove them in your application.-->
     <link href="{{asset('css/examples.css')}}" rel="stylesheet">
+    <link rel="stylesheet" href="{{asset('css/sweetalert2.min.css')}}">
+
   </head>
 <body>
     @guest
@@ -95,6 +97,8 @@
     <script src="{{asset('vendors/@coreui/coreui/js/coreui.bundle.min.js')}}"></script>
     <script src="{{asset('js/jquery.min.js')}}" ></script>
     <script src="{{asset('js/select2.min.js')}}"></script>
+    <script src="{{asset('js/sweetalert2.all.min.js')}}"></script>
+
     <script>
          setTimeout(() => {
     $('.alert').alert('close');
