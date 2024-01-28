@@ -227,7 +227,7 @@ $(document).ready(function(){
                 $("#btn").val('Save');
                 swalWithBootstrapButtons.fire(
                 'Cancelled',
-                'Your Supplier Product Datas file is safe',
+                'Your Supplier Product Datas is safe',
                 'error'
                 )
             }

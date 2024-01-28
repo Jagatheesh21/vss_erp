@@ -7,6 +7,8 @@
 <div class="row d-flex justify-content-center">
     <div id="data"></div>
     <div class="col-12">
+        <div class="row col-md-3"id="res"></div>
+
         <div class="card">
             <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Supplier Updation</b></span><a class="btn btn-sm btn-primary" href="{{route('supplier.index')}}">Supplier List</a>
             </div>
@@ -38,9 +40,33 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="">Contact *</label>
+                                    <label for="">Contact Person *</label>
+                                    <input type="text" name="contact_person" id="contact_person"  value="{{$supplier->contact_person}}" class="form-control @error('contact_person') is-invalid @enderror" >
+                                    @error('contact_person')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="">Contact Number*</label>
                                     <input type="text" name="contact_number" id="contact_number"  value="{{$supplier->contact_number}}" class="form-control @error('contact_number') is-invalid @enderror" >
                                     @error('contact_number')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row d-flex justify-content-center">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="">Email *</label>
+                                    <input type="text" name="email" id="email"  value="{{$supplier->email}}" class="form-control @error('email') is-invalid @enderror" >
+                                    @error('email')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -58,8 +84,6 @@
                                     @enderror
                                 </div>
                             </div>
-                        </div>
-                        <div class="row d-flex justify-content-center">
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="">Address *</label>
@@ -85,6 +109,8 @@
                                     @enderror
                                 </div>
                             </div>
+                        </div>
+                        <div class="row d-flex justify-content-center">
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="cgst">CGST (%) *</label>
@@ -107,8 +133,6 @@
                                     @enderror
                                 </div>
                             </div>
-                        </div>
-                        <div class="row d-flex justify-content-center">
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="igst">IGST (%) *</label>
@@ -131,6 +155,8 @@
                                     @enderror
                                 </div>
                             </div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="currency_id">Mode Of Currency*</label>
@@ -159,8 +185,6 @@
                                     @enderror
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Status *</label>
@@ -176,9 +200,10 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row d-flex justify-content-center">
+                        <div class="row d-flex justify-content-center ">
                             <div class="col-md-2 mt-4">
-                                <button class="btn btn-sm btn-primary" id="submit_btn" type="submit">Submit</button>
+                                <input type="submit" class="btn btn-success  text-white align-center" id="btn" value="Save">
+                                <input class="btn btn-danger text-white" id="reset" type="reset" value="Reset">
                             </div>
                         </div>
             </div>
@@ -248,6 +273,75 @@ $(document).ready(function(){
             }
         });
 	});
+    $("#supplier_formdata").submit(function (e) {
+        e.preventDefault();
+        var formData = new FormData($("#supplier_formdata")[0]);
+        $("#btn").attr('disabled',true);
+        $("#btn").val('Updating...');
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+            buttonsStyling: false
+        });
+
+        swalWithBootstrapButtons.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Add it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+        }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                                // url: editUrl,
+                url: this.action,
+                type:"POST",
+                data: formData,
+                cache:false,
+                processData:false,
+                contentType:false,
+                success: function(data) {
+                if (data.code==404||data.code==500) {
+                    let error ='<span class="alert alert-danger">'+data.msg+'</span>';
+                        $("#res").html(error);
+                                // $("#btn").attr('disabled',false);
+                                // $("#btn").val('Save');
+                }else{
+                    //    console.log(data);
+                    $("#btn").attr('disabled',false);
+                    $("#btn").val('Save');
+                    swalWithBootstrapButtons.fire(
+                        'Updated!',
+                        'Supplier is Updated Successfully!...',
+                        'success'
+                        );
+                        location.reload(true);
+                    }
+                }
+            });
+                            // ajax request completed
+        }else if (
+         /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+            ) {
+                $("#btn").attr('disabled',false);
+                $("#btn").val('Save');
+                swalWithBootstrapButtons.fire(
+                'Cancelled',
+                'Your Supplier Datas is safe',
+                'error'
+                )
+            }
+        });
+    });
+    $("#reset").click(function (e) {
+        e.preventDefault();
+        location.reload(true);
+    });
 });
 </script>
 @endsection

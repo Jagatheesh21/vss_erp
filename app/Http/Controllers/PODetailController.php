@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Auth;
 use Illuminate\Http\Request;
 use App\Models\Supplier;
+use App\Models\SupplierProduct;
 use App\Models\Currency;
 use App\Models\POProductDetail;
 use App\Models\PODetail;
@@ -79,7 +80,16 @@ class PODetailController extends Controller
                 $currency_id .= '<option value="'.$supplier->currency_id.'" selected>'.$currency_data->name.'</option>';
 
             }
-            return response()->json(['id'=>$id,'name'=>$name,'gst_number'=>$gst_number,'address'=>$address,'contact_person'=>$contact_person,'contact_number'=>$contact_number,'packing_charges'=>$packing_charges,'trans_mode'=>$trans_mode,'cgst'=>$cgst,'sgst'=>$sgst,'igst'=>$igst,'remarks'=>$remarks,'currency_id'=>$currency_id,'count'=>$count]);
+        $count2 = SupplierProduct::with(['category','product','material','uom'])->where('supplier_id',$id)->get()->count();
+        if ($count2>0) {
+            $supplier_products = SupplierProduct::with(['category','product','material','uom'])->where('supplier_id',$id)->get();
+            $category='<option></option>';
+            foreach ($supplier_products as $key => $supplier_product) {
+                $category .= '<option value="'.$supplier_product->raw_material_category_id.'">'.$supplier_product->category->name.'</option>';
+            }
+        }
+
+            return response()->json(['id'=>$id,'name'=>$name,'gst_number'=>$gst_number,'address'=>$address,'contact_person'=>$contact_person,'contact_number'=>$contact_number,'packing_charges'=>$packing_charges,'trans_mode'=>$trans_mode,'cgst'=>$cgst,'sgst'=>$sgst,'igst'=>$igst,'remarks'=>$remarks,'currency_id'=>$currency_id,'count'=>$count,'count2'=>$count2,'category'=>$category]);
         }else {
             $currency_id='';
             $trans_mode = '<option value="BY ROAD">BY ROAD</option>';
@@ -94,6 +104,10 @@ class PODetailController extends Controller
         // return $id;
     }
 
+
+    public function posuppliersrmdata($raw_material_category_id,$scode){
+        return response()->json(['data'=>$raw_material_category_id,'code'=>$scode]);
+    }
     /**
      * Store a newly created resource in storage.
      */

@@ -26,7 +26,9 @@
                                     <th>S.No</th>
                                     <th>Code</th>
                                     <th>Supplier Name</th>
-                                    <th>Contact</th>
+                                    <th>Contact Person</th>
+                                    <th>Contact Number</th>
+                                    <th>Email</th>
                                     <th>Location</th>
                                     <th>Status</th>
                                     <th>Action</th>
@@ -38,7 +40,9 @@
                                     <td>{{$loop->iteration}}</td>
                                     <td>{{$supplier->supplier_code}}</td>
                                     <td>{{$supplier->name}}</td>
+                                    <td>{{$supplier->contact_person}}</td>
                                     <td>{{$supplier->contact_number}}</td>
+                                    <td>{{$supplier->email}}</td>
                                     <td>{{$supplier->address}}</td>
                                     <td>@if ($supplier->status==1)
                                         <span class="btn btn-sm text-white btn-success">Active</span>

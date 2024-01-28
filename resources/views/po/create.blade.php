@@ -51,34 +51,6 @@
                                     @enderror
                                 </div>
                             </div>
-                            {{-- <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="">RM Category *</label>
-                                    <select name="raw_material_category_id" id="raw_material_category_id" class="form-control @error('raw_material_category_id') is-invalid @enderror">
-                                        <option value=""></option>
-                                        @forelse ($categories as $category)
-                                            <option value="{{$category->id}}">{{$category->name}}</option>
-                                        @empty
-                                        @endforelse
-                                    </select>
-                                    @error('raw_material_category_id')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Material Description *</label>
-                                    <select name="raw_material_id" id="raw_material_id" class="form-control @error('raw_material_id') is-invalid @enderror"></select>
-                                    @error('raw_material_id')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div> --}}
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="">Name *</label>
@@ -324,6 +296,47 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row clearfix mt-3">
+                        <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive" id="tab_logic">
+                                <thead>
+                                <tr>
+                                    <th>S.No</th>
+                                    <th>Material Category</th>
+                                    <th>Material Description</th>
+                                    <th>Material HSN Code</th>
+                                    <th>Due Date</th>
+                                    <th>UOM</th>
+                                    <th>Rate</th>
+                                    <th>Quantity</th>
+                                    <th>Total Cost</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr id='addr0'>
+                                    <td>1</td>
+                                    <td><select name="raw_material_category_id[]" id="raw_material_category_id" class="form-control"></select></td>
+                                    <td><select name="supplier_product_id[]" id="supplier_product_id" class="form-control"></select></td>
+                                    <td><input type="text" class="form-control" id="products_hsnc" name="products_hsnc[]"></td>
+                                    <td><input type="date" class="form-control" id="duedate" name="duedate[]"></td>
+                                    <td><select name="uom_id[]" id="uom_id" class="form-control bg-white"></td>
+                                    <td><input type="number" id="products_rate" class="form-control" name="products_rate[]" readonly></td>
+                                    <td><input type="text" id="qty" class="form-control" name="qty[]"></td>
+                                    <td><input type="number" id="rate" class="form-control" name="rate[]" readonly></td>
+                                </tr>
+                                <tr id='addr1'></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="row mb-3 clearfix">
+                        <div class="col-md-12 ">
+                          <button id="add_row" type="button" class="btn btn-primary pull-left">Add Row</button>
+                          <button id='delete_row' type="button" class="float-end btn btn-danger text-white" onclick="confirm('Are you Sure, Want to Delete the Row?')">Delete Row</button>
+                        </div>
+                    </div>
                         <div class="row d-flex justify-content-center">
                             <div class="col-md-2 mt-4">
                                 <button class="btn btn-sm btn-primary" id="submit_btn" type="submit">Submit</button>
@@ -369,6 +382,8 @@ $(document).ready(function(){
                     $('#packing_charges').val(result.packing_charges);
                     $('#currency_id').html(result.currency_id);
                     $('#remarks').val(result.remarks);
+                    $('#raw_material_category_id').html(result.category);
+
                 }else{
                     // location.reload(true);
                     // $('#supplier_code').val('abc');
@@ -388,6 +403,42 @@ $(document).ready(function(){
                 }
             }
         });
+	});
+    $("#raw_material_category_id").change(function(e){
+        e.preventDefault();
+        var supplier_id=$("#supplier_id").val();
+        var raw_material_category_id=$(this).val();
+        alert(raw_material_category_id);
+        alert(supplier_id);
+
+        var geturldata="{{url('/posuppliersrmdata-data')}}/{{"+ raw_material_category_id +"}}/{{"+ supplier_id"}}";
+        $.ajax({
+            url: '/posuppliersrmdata-data/' + raw_material_category_id + '/' + supplier_id,
+            method: 'GET',
+            data:{
+                raw_material_category_id:$(this).val(),
+                scode:$("#supplier_id").val()
+            },
+            cache:false,
+            processData:false,
+            contentType:false,
+            success : function(result){
+                console.log(result.data);
+                console.log(result.code);
+            }
+        });
+	});
+    var i=1;
+    $("#add_row").click(function(){b=i-1;
+      	$('#addr'+i).html($('#addr'+b).html()).find('td:first-child').html(i+1);
+      	$('#tab_logic').append('<tr id="addr'+(i+1)+'"></tr>');
+      	i++;
+  	});
+      $("#delete_row").click(function(){
+    	if(i>1){
+		$("#addr"+(i-1)).html('');
+		i--;
+		}
 	});
 });
 </script>

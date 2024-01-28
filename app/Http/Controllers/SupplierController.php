@@ -87,6 +87,8 @@ class SupplierController extends Controller
             $supplier_data->name = $request->name;
             $supplier_data->gst_number = $request->gst_number;
             $supplier_data->address = $request->address;
+            $supplier_data->contact_person = $request->contact_person;
+            $supplier_data->email = $request->email;
             $supplier_data->contact_number = $request->contact_number;
             $supplier_data->packing_charges = $request->packing_charges;
             $supplier_data->trans_mode = $request->trans_mode;

@@ -114,7 +114,7 @@
                                 <input type="submit" class="btn btn-success  text-white align-center" id="btn" value="Save">
                                 <input class="btn btn-danger text-white" id="reset" type="reset" value="Reset">
                             </div>
-                          </div>
+                        </div>
             </div>
         </div>
     </div>
@@ -218,7 +218,7 @@ $(document).ready(function(){
                 $("#btn").val('Save');
                 swalWithBootstrapButtons.fire(
                 'Cancelled',
-                'Your Supplier Product Datas file is safe',
+                'Your Supplier Product Datas is safe',
                 'error'
                 )
             }
