@@ -408,23 +408,25 @@ $(document).ready(function(){
         e.preventDefault();
         var supplier_id=$("#supplier_id").val();
         var raw_material_category_id=$(this).val();
-        alert(raw_material_category_id);
-        alert(supplier_id);
+        // alert(raw_material_category_id);
+        // alert(supplier_id);
 
-        var geturldata="{{url('/posuppliersrmdata-data')}}/{{"+ raw_material_category_id +"}}/{{"+ supplier_id"}}";
         $.ajax({
-            url: '/posuppliersrmdata-data/' + raw_material_category_id + '/' + supplier_id,
-            method: 'GET',
+            url: "{{ route('posuppliersrmdata') }}",
+            method: 'POST',
             data:{
-                raw_material_category_id:$(this).val(),
-                scode:$("#supplier_id").val()
+                "_token": "{{ csrf_token() }}",
+                "raw_material_category_id":raw_material_category_id,
+                "supplier_id":supplier_id
             },
-            cache:false,
-            processData:false,
-            contentType:false,
+            // cache:false,
+            // processData:false,
+            // contentType:false,
             success : function(result){
-                console.log(result.data);
-                console.log(result.code);
+                console.log(result);
+                $("#supplier_product_id").html(result);
+                // console.log(result.data);
+                // console.log(result.code);
             }
         });
 	});

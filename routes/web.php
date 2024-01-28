@@ -27,7 +27,7 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('ho
 Route::get('/suppliers-data/id', [SupplierController::class,'suppliersdata'])->name('suppliersdata');
 Route::get('/rmcategorydata-data/id', [SupplierProductController::class,'rmcategorydata'])->name('rmcategorydata');
 Route::get('/posuppliers-data/id', [PODetailController::class,'posuppliersdata'])->name('posuppliersdata');
-Route::get('/posuppliersrmdata-data/{raw_material_category_id}/{scode}', [PODetailController::class,'posuppliersrmdata'])->name('posuppliersrmdata');
+Route::post('/posuppliersrmdata-data', [PODetailController::class,'posuppliersrmdata'])->name('posuppliersrmdata');
 
 Route::resources([
     'roles' => RoleController::class,

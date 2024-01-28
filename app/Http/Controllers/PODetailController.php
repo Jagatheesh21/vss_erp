@@ -105,8 +105,21 @@ class PODetailController extends Controller
     }
 
 
-    public function posuppliersrmdata($raw_material_category_id,$scode){
-        return response()->json(['data'=>$raw_material_category_id,'code'=>$scode]);
+    // public function posuppliersrmdata($raw_material_category_id,$scode){
+    //     return response()->json(['data'=>$raw_material_category_id,'code'=>$scode]);
+    // }
+    public function posuppliersrmdata(Request $request){
+        //return json_encode($request->all());
+        if($request->raw_material_category_id){
+            $raw_material_category_id = $request->raw_material_category_id;
+            $supplier_id = $request->supplier_id;
+            $supplier_products = SupplierProduct::where('supplier_id',$supplier_id)->where('raw_material_category_id',$raw_material_category_id)->get();
+            $html = "<option></option>";
+            foreach($supplier_products as $product){
+                $html.="<option value='.$product->material->id.'>".$product->material->name."</option>";
+            }
+            return $html;
+        }
     }
     /**
      * Store a newly created resource in storage.
