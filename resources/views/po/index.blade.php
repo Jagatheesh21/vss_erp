@@ -25,6 +25,7 @@
                                 <tr>
                                     <th>S.No</th>
                                     <th>PO Number</th>
+                                    <th>PO Date</th>
                                     <th>Code</th>
                                     <th>Supplier Name</th>
                                     <th>Status</th>
@@ -32,10 +33,28 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @forelse ($po_datas as $po_data)
+                                <tr>
 
+                                    <td>{{$loop->iteration}}</td>
+                                    <td>{{$po_data->ponumber}}</td>
+                                    <td>{{date('d-m-Y', strtotime($po_data->podate))}}</td>
+                                    <td>{{$po_data->supplier->supplier_code}}</td>
+                                    <td>{{$po_data->supplier->name}}</td>
+                                    <td>@if ($po_data->status==1)
+                                        <span class="btn btn-sm text-white btn-success">Active</span>
+                                        @else
+                                        <span class="btn btn-sm text-white btn-danger">Inactive</span>
+                                    @endif</td>
+                                    <td><a href="{{route('po.edit',$po_data->id)}}" class="btn btn-sm btn-primary  me-md-2 text-white">Correction Request</a>
+                                        <a href="{{route('po.print',$po_data->id)}}"  data-toggle="tooltip"  data-id="{{$po_data->id}}" data-original-title="Edit" class="edit btn btn-info mx-2 btn-sm text-white">Print</a></td>
+                                </tr>
+                                @empty
                                 <tr>
                                     <td colspan="6" align="center">No Records Found!</td>
                                 </tr>
+                                @endforelse
+
                             </tbody>
                         </table>
                     </div>

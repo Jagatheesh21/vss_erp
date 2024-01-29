@@ -28,6 +28,8 @@ Route::get('/suppliers-data/id', [SupplierController::class,'suppliersdata'])->n
 Route::get('/rmcategorydata-data/id', [SupplierProductController::class,'rmcategorydata'])->name('rmcategorydata');
 Route::get('/posuppliers-data/id', [PODetailController::class,'posuppliersdata'])->name('posuppliersdata');
 Route::post('/posuppliersrmdata-data', [PODetailController::class,'posuppliersrmdata'])->name('posuppliersrmdata');
+Route::post('/posuppliersproductdata-data', [PODetailController::class,'posuppliersproductdata'])->name('posuppliersproductdata');
+Route::get('/poprint-data/{id}', [PODetailController::class,'poprint'])->name('po.print');
 
 Route::resources([
     'roles' => RoleController::class,

@@ -1,5 +1,7 @@
 @extends('layouts.app')
 @section('content')
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
 <form action="{{route('po.store')}}" id="po_formdata" method="POST">
     @csrf
     @method('POST')
@@ -7,10 +9,8 @@
 <div class="row d-flex justify-content-center">
     <div id="data"></div>
     <div class="col-12">
-        <div class="row col-md-3"id="res"></div>
-
         <div class="card">
-            <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Create Purchase Order</b></span><a class="btn btn-sm btn-primary" href="{{route('po.index')}}">Purchase Order List</a>
+            <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Create Purchase Order</b></span><a class="btn btn-sm btn-primary" href="{{route('po.index')}}">Supplier Products List</a>
             </div>
             <div class="card-body">
                         <div class="row d-flex justify-content-center">
@@ -233,9 +233,9 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="quotno">Quote No *</label>
-                                    <input type="text" name="quotno" id="quotno" class="form-control @error('quotno') is-invalid @enderror" >
-                                    @error('quotno')
+                                    <label for="indentno">Indent No *</label>
+                                    <input type="text" name="indentno" id="indentno" class="form-control @error('indentno') is-invalid @enderror" >
+                                    @error('indentno')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -298,53 +298,35 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row clearfix mt-3">
+
+                    <div class="row clearfix mt-3">
                         <div class="col-md-12">
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-striped table-responsive" id="tab_logic">
-                                <thead>
-                                <tr>
-                                    <th>S.No</th>
-                                    <th>Material Category</th>
-                                    <th>Material Description</th>
-                                    <th>Material HSN Code</th>
-                                    <th>Due Date</th>
-                                    <th>UOM</th>
-                                    <th>Rate</th>
-                                    <th>Quantity</th>
-                                    <th>Total Cost</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr id='addr0'>
-                                    <td>1</td>
-                                    <td><select name="raw_material_category_id[]" id="raw_material_category_id" class="form-control"></select></td>
-                                    <td><select name="supplier_product_id[]" id="supplier_product_id" class="form-control"></select></td>
-                                    <td><input type="text" class="form-control" id="products_hsnc" name="products_hsnc[]"></td>
-                                    <td><input type="date" class="form-control" id="duedate" name="duedate[]"></td>
-                                    <td><select name="uom_id[]" id="uom_id" class="form-control bg-white"></td>
-                                    <td><input type="number" id="products_rate" class="form-control" name="products_rate[]" readonly></td>
-                                    <td><input type="text" id="qty" class="form-control" name="qty[]"></td>
-                                    <td><input type="number" id="rate" class="form-control" name="rate[]" readonly></td>
-                                </tr>
-                                <tr id='addr1'></tr>
-                                </tbody>
-                            </table>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped table-responsive" id="tab_logic">
+                                    <thead>
+                                    <tr>
+                                        <th>S.No</th>
+                                        <th>Material Category</th>
+                                        <th>Material Description</th>
+                                        <th>Material HSN Code</th>
+                                        <th>Due Date</th>
+                                        <th>UOM</th>
+                                        <th>Rate</th>
+                                        <th>Quantity</th>
+                                        <th>Total Cost</th>
+                                        <th><button type="button" name="add" class="btn btn-success btn-border-radius-sm btn-xs add"><i class='bx bx-plus-circle' style="color: white" ></i></button></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                    </div>
-                    <div class="row mb-3 clearfix">
-                        <div class="col-md-12 ">
-                          <button id="add_row" type="button" class="btn btn-primary pull-left">Add Row</button>
-                          <button id='delete_row' type="button" class="float-end btn btn-danger text-white" onclick="confirm('Are you Sure, Want to Delete the Row?')">Delete Row</button>
+                        <div class="row d-flex justify-content-center">
+                            <div class="col-md-2 mt-4">
+                                <button class="btn btn-sm btn-primary" id="submit_btn" type="submit">Submit</button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row d-flex justify-content-center ">
-                        <div class="col-md-2 mt-4">
-                            <input type="submit" class="btn btn-success  text-white align-center" id="btn" value="Save">
-                            <input class="btn btn-danger text-white" id="reset" type="reset" value="Reset">
-                        </div>
-                    </div>
             </div>
         </div>
     </div>
@@ -352,11 +334,12 @@
 </form>
 
 <script src="{{asset('js/jquery.min.js')}}"></script>
+<script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
 <script src="{{asset('js/select2.min.js')}}"></script>
 
 <script>
 $(document).ready(function(){
-    $("#supplier_id").select2();
+    $("#raw_material_category_id").select2();
 
     $.ajaxSetup({
                 headers: {
@@ -374,8 +357,6 @@ $(document).ready(function(){
             contentType:false,
             success : function(result){
                 // console.log(result);
-                $("#supplier_id").select2();
-                $("#raw_material_category_id").select2();
                 if (result.count > 0) {
                     $('#name').val(result.name);
                     $('#name'). attr('readonly','true');
@@ -413,10 +394,12 @@ $(document).ready(function(){
         });
 	});
     $("#raw_material_category_id").change(function(e){
-        e.preventDefault();
-        $("#raw_material_category_id").select2();
+        // e.preventDefault();
         var supplier_id=$("#supplier_id").val();
         var raw_material_category_id=$(this).val();
+        // var sub_category_id = $(this).data('supplier_product_id');
+        // alert(sub_category_id);
+        alert(raw_material_category_id);
         $.ajax({
             url: "{{ route('posuppliersrmdata') }}",
             method: 'POST',
@@ -426,7 +409,6 @@ $(document).ready(function(){
                 "supplier_id":supplier_id
             },
             success : function(result){
-                $("#raw_material_category_id").select2();
                 // console.log(result);
                 $("#supplier_product_id").html(result);
                 // console.log(result.data);
@@ -435,13 +417,12 @@ $(document).ready(function(){
         });
 	});
     $("#supplier_product_id").change(function(e){
-        e.preventDefault();
+        // e.preventDefault();
         var supplier_id=$("#supplier_id").val();
         var raw_material_category_id=$("#raw_material_category_id").val();
         var supplier_product_id=$(this).val();
         // alert(raw_material_category_id);
         // alert(supplier_id);
-        $("#supplier_product_id").select2();
 
         $.ajax({
             url: "{{ route('posuppliersproductdata') }}",
@@ -453,7 +434,6 @@ $(document).ready(function(){
                 "supplier_product_id":supplier_product_id,
             },
             success : function(result){
-                $("#supplier_product_id").select2();
                 // console.log(result);
                 $("#uom_id").html(result.html);
                 $("#products_hsnc").val(result.products_hsnc);
@@ -464,15 +444,6 @@ $(document).ready(function(){
         });
 	});
     $('#qty').blur(function (e) {
-        e.preventDefault();
-        var products_rate=$("#products_rate").val();
-        var qty=$("#qty").val();
-        if(products_rate!=''&&qty!=''){
-            var total_cost=products_rate * qty;
-            $("#rate").val(total_cost);
-        }
-    });
-    $('#products_rate').blur(function (e) {
         e.preventDefault();
         var products_rate=$("#products_rate").val();
         var qty=$("#qty").val();
@@ -494,75 +465,26 @@ $(document).ready(function(){
 		i--;
 		}
 	});
-    $("#po_formdata").submit(function (e) {
-        e.preventDefault();
-        var formData = new FormData($("#po_formdata")[0]);
-        $("#btn").attr('disabled',true);
-        $("#btn").val('Updating...');
-        const swalWithBootstrapButtons = Swal.mixin({
-            customClass: {
-                    confirmButton: 'btn btn-success',
-                    cancelButton: 'btn btn-danger'
-                },
-            buttonsStyling: false
-        });
-
-        swalWithBootstrapButtons.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, Update it!',
-        cancelButtonText: 'No, cancel!',
-        reverseButtons: true
-        }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                                // url: editUrl,
-                url: this.action,
-                type:"POST",
-                data: formData,
-                cache:false,
-                processData:false,
-                contentType:false,
-                success: function(data) {
-                if (data.code==404||data.code==500) {
-                    let error ='<span class="alert alert-danger">'+data.msg+'</span>';
-                        $("#res").html(error);
-                                // $("#btn").attr('disabled',false);
-                                // $("#btn").val('Save');
-                }else{
-                    //    console.log(data);
-                    $("#btn").attr('disabled',false);
-                    $("#btn").val('Save');
-                    swalWithBootstrapButtons.fire(
-                        'Added!',
-                        'Purchase Order is Created Successfully!...',
-                        'success'
-                        );
-                        location.reload(true);
-                    }
-                }
-            });
-                            // ajax request completed
-        }else if (
-         /* Read more about handling dismissals below */
-            result.dismiss === Swal.DismissReason.cancel
-            ) {
-                $("#btn").attr('disabled',false);
-                $("#btn").val('Save');
-                swalWithBootstrapButtons.fire(
-                'Cancelled',
-                'Your Purchase Order Datas is safe',
-                'error'
-                )
-            }
-        });
-    });
-    $("#reset").click(function (e) {
-        e.preventDefault();
-        location.reload(true);
-    });
+    var count = 0;
+    $(document).on('click', '.add', function(){
+        count++;
+        var html = '';
+        html += '<tr>';
+        html += '<td>'+count+'</td>';
+        html += '<td><select name="raw_material_category_id[]" id="raw_material_category_id" class="form-control"></select></td>';
+        html += '<td><select name="supplier_product_id[]" id="supplier_product_id" class="form-control"></select></td>';
+        html += '<td><input type="text" class="form-control" id="products_hsnc" name="products_hsnc[]"></td>';
+        html += '<td><input type="date" class="form-control" id="duedate" name="duedate[]"></td>';
+        html += '<td><select name="uom_id[]" id="uom_id" class="form-control bg-white"></td>';
+        html += '<td><input type="number" id="products_rate" class="form-control" name="products_rate[]" readonly></td>';
+        html += '<td><input type="text" id="qty" class="form-control" name="qty[]"></td>';
+        html += '<td><input type="number" id="rate" class="form-control" name="rate[]" readonly></td>';
+        html += '<td><button type="button" name="remove" class="btn btn-danger btn-xs remove"><i class="bx bx-minus-circle"></i></button></td>';
+        $('tbody').append(html);
+      });
+      $(document).on('click', '.remove', function(){
+        $(this).closest('tr').remove();
+      });
 });
 </script>
 @endsection

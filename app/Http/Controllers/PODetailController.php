@@ -22,9 +22,9 @@ class PODetailController extends Controller
     public function index()
     {
         //
-        // $suppliers = Supplier::get();
+        $po_datas=PODetail::with(['supplier'])->get();
         // return view('po.index',compact('suppliers'));
-        return view('po.index');
+        return view('po.index',compact('po_datas'));
     }
 
     /**
@@ -80,9 +80,9 @@ class PODetailController extends Controller
                 $currency_id .= '<option value="'.$supplier->currency_id.'" selected>'.$currency_data->name.'</option>';
 
             }
-        $count2 = SupplierProduct::with(['category','product','material','uom'])->where('supplier_id',$id)->get()->count();
+        $count2 = SupplierProduct::with(['category','product','material','uom'])->where('supplier_id',$id)->where('status','=','1')->get()->count();
         if ($count2>0) {
-            $supplier_products = SupplierProduct::with(['category','product','material','uom'])->where('supplier_id',$id)->get();
+            $supplier_products = SupplierProduct::with(['category','product','material','uom'])->where('supplier_id',$id)->where('status','=','1')->groupBy('raw_material_category_id')->get();
             $category='<option></option>';
             foreach ($supplier_products as $key => $supplier_product) {
                 $category .= '<option value="'.$supplier_product->raw_material_category_id.'">'.$supplier_product->category->name.'</option>';
@@ -94,7 +94,7 @@ class PODetailController extends Controller
             $currency_id='';
             $trans_mode = '<option value="BY ROAD">BY ROAD</option>';
             $trans_mode .= '<option value="BY COURIER">BY COURIER</option>';
-            $currency_datas=Currency::get();
+            $currency_datas=Currency::where('status','=','1')->get();
             foreach ($currency_datas as $key => $currency_data) {
                 $currency_id .= '<option value="'.$currency_data->id.'">'.$currency_data->name.'</option>';
 
@@ -105,28 +105,89 @@ class PODetailController extends Controller
     }
 
 
-    // public function posuppliersrmdata($raw_material_category_id,$scode){
-    //     return response()->json(['data'=>$raw_material_category_id,'code'=>$scode]);
-    // }
+    public function posuppliersproductdata(Request $request){
+        // return json_encode($request->all());
+        if($request->raw_material_category_id){
+            $raw_material_category_id = $request->raw_material_category_id;
+            $supplier_id = $request->supplier_id;
+            $supplier_product_id = $request->supplier_product_id;
+            $supplier_products = SupplierProduct::with(['category','product','material','uom'])->where('supplier_id',$supplier_id)->where('raw_material_category_id',$raw_material_category_id)->where('raw_material_id',$supplier_product_id)->where('status','=','1')->get();
+            foreach($supplier_products as $product){
+                $html='<option value="'.$product->uom->id.' selected">'.$product->uom->name.'</option>';
+                $products_hsnc=$product->products_hsnc;
+                $products_rate=$product->products_rate;
+            }
+            // return $html;
+            return response()->json(['html'=>$html,'products_hsnc'=>$products_hsnc,'products_rate'=>$products_rate]);
+
+        }
+    }
     public function posuppliersrmdata(Request $request){
         //return json_encode($request->all());
         if($request->raw_material_category_id){
             $raw_material_category_id = $request->raw_material_category_id;
             $supplier_id = $request->supplier_id;
-            $supplier_products = SupplierProduct::where('supplier_id',$supplier_id)->where('raw_material_category_id',$raw_material_category_id)->get();
-            $html = "<option></option>";
-            foreach($supplier_products as $product){
-                $html.="<option value='.$product->material->id.'>".$product->material->name."</option>";
+            $supplier_rmdatas = SupplierProduct::with(['category','product','material','uom'])->where('supplier_id',$supplier_id)->where('raw_material_category_id',$raw_material_category_id)->where('status','=','1')->get();
+            $html = '<option></option>';
+            foreach($supplier_rmdatas as $rmdata){
+                $html.='<option value="'.$rmdata->material->id.'">'.$rmdata->material->name.'</option>';
             }
             return $html;
         }
     }
+
+    public function poprint(Request $request){
+    }
+
     /**
      * Store a newly created resource in storage.
      */
     public function store(StorePODetailRequest $request)
     {
         //
+        // dd($request);
+        DB::beginTransaction();
+        try {
+            $po_datas = new PODetail;
+            $po_datas->ponumber = $request->ponumber;
+            $po_datas->podate = $request->podate;
+            $po_datas->purchasetype = $request->purchasetype;
+            $po_datas->payment_terms = $request->payment_terms;
+            $po_datas->supplier_id = $request->supplier_id;
+            $po_datas->indentno = $request->indentno;
+            $po_datas->indentdate = $request->indentdate;
+            $po_datas->quotno = $request->quotno;
+            $po_datas->quotdt = $request->quotdt;
+            $po_datas->remarks1 = $request->remarks1;
+            $po_datas->remarks2 = $request->remarks2;
+            $po_datas->remarks3 = $request->remarks3;
+            $po_datas->remarks4 = $request->remarks4;
+            $po_datas->prepared_by = auth()->user()->id;
+            $po_datas->save();
+
+            $po_id=$po_datas->id;
+        // dd($po_datas->id);
+            $raw_material_category_datas=$request->raw_material_category_id;
+            foreach ($raw_material_category_datas as $key => $raw_material_category_data) {
+                $po_product_datas = new POProductDetail;
+                $po_product_datas->po_id =$po_id;
+                $po_product_datas->supplier_id =$request->supplier_id;
+                $po_product_datas->supplier_product_id =$request->supplier_product_id[$key];
+                $po_product_datas->duedate =$request->duedate[$key];
+                $po_product_datas->qty =$request->qty[$key];
+                $po_product_datas->rate =$request->rate[$key];
+                $po_product_datas->prepared_by = auth()->user()->id;
+                $po_product_datas->save();
+            }
+            DB::commit();
+            return redirect()->route('po.index')->withSuccess('Purchase Order Created Successfully!');
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollback();
+            return redirect()->back()->withErrors($th->getMessage());
+        }
+
+
     }
 
     /**
