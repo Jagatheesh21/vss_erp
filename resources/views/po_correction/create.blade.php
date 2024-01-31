@@ -79,7 +79,7 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            {{-- <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="approved_by">Approved BY *</label>
                                     <select name="approved_by" id="approved_by" class="form-control bg-light @error('approved_by') is-invalid @enderror" disabled>
@@ -92,7 +92,7 @@
                                     </span>
                                     @enderror
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                         <div class="row d-flex justify-content-center ">
                             <div class="col-md-2 mt-4">
@@ -117,9 +117,9 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
                 });
-        $("#raw_material_category_formdata").submit(function (e) {
+        $("#pocorrection_formdata").submit(function (e) {
             e.preventDefault();
-            var formData = new FormData($("#raw_material_category_formdata")[0]);
+            var formData = new FormData($("#pocorrection_formdata")[0]);
             $("#btn").attr('disabled',true);
             $("#btn").val('Updating...');
             const swalWithBootstrapButtons = Swal.mixin({
@@ -160,7 +160,7 @@
                         $("#btn").val('Save');
                         swalWithBootstrapButtons.fire(
                             'Added!',
-                            'Raw Material Category is Created Successfully!...',
+                            'PO Correction is Request Submitted Successfully!...',
                             'success'
                             );
                             location.reload(true);
@@ -176,7 +176,7 @@
                     $("#btn").val('Save');
                     swalWithBootstrapButtons.fire(
                     'Cancelled',
-                    'Your Raw Material Category Data is safe',
+                    'PO Correction Data is safe',
                     'error'
                     )
                 }

@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
+use Illuminate\Http\Request;
 use App\Models\PoCorrection;
 use App\Http\Requests\StorePoCorrectionRequest;
 use App\Http\Requests\UpdatePoCorrectionRequest;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
 
 class PoCorrectionController extends Controller
 {
@@ -30,7 +34,22 @@ class PoCorrectionController extends Controller
     public function store(StorePoCorrectionRequest $request)
     {
         //
-        dd($request);
+        // dd($request);
+        DB::beginTransaction();
+        try {
+            $pocorrection_data = new PoCorrection;
+            $pocorrection_data->po_id = $request->po_id;
+            $pocorrection_data->po_corrections_date = $request->po_corrections_date;
+            $pocorrection_data->reason = $request->reason;
+            $pocorrection_data->prepared_by = auth()->user()->id;
+            $pocorrection_data->save();
+            DB::commit();
+            return redirect()->route('pocorrection.index')->withSuccess('PO Correction is Requested Successfully!');
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollback();
+            return redirect()->back()->withErrors($th->getMessage());
+        }
     }
 
     /**
