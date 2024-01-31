@@ -5,18 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class GRNInwardRegister extends Model
+class PoCorrection extends Model
 {
     use HasFactory;
 
-    public function podata()
+    public function podetails()
     {
         return $this->belongsTo(PODetail::class,'po_id');
-    }
-
-    public function poproduct()
-    {
-        return $this->belongsTo(POProductDetail::class,'p_o_product_id');
     }
 
 }

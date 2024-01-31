@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Auth;
 use Illuminate\Http\Request;
 use App\Models\Supplier;
+use App\Models\User;
 use App\Models\SupplierProduct;
 use App\Models\Currency;
 use App\Models\POProductDetail;
@@ -137,6 +138,26 @@ class PODetailController extends Controller
     }
 
     public function poprint(Request $request){
+        $id=$request->id;
+        // dd($id);
+        $po_datas=PODetail::where('status','!=',1)->where('id','=',$id)->get();
+        $total_rate=POProductDetail::where('po_id','=',$id)->sum('rate');
+        // dd($po_datas);
+        dd($total_rate);
+        return view('po_correction.create',compact('po_datas'));
+    }
+
+    public function pocorrection(Request $request){
+        $id=$request->id;
+        // dd($id);
+        $user_id=auth()->user()->id;
+        $user_datas=User::find($user_id);
+        // dd($user_data);
+        $po_datas=PODetail::with(['supplier'])->where('status','!=',1)->where('id','=',$id)->get();
+        $total_rate=POProductDetail::where('po_id','=',$id)->sum('rate');
+        // dd($po_datas);
+        // dd($total_rate);
+        return view('po_correction.create',compact('po_datas','total_rate','user_datas'));
     }
 
     /**
@@ -203,7 +224,7 @@ class PODetailController extends Controller
      */
     public function edit(PODetail $pODetail)
     {
-        //
+        dd($pODetail);
     }
 
     /**

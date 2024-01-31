@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('grnnumber')->unique();
             $table->date('grndate');
+            $table->integer('grnnumber_category')->default(0);
             $table->integer('po_id');
             $table->integer('p_o_product_id');
             $table->string('invoice_number')->nullable();
@@ -24,9 +25,15 @@ return new class extends Migration
             $table->string('pad_number')->nullable();
             $table->string('release_number')->nullable();
             $table->float('inward_qty', 8, 2)->default(0);
+            $table->float('approved_qty', 8, 2)->default(0);
+            $table->float('onhold_qty', 8, 2)->default(0);
+            $table->float('rejected_qty', 8, 2)->default(0);
             $table->float('issued_qty', 8, 2)->default(0);
+            $table->float('return_qty', 8, 2)->default(0);
             $table->float('return_dc_qty', 8, 2)->default(0);
+            $table->float('avl_qty', 8, 2)->default(0);
             $table->date('grn_close_date')->nullable();
+            $table->integer('approved_status')->default(0);
             $table->integer('status')->default(0);
             $table->integer('prepared_by');
             $table->integer('updated_by')->nullable();

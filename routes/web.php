@@ -9,6 +9,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\SupplierProductController;
 use App\Http\Controllers\PODetailController;
 use App\Http\Controllers\POProductDetailController;
+use App\Http\Controllers\PoCorrectionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +31,7 @@ Route::get('/posuppliers-data/id', [PODetailController::class,'posuppliersdata']
 Route::post('/posuppliersrmdata-data', [PODetailController::class,'posuppliersrmdata'])->name('posuppliersrmdata');
 Route::post('/posuppliersproductdata-data', [PODetailController::class,'posuppliersproductdata'])->name('posuppliersproductdata');
 Route::get('/poprint-data/{id}', [PODetailController::class,'poprint'])->name('po.print');
+Route::get('/pocorrection-data/{id}', [PODetailController::class,'pocorrection'])->name('po.correction');
 
 Route::resources([
     'roles' => RoleController::class,
@@ -42,4 +44,5 @@ Route::resources([
     'supplier-products' => SupplierProductController::class,
     'po' => PODetailController::class,
     'po-products' => POProductDetailController::class,
+    'pocorrection' => PoCorrectionController::class,
 ]);

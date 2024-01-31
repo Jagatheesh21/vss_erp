@@ -27,7 +27,7 @@ return new class extends Migration
             $table->text('remarks3')->nullable();
             $table->text('remarks4')->nullable();
             $table->date('po_close_date')->nullable();
-            $table->integer('status')->default(1);
+            $table->integer('status')->default(0);
             $table->integer('prepared_by');
             $table->integer('updated_by')->nullable();
             $table->timestamps();
