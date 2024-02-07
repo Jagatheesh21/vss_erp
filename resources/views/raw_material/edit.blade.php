@@ -78,6 +78,17 @@
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
+                                <label for="maximum_stock">Maximum Stock *</label>
+                                <input type="number" name="maximum_stock" min="0.10" step="0.01" value="{{$rawMaterial->maximum_stock}}" class="form-control @error('maximum_stock') is-invalid @enderror" >
+                                @error('maximum_stock')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
                                 <label>Status *</label>
                                 <select name="status" class="form-control">
                                     <option value="1" @if($rawMaterial->status==1) selected @endif >Active</option>

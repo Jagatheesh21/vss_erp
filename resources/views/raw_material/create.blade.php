@@ -62,6 +62,17 @@
                                     @enderror
                                 </div>
                             </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="maximum_stock">Maximum Stock *</label>
+                                    <input type="number" name="maximum_stock" min="0.10" step="0.01" class="form-control @error('maximum_stock') is-invalid @enderror" >
+                                    @error('maximum_stock')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
                         </div>
                         <div class="row d-flex justify-content-center ">
                             <div class="col-md-2 mt-4">

@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('material_code');
             $table->integer('raw_material_category_id');
             $table->string('name');
-            $table->integer('minimum_stock');
+            $table->integer('minimum_stock')->default(1);
+            $table->integer('maximum_stock')->default(1);
             $table->integer('status')->default(1);
             $table->integer('prepared_by');
             $table->integer('updated_by')->nullable();

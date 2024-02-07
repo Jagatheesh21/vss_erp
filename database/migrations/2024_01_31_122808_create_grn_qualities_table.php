@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('grn_qualities', function (Blueprint $table) {
             $table->id();
             $table->integer('grnnumber_id');
+            $table->integer('rack_id');
             $table->integer('heat_no_id');
             $table->integer('inspected_by');
             $table->date('inspected_date');

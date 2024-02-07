@@ -24,24 +24,26 @@
                             <thead>
                                 <tr>
                                     <th>S.No</th>
-                                    <th>Category</th>                                
-                                    <th>Material Code</th>                                
-                                    <th>Material Description</th>                             
-                                    <th>Minimum Stock</th>                             
-                                    <th>Available Stock</th>                             
-                                    <th>Stock Level</th>                             
-                                    <th>Status</th>                                
+                                    <th>Category</th>
+                                    <th>Material Code</th>
+                                    <th>Material Description</th>
+                                    <th>Minimum Stock</th>
+                                    <th>Maximum Stock</th>
+                                    <th>Available Stock</th>
+                                    <th>Stock Level</th>
+                                    <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($raw_materials as $department)                               
+                                @forelse ($raw_materials as $department)
                                 <tr>
                                     <td>{{$loop->iteration}}</td>
                                     <td>{{$department->category->name}}</td>
                                     <td>{{$department->material_code}}</td>
                                     <td>{{$department->name}}</td>
                                     <td>{{$department->minimum_stock}}</td>
+                                    <td>{{$department->maximum_stock}}</td>
                                     <td>{{$avl_stock}}</td>
                                     <td>
                                         @if((($avl_stock)-($department->minimum_stock))==0)
@@ -57,13 +59,13 @@
                                         <span class="btn btn-sm text-white btn-danger">Inactive</span>
                                     @endif</td>
                                     <td><a href="{{route('raw_material.edit',$department->id)}}" class="btn btn-sm btn-primary">Edit</a></td>
-                                </tr>    
+                                </tr>
                                 @empty
                                 <tr>
                                     <td colspan="5" align="center">No Records Found!</td>
-                                </tr>    
+                                </tr>
                                 @endforelse
-                                
+
                             </tbody>
                         </table>
                     </div>

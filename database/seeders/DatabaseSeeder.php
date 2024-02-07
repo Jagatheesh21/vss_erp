@@ -23,6 +23,8 @@ class DatabaseSeeder extends Seeder
             ModeOfUnitSeeder::class,
             SupplierSeeder::class,
             SupplierProductSeeder::class,
+            RackStockmasterSeeder::class,
+            RackmasterSeeder::class
         ]);
     }
 }

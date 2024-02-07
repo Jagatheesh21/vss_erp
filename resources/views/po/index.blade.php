@@ -49,12 +49,13 @@
                                     <td>
                                         {{-- <a href="{{route('po.edit',$po_data->id)}}" class="btn btn-sm btn-primary  me-md-2 text-white">Correction Request</a> --}}
                                         <a href="{{route('po.correction',$po_data->id)}}"  data-toggle="tooltip"  data-id="{{$po_data->id}}" data-original-title="Edit" class="edit btn btn-info mx-2 btn-sm text-white">Correction Request</a>
+                                        <a href="#" class="edit btn btn-info mx-2 btn-sm text-white">Correction Request</a>
                                         <a href="{{route('po.print',$po_data->id)}}"  data-toggle="tooltip"  data-id="{{$po_data->id}}" data-original-title="Edit" class="edit btn btn-info mx-2 btn-sm text-white">Print</a>
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="6" align="center">No Records Found!</td>
+                                    <td colspan="7" align="center">No Records Found!</td>
                                 </tr>
                                 @endforelse
 

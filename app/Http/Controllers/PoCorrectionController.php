@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Auth;
 use Illuminate\Http\Request;
 use App\Models\PoCorrection;
+use App\Models\User;
+use App\Models\PODetail;
+use App\Models\POProductDetail;
 use App\Http\Requests\StorePoCorrectionRequest;
 use App\Http\Requests\UpdatePoCorrectionRequest;
 use Illuminate\Support\Facades\File;
@@ -18,6 +21,10 @@ class PoCorrectionController extends Controller
     public function index()
     {
         //
+        $pocorrection_datas =PoCorrection::with(['podetails'])->orderBy('id', 'DESC')->get();
+        $user_datas=User::get();
+        // dd($po_correction_datas);
+        return view('po_correction.index',compact('pocorrection_datas','user_datas'));
     }
 
     /**
@@ -40,11 +47,11 @@ class PoCorrectionController extends Controller
             $pocorrection_data = new PoCorrection;
             $pocorrection_data->po_id = $request->po_id;
             $pocorrection_data->po_corrections_date = $request->po_corrections_date;
-            $pocorrection_data->reason = $request->reason;
+            $pocorrection_data->request_reason = $request->request_reason;
             $pocorrection_data->prepared_by = auth()->user()->id;
             $pocorrection_data->save();
             DB::commit();
-            return redirect()->route('pocorrection.index')->withSuccess('PO Correction is Requested Successfully!');
+            return redirect()->route('po-correction.index')->withSuccess('PO Correction is Requested Successfully!');
         } catch (\Throwable $th) {
             //throw $th;
             DB::rollback();
@@ -60,12 +67,27 @@ class PoCorrectionController extends Controller
         //
     }
 
+    public function approval(Request $request){
+        $id=$request->id;
+        $po_correction_data=PoCorrection::with(['podetails'])->where('id','=',$id)->get();
+        $po_id=$po_correction_data[0]->po_id;
+        $correction_id=$po_correction_data[0]->id;
+        $po_datas=PODetail::with(['supplier'])->where('id','=',$po_id)->where('status','!=',1)->get();
+        $total_rate=POProductDetail::where('po_id','=',$po_id)->sum('rate');
+        dd($po_datas);
+
+        return view('po_correction.edit',compact('po_datas','total_rate'));
+    }
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(PoCorrection $poCorrection)
     {
         //
+        $po_id=$poCorrection->po_id;
+        $po_datas=PODetail::with(['supplier'])->where('id','=',$po_id)->get();
+        $total_rate=POProductDetail::where('po_id','=',$po_id)->sum('rate');
+        return view('po_correction.edit',compact('poCorrection','po_datas','total_rate'));
     }
 
     /**
@@ -74,6 +96,29 @@ class PoCorrectionController extends Controller
     public function update(UpdatePoCorrectionRequest $request, PoCorrection $poCorrection)
     {
         //
+        // dd($request->all());
+        // dd($request->id);
+        // dd($poCorrection->id);
+        DB::beginTransaction();
+        try {
+            $id=$request->id;
+            if ($poCorrection->id==$id) {
+                $pocorrection_data=PoCorrection::find($id);
+                $pocorrection_data->po_id = $request->po_id;
+                $pocorrection_data->approved_by = auth()->user()->id;
+                $pocorrection_data->approved_date = $request->approved_date;
+                $pocorrection_data->status = $request->status;
+                $pocorrection_data->approve_reason = $request->approve_reason;
+                $pocorrection_data->updated_by = auth()->user()->id;
+                $pocorrection_data->update();
+                DB::commit();
+                return redirect()->route('po-correction.index')->withSuccess('PO Correction is Status Submitted Successfully!');
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollback();
+            return redirect()->back()->withErrors($th->getMessage());
+        }
     }
 
     /**

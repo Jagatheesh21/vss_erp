@@ -17,7 +17,8 @@ return new class extends Migration
             $table->date('po_corrections_date');
             $table->integer('approved_by');
             $table->date('approved_date');
-            $table->string('reason');
+            $table->string('request_reason');
+            $table->string('approve_reason')->nullable();
             $table->integer('status')->default(0);
             $table->integer('prepared_by');
             $table->integer('updated_by')->nullable();

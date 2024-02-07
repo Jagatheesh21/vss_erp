@@ -10,7 +10,7 @@
 
             <div class="card-body">
 
-                    <form action="{{route('pocorrection.store')}}" id="pocorrection_formdata"  method="POST">
+                    <form action="{{route('po-correction.store')}}" id="pocorrection_formdata"  method="POST">
                         @csrf
                         @method('POST')
                         <div class="row d-flex justify-content-center">
@@ -70,9 +70,9 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="reason">REASON *</label>
-                                    <textarea name="reason" id="reason" class="form-control @error('reason') is-invalid @enderror" cols="20" rows="3"></textarea>
-                                    @error('reason')
+                                    <label for="request_reason">REASON *</label>
+                                    <textarea name="request_reason" id="request_reason" class="form-control @error('request_reason') is-invalid @enderror" cols="20" rows="3"></textarea>
+                                    @error('request_reason')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>

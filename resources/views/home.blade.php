@@ -13,7 +13,7 @@
                         <li class="list-group-item"><a href="{{route('supplier.index')}}">Suppliers</a></li>
                         <li class="list-group-item"><a href="{{route('supplier-products.index')}}">Supplier Products</a></li>
                         <li class="list-group-item"><a href="{{route('po.index')}}">Purchase Order</a></li>
-                        <li class="list-group-item"><a href="{{route('pocorrection.index')}}">Purchase Order Correction</a></li>
+                        <li class="list-group-item"><a href="{{route('po-correction.index')}}">Purchase Order Correction</a></li>
                     </ul>
                 </div>
             </div>
@@ -26,6 +26,8 @@
                         <li class="list-group-item"><a href="#">Material Inward (GRN)</a></li>
                         <li class="list-group-item"><a href="#">GRN Correction</a></li>
                         <li class="list-group-item"><a href="#">Material Issuance</a></li>
+                        <li class="list-group-item"><a href="{{route('rack-stock-master.index')}}">Stocking Point Rack Master</a></li>
+                        <li class="list-group-item"><a href="{{route('rack-master.index')}}">Rack Master</a></li>
                     </ul>
                 </div>
             </div>

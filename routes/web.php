@@ -10,6 +10,8 @@ use App\Http\Controllers\SupplierProductController;
 use App\Http\Controllers\PODetailController;
 use App\Http\Controllers\POProductDetailController;
 use App\Http\Controllers\PoCorrectionController;
+use App\Http\Controllers\RackmasterController;
+use App\Http\Controllers\RackStockmasterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +34,7 @@ Route::post('/posuppliersrmdata-data', [PODetailController::class,'posuppliersrm
 Route::post('/posuppliersproductdata-data', [PODetailController::class,'posuppliersproductdata'])->name('posuppliersproductdata');
 Route::get('/poprint-data/{id}', [PODetailController::class,'poprint'])->name('po.print');
 Route::get('/pocorrection-data/{id}', [PODetailController::class,'pocorrection'])->name('po.correction');
+Route::get('/pocorrection-approval-data/{id}', [PoCorrectionController::class,'approval'])->name('pocorrection.approval');
 
 Route::resources([
     'roles' => RoleController::class,
@@ -44,5 +47,7 @@ Route::resources([
     'supplier-products' => SupplierProductController::class,
     'po' => PODetailController::class,
     'po-products' => POProductDetailController::class,
-    'pocorrection' => PoCorrectionController::class,
+    'po-correction' => PoCorrectionController::class,
+    'rack-stock-master' => RackStockmasterController::class,
+    'rack-master' => RackmasterController::class,
 ]);

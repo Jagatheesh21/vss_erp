@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="{{asset('vendors/simplebar/css/simplebar.css')}}">
     <link rel="stylesheet" href="{{asset('css/vendors/simplebar.css')}}">
     <link  rel="stylesheet" href="{{asset('css/select2.min.css')}}" />
+    <link  rel="stylesheet" href="{{asset('css/boxicons.min.css')}}" />
 
 	{{-- <link rel="stylesheet" type="text/css" href="{{asset('css/select2.min.css')}}"> --}}
     <!-- Main styles for this application-->
@@ -98,7 +99,7 @@
     <script src="{{asset('js/jquery.min.js')}}" ></script>
     <script src="{{asset('js/select2.min.js')}}"></script>
     <script src="{{asset('js/sweetalert2.all.min.js')}}"></script>
-
+    <script src="{{asset('js/boxicons.js')}}"></script>
     <script>
          setTimeout(() => {
     $('.alert').alert('close');

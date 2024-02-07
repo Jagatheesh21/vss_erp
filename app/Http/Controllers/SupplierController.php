@@ -122,6 +122,7 @@ class SupplierController extends Controller
     public function edit(Supplier $supplier)
     {
         //
+        dd($supplier);
         $currency_datas=Currency::get();
         return view('supplier.edit',compact('supplier','currency_datas'));
 
