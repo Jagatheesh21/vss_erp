@@ -29,6 +29,7 @@ class RackStockmasterController extends Controller
     public function create()
     {
         //
+        return view('stock_rack_master.create');
     }
 
     /**
@@ -37,6 +38,19 @@ class RackStockmasterController extends Controller
     public function store(StoreRackStockmasterRequest $request)
     {
         //
+        // dd($request->all());
+        DB::beginTransaction();
+        try {
+            $department = new RackStockmaster;
+            $department->name = $request->name;
+            $department->prepared_by = auth()->user()->id;
+            $department->save();
+            DB::commit();
+            return back()->withSuccess('Stocking Point Rack Master is Created Successfully!');
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return back()->withErrors($th->getMessage());
+        }
     }
 
     /**
@@ -45,6 +59,7 @@ class RackStockmasterController extends Controller
     public function show(RackStockmaster $rackStockmaster)
     {
         //
+
     }
 
     /**
@@ -53,6 +68,10 @@ class RackStockmasterController extends Controller
     public function edit(RackStockmaster $rackStockmaster)
     {
         //
+        // dd($rackStockmaster);
+
+        return view('stock_rack_master.edit',compact('rackStockmaster'));
+
     }
 
     /**
@@ -61,6 +80,24 @@ class RackStockmasterController extends Controller
     public function update(UpdateRackStockmasterRequest $request, RackStockmaster $rackStockmaster)
     {
         //
+        // dd($rackStockmaster);
+        DB::beginTransaction();
+        try {
+            $id=$request->id;
+            $rackStockmaster=RackStockmaster::find($id);
+        // dd($rackStockmaster);
+            $rackStockmaster->name = $request->name;
+            $rackStockmaster->status = $request->status;
+            $rackStockmaster->updated_by = auth()->user()->id;
+            $rackStockmaster->update();
+            DB::commit();
+            return back()->withSuccess('Stocking Point Rack Master Is Updated Successfully!');
+
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollback();
+            return back()->withErrors($th->getMessage());
+        }
     }
 
     /**

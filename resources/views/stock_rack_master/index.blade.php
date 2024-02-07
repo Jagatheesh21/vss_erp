@@ -6,7 +6,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header d-flex" style="justify-content:space-between"><span><b>Stocking Point Rack Master List</b>  </span>
-                <a class="btn btn-md btn-primary" href="{{route('rack-stock-master.create')}}"><b><i class='bx bx-plus bx-flashing' style='color:white;' ></i>&nbsp;&nbsp; New</b></a>
+                <a class="btn btn-md btn-primary" href="{{route('rack-stockmaster.create')}}"><b><i class='bx bx-plus bx-flashing' style='color:white;' ></i>&nbsp;&nbsp; New</b></a>
             </div>
             <div class="card-body">
                 <div class="table">
@@ -26,11 +26,11 @@
                                     <td>{{$loop->iteration}}</td>
                                     <td>{{$stockmaster->name}}</td>
                                     <td>@if ($stockmaster->status==1)
-                                        <span class="btn btn-sm btn-success">Active</span>
+                                        <span class="btn btn-sm btn-success text-white">Active</span>
                                         @else
-                                        <span class="btn btn-sm btn-danger">Inactive</span>
+                                        <span class="btn btn-sm btn-danger text-white">Inactive</span>
                                     @endif</td>
-                                    <td><a href="{{route('rack-stock-master.edit',$stockmaster->id)}}" class="btn btn-sm btn-info"><i class='bx bxs-edit' style='color:white;'>&nbsp;&nbsp; Edit</a></td>
+                                    <td><a href="{{route('rack-stockmaster.edit',$stockmaster->id)}}" class="btn btn-sm btn-info"><i class='bx bxs-edit' style='color:white;'>&nbsp; Edit</a></td>
                                 </tr>
                                 @empty
                                 <tr>

@@ -15,7 +15,7 @@ class RawMaterialCategorySeeder extends Seeder
     {
         //
         $rm_category=RawMaterialCategory::create([
-            'name' => 'Spring Steel GR 3 - DH',
+            'name' => 'Spring Steel',
             'prepared_by'=>'1'
         ]);
     }

@@ -6,6 +6,8 @@ use Auth;
 use Illuminate\Http\Request;
 use App\Models\RackStockmaster;
 use App\Models\Rackmaster;
+use App\Models\RawMaterial;
+use App\Models\RawMaterialCategory;
 use App\Http\Requests\StoreRackmasterRequest;
 use App\Http\Requests\UpdateRackmasterRequest;
 use Illuminate\Support\Facades\File;
@@ -19,6 +21,11 @@ class RackmasterController extends Controller
     public function index()
     {
         //
+        $rackmaster_datas=Rackmaster::with(['rackstockmaster','category','material'])->get();
+        // dd($rackmaster_datas);
+        $available_stock=50;
+        return view('rack_master.index',compact('rackmaster_datas','available_stock'));
+
     }
 
     /**
@@ -27,6 +34,10 @@ class RackmasterController extends Controller
     public function create()
     {
         //
+        $rackstockmasters=RackStockmaster::where('status','=',1)->get();
+        $categories=RawMaterialCategory::where('status','=',1)->get();
+        // dd($categories);
+        return view('rack_master.create',compact('rackstockmasters','categories'));
     }
 
     /**

@@ -48,6 +48,6 @@ Route::resources([
     'po' => PODetailController::class,
     'po-products' => POProductDetailController::class,
     'po-correction' => PoCorrectionController::class,
-    'rack-stock-master' => RackStockmasterController::class,
+    'rack-stockmaster' => RackStockmasterController::class,
     'rack-master' => RackmasterController::class,
 ]);

@@ -19,6 +19,7 @@ class RawMaterialSeeder extends Seeder
             'raw_material_category_id'=>'1',
             'name' => '1.0 MM Spring Steel Wire',
             'minimum_stock'=>'10',
+            'maximum_stock'=>'100',
             'prepared_by'=>'1'
         ]);
     }
