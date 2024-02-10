@@ -1,4 +1,7 @@
 @extends('layouts.app')
+@push('styles')
+    
+@endpush
 @section('content')
 <form action="{{route('po.store')}}" id="po_formdata" method="POST">
     @csrf
@@ -318,14 +321,14 @@
                                 <tbody>
                                 <tr id='addr0'>
                                     <td>1</td>
-                                    <td><select name="raw_material_category_id[]" id="raw_material_category_id" class="form-control"></select></td>
-                                    <td><select name="supplier_product_id[]" id="supplier_product_id" class="form-control"></select></td>
-                                    <td><input type="text" class="form-control" id="products_hsnc" name="products_hsnc[]"></td>
-                                    <td><input type="date" class="form-control" id="duedate" name="duedate[]"></td>
-                                    <td><select name="uom_id[]" id="uom_id" class="form-control bg-white"></td>
-                                    <td><input type="number" id="products_rate" class="form-control" name="products_rate[]" readonly></td>
-                                    <td><input type="text" id="qty" class="form-control" name="qty[]"></td>
-                                    <td><input type="number" id="rate" class="form-control" name="rate[]" readonly></td>
+                                    <td><select name="raw_material_category_id[]"  class="form-control raw_material_category_id"></select></td>
+                                    <td><select name="supplier_product_id[]" id="" class="form-control supplier_product_id"></select></td>
+                                    <td><input type="text" class="form-control products_hsnc"  name="products_hsnc[]"></td>
+                                    <td><input type="date" class="form-control duedate" id="duedate" name="duedate[]"></td>
+                                    <td><select name="uom_id[]"  class="form-control bg-white uom_id"></td>
+                                    <td><input type="number"  class="form-control products_rate" name="products_rate[]" readonly></td>
+                                    <td><input type="text"  class="form-control qty" name="qty[]"></td>
+                                    <td><input type="number" class="form-control rate" name="rate[]" readonly></td>
                                 </tr>
                                 <tr id='addr1'></tr>
                                 </tbody>
@@ -350,19 +353,21 @@
     </div>
 </div>
 </form>
-
-<script src="{{asset('js/jquery.min.js')}}"></script>
-<script src="{{asset('js/select2.min.js')}}"></script>
-
+@endsection
+<!-- <script src="{{asset('js/jquery.min.js')}}"></script>
+<script src="{{asset('js/select2.min.js')}}"></script> -->
+@push('scripts')
 <script>
 $(document).ready(function(){
-    $("#supplier_id").select2();
-
-    $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
+    $("#supplier_id").select2({
+        placeholder:"Select Supplier",
+        allowedClear:true
+    });
+    $(".raw_material_category_id").select2({
+        placeholder:"Select Material Category",
+        allowedClear:true
+    });
+    
     $("#supplier_id").change(function(e){
         e.preventDefault();
         var supplier_id=$(this).val();
@@ -565,4 +570,5 @@ $(document).ready(function(){
     });
 });
 </script>
-@endsection
+@endpush
+

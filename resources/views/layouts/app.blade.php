@@ -27,41 +27,50 @@
     <!-- We use those styles to show code examples, you should remove them in your application.-->
     <link href="{{asset('css/examples.css')}}" rel="stylesheet">
     <link rel="stylesheet" href="{{asset('css/sweetalert2.min.css')}}">
+    <style>
+        a{
+            text-decoration:none !important;
+        }
+        .header-sticky{
+            background-color:currentColor !important;
+        }
+    </style>
+    @stack('styles')
 
   </head>
 <body>
-    @guest
-    @else
     <div class="wrapper d-flex flex-column min-vh-100 bg-light">
       <header class="header header-sticky mb-4">
             <div class="container-fluid">
-                <a class="header-brand d-md-none" href="#">
+                <!-- <a class="header-brand d-xl-none" href="#">
+                    <img src="{{asset('image/logo.png')}}" alt="logo">
                     <svg width="118" height="46" alt="CoreUI Logo">
                     <use xlink:href="{{asset('assets/brand/coreui.svg#full')}}"></use>
                     </svg>
-                </a>
-                <ul class="header-nav d-none d-md-flex">
-                    <li class="nav-item"><a href="{{route('home')}}"><h3>VSSIPL</h3></a></li>
+                </a> -->
+                <ul class="header-nav d-none d-md-flex" style="margin-right:30% !important;">
+                    <li class="nav-item" ><a href="{{route('home')}}"><img src="{{asset('image/logo.png')}}" alt="logo"></li>
                     <!-- <li class="nav-item"><a class="nav-link" href="#">Dashboard</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">{{ Auth::user()->name }}</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Settings</a></li> -->
                 </ul>
                 <ul class="header-nav ms-auto">
-                    <li class="nav-item font-bold">Welcome ! {{ Auth::user()->name }}</li>
+                    
+                    <li class="nav-item text-white font-bold">Welcome ! {{ Auth::user()->name }}</li>
                 </ul>
-                <ul class="header-nav ms-auto">
+                <ul class="header-nav ms-auto ">
                     <li class="nav-item"><a class="nav-link" href="#">
-                        <svg class="icon icon-lg">
+                        <svg class="icon icon-lg text-white">
                         <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-bell"></use>
                         </svg></a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">
-                        <svg class="icon icon-lg">
+                    <!-- <li class="nav-item"><a class="nav-link" href="#">
+                        <svg class="icon icon-lg text-white">
                         <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-list-rich"></use>
                         </svg></a></li>
                     <li class="nav-item"><a class="nav-link" href="#">
-                        <svg class="icon icon-lg">
+                        <svg class="icon icon-lg text-white">
                         <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-envelope-open"></use>
-                        </svg></a></li>
+                        </svg></a></li> -->
                 </ul>
                 <ul class="header-nav ms-3">
                     <li class="nav-item dropdown"><a class="nav-link py-0" data-coreui-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
@@ -70,7 +79,8 @@
                     <div class="dropdown-menu dropdown-menu-end pt-0">
                         <div class="dropdown-header bg-light py-2">
                         <div class="fw-semibold">Settings</div>
-                        </div><a class="dropdown-item" href="#">
+                        </div>
+                        <a class="dropdown-item" href="#">
                         <svg class="icon me-2">
                             <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-user"></use>
                         </svg> Profile</a>
@@ -92,18 +102,23 @@
                     @yield('content')
             </div>
         </div>
-    </div>
-    @endguest
+    </div>    
+</body>
+    <script src="{{asset('js/jquery.min.js')}}" ></script>
     <script src="{{asset('vendors/simplebar/js/simplebar.min.js')}}"></script>
     <script src="{{asset('vendors/@coreui/coreui/js/coreui.bundle.min.js')}}"></script>
-    <script src="{{asset('js/jquery.min.js')}}" ></script>
     <script src="{{asset('js/select2.min.js')}}"></script>
     <script src="{{asset('js/sweetalert2.all.min.js')}}"></script>
     <script src="{{asset('js/boxicons.js')}}"></script>
     <script>
-         setTimeout(() => {
+    setTimeout(() => {
     $('.alert').alert('close');
-  }, 2000);
+    }, 2000);
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
     </script>
-</body>
+    @stack('scripts')
 </html>

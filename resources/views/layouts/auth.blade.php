@@ -22,6 +22,11 @@
     <link href="{{asset('css/style.css')}}" rel="stylesheet">
     <!-- We use those styles to show code examples, you should remove them in your application.-->
     <link href="{{asset('css/examples.css')}}" rel="stylesheet">
+    <script>
+      body{
+        background-image:'{{asset('image/bg.jpg')}}' !important;
+      }
+    </script>
   </head>
   <body>
     <div class="bg-light min-vh-100 d-flex flex-row align-items-center">
