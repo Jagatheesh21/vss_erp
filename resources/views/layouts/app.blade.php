@@ -27,6 +27,7 @@
     <!-- We use those styles to show code examples, you should remove them in your application.-->
     <link href="{{asset('css/examples.css')}}" rel="stylesheet">
     <link rel="stylesheet" href="{{asset('css/sweetalert2.min.css')}}">
+    <link rel="stylesheet" href="{{asset('css/toaster.min.css')}}" />
     <style>
         a{
             text-decoration:none !important;
@@ -110,6 +111,7 @@
     <script src="{{asset('js/select2.min.js')}}"></script>
     <script src="{{asset('js/sweetalert2.all.min.js')}}"></script>
     <script src="{{asset('js/boxicons.js')}}"></script>
+    <script src="{{asset('js/toaster.min.js')}}" ></script>
     <script>
     setTimeout(() => {
     $('.alert').alert('close');

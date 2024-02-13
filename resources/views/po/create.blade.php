@@ -307,7 +307,6 @@
                             <table class="table table-bordered table-striped table-responsive" id="tab_logic">
                                 <thead>
                                 <tr>
-                                    <th>S.No</th>
                                     <th>Material Category</th>
                                     <th>Material Description</th>
                                     <th>Material HSN Code</th>
@@ -316,21 +315,21 @@
                                     <th>Rate</th>
                                     <th>Quantity</th>
                                     <th>Total Cost</th>
+                                    <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr id='addr0'>
-                                    <td>1</td>
+                                <tr>
                                     <td><select name="raw_material_category_id[]"  class="form-control raw_material_category_id"></select></td>
                                     <td><select name="supplier_product_id[]" id="" class="form-control supplier_product_id"></select></td>
                                     <td><input type="text" class="form-control products_hsnc"  name="products_hsnc[]"></td>
                                     <td><input type="date" class="form-control duedate" id="duedate" name="duedate[]"></td>
                                     <td><select name="uom_id[]"  class="form-control bg-white uom_id"></td>
                                     <td><input type="number"  class="form-control products_rate" name="products_rate[]" readonly></td>
-                                    <td><input type="text"  class="form-control qty" name="qty[]"></td>
+                                    <td><input type="text"  class="form-control qty" name="qty[]" value="1"></td>
                                     <td><input type="number" class="form-control rate" name="rate[]" readonly></td>
+                                    <td>&nbsp;</td>
                                 </tr>
-                                <tr id='addr1'></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -338,10 +337,20 @@
                     </div>
                     <div class="row mb-3 clearfix">
                         <div class="col-md-12 ">
-                          <button id="add_row" type="button" class="btn btn-primary pull-left">Add Row</button>
-                          <button id='delete_row' type="button" class="float-end btn btn-danger text-white" onclick="confirm('Are you Sure, Want to Delete the Row?')">Delete Row</button>
+                          <button id="add_row" type="button" class="btn btn-sm btn-primary float-end text-white">Add Row</button>
+                          <!-- <button id='delete_row' type="button" class="float-end btn btn-danger text-white" onclick="confirm('Are you Sure, Want to Delete the Row?')">Delete Row</button> -->
                         </div>
                     </div>
+                    <hr>
+                    <div class="row mb-3 d-flex justify-content-end clearfix">
+                        <div class="col-2"><h6>Grand Total:</h6></div>
+                        <div class="col-2"><input type="text" name="grand_total" class="form-control" id="grand_total" readonly></div>
+                        <!-- <div class="col-md-12">
+                            <div class="col-md-10">Total</div>
+                            <div class="col-md-2"></div>
+                        </div> -->
+                    </div>
+
                     <div class="row d-flex justify-content-center ">
                         <div class="col-md-2 mt-4">
                             <input type="submit" class="btn btn-success  text-white align-center" id="btn" value="Save">
@@ -359,12 +368,23 @@
 @push('scripts')
 <script>
 $(document).ready(function(){
+    $('input').on('input', function() {
+        var inputId = $(this).attr('id');
+        $('#' + inputId + '-error').remove();
+    });
+    
+});
     $("#supplier_id").select2({
         placeholder:"Select Supplier",
         allowedClear:true
     });
+    
     $(".raw_material_category_id").select2({
         placeholder:"Select Material Category",
+        allowedClear:true
+    });
+    $(".supplier_product_id").select2({
+        placeholder:"Select Material",
         allowedClear:true
     });
     
@@ -395,7 +415,7 @@ $(document).ready(function(){
                     $('#packing_charges').val(result.packing_charges);
                     $('#currency_id').html(result.currency_id);
                     $('#remarks').val(result.remarks);
-                    $('#raw_material_category_id').html(result.category);
+                    $('.raw_material_category_id').html(result.category);
 
                 }else{
                     // location.reload(true);
@@ -417,9 +437,9 @@ $(document).ready(function(){
             }
         });
 	});
-    $("#raw_material_category_id").change(function(e){
-        e.preventDefault();
-        $("#raw_material_category_id").select2();
+    function get_material(){
+        var closestTr = $(this).closest('tr');
+        $(".raw_material_category_id").select2();
         var supplier_id=$("#supplier_id").val();
         var raw_material_category_id=$(this).val();
         $.ajax({
@@ -431,23 +451,40 @@ $(document).ready(function(){
                 "supplier_id":supplier_id
             },
             success : function(result){
-                $("#raw_material_category_id").select2();
-                // console.log(result);
-                $("#supplier_product_id").html(result);
-                // console.log(result.data);
-                // console.log(result.code);
+                $(".raw_material_category_id").select2();
+                closestTr.find('.supplier_product_id').html(result);
+            }
+        });
+        
+    }
+    $(".raw_material_category_id").change(function(e){
+        e.preventDefault();
+        var closestTr = $(this).closest('tr');
+        $(".raw_material_category_id").select2();
+        var supplier_id=$("#supplier_id").val();
+        var raw_material_category_id=$(this).val();
+        $.ajax({
+            url: "{{ route('posuppliersrmdata') }}",
+            method: 'POST',
+            data:{
+                "_token": "{{ csrf_token() }}",
+                "raw_material_category_id":raw_material_category_id,
+                "supplier_id":supplier_id
+            },
+            success : function(result){
+                $(".raw_material_category_id").select2();
+                closestTr.find('.supplier_product_id').html(result);
+                
             }
         });
 	});
-    $("#supplier_product_id").change(function(e){
+    $(".supplier_product_id").change(function(e){
         e.preventDefault();
         var supplier_id=$("#supplier_id").val();
-        var raw_material_category_id=$("#raw_material_category_id").val();
+        var closestTr = $(this).closest('tr');
+        var raw_material_category_id=closestTr.find(".raw_material_category_id").val();
         var supplier_product_id=$(this).val();
-        // alert(raw_material_category_id);
-        // alert(supplier_id);
         $("#supplier_product_id").select2();
-
         $.ajax({
             url: "{{ route('posuppliersproductdata') }}",
             method: 'POST',
@@ -458,117 +495,219 @@ $(document).ready(function(){
                 "supplier_product_id":supplier_product_id,
             },
             success : function(result){
-                $("#supplier_product_id").select2();
-                // console.log(result);
-                $("#uom_id").html(result.html);
-                $("#products_hsnc").val(result.products_hsnc);
-                $("#products_rate").val(result.products_rate);
-                // console.log(result.data);
-                // console.log(result.code);
+                $(".supplier_product_id").select2();
+                closestTr.find(".uom_id").html(result.html);
+                closestTr.find(".products_hsnc").val(result.products_hsnc);
+                closestTr.find(".products_rate").val(result.products_rate);
+                calculate();
             }
         });
 	});
-    $('#qty').blur(function (e) {
+    $('.qty').change(function (e) {
         e.preventDefault();
-        var products_rate=$("#products_rate").val();
-        var qty=$("#qty").val();
+        var closestTr = $(this).closest('tr');
+        var products_rate=closestTr.find(".products_rate").val();
+        var qty=$(this).val();
         if(products_rate!=''&&qty!=''){
             var total_cost=products_rate * qty;
-            $("#rate").val(total_cost);
+            closestTr.find(".rate").val(total_cost);
+        }
+        calculate();
+    });
+    $('.products_rate').change(function (e) {
+        e.preventDefault();
+        var products_rate=$(this).val();
+        var closestTr = $(this).closest('tr');
+        var qty=closestTr.find(".qty").val();
+        if(products_rate!=''&&qty!=''){
+            var total_cost=products_rate * qty;
+            closestTr.find(".rate").val(total_cost);
         }
     });
-    $('#products_rate').blur(function (e) {
-        e.preventDefault();
-        var products_rate=$("#products_rate").val();
-        var qty=$("#qty").val();
-        if(products_rate!=''&&qty!=''){
-            var total_cost=products_rate * qty;
-            $("#rate").val(total_cost);
+
+    // Add Dynamic Rows
+    $("#add_row").click(function(){
+        var supplier_id = $("#supplier_id").val();
+        if(supplier_id==""){
+            alert("Please select supplier!");
+            return false;
         }
+        $.ajax({
+            url:"{{route('add_purchase_item')}}",
+            type:"POST",
+            data:{"supplier_id":supplier_id},
+            success:function(response){ 
+
+                $("#tab_logic").append(response.category);
+                $(".raw_material_category_id").select2({
+                    placeholder:"Select Material Category",
+                    allowedClear:true
+                });
+                $(".supplier_product_id").select2({
+                    placeholder:"Select Material",
+                    allowedClear:true
+                });
+            }
+        });
     });
 
     var i=1;
-    $("#add_row").click(function(){b=i-1;
-      	$('#addr'+i).html($('#addr'+b).html()).find('td:first-child').html(i+1);
-      	$('#tab_logic').append('<tr id="addr'+(i+1)+'"></tr>');
-      	i++;
-  	});
-      $("#delete_row").click(function(){
-    	if(i>1){
-		$("#addr"+(i-1)).html('');
-		i--;
-		}
-	});
+    // $("#add_row").click(function(){b=i-1;
+    //   	$('#addr'+i).html($('#addr'+b).html()).find('td:first-child').html(i+1);
+    //   	$('#tab_logic').append('<tr id="addr'+(i+1)+'"></tr>');
+    //   	i++;
+  	// });
+    //   $("#delete_row").click(function(){
+    // 	if(i>1){
+	// 	$("#addr"+(i-1)).html('');
+	// 	i--;
+	// 	}
+	// });
     $("#po_formdata").submit(function (e) {
         e.preventDefault();
         var formData = new FormData($("#po_formdata")[0]);
-        $("#btn").attr('disabled',true);
-        $("#btn").val('Updating...');
-        const swalWithBootstrapButtons = Swal.mixin({
-            customClass: {
-                    confirmButton: 'btn btn-success',
-                    cancelButton: 'btn btn-danger'
-                },
-            buttonsStyling: false
-        });
-
-        swalWithBootstrapButtons.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, Update it!',
-        cancelButtonText: 'No, cancel!',
-        reverseButtons: true
-        }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
+        $('#po_formdata').find(':input').removeClass('text-danger');
+        // Updated code
+        $.ajax({
                                 // url: editUrl,
                 url: this.action,
                 type:"POST",
                 data: formData,
+                dataType:"json",
                 cache:false,
                 processData:false,
                 contentType:false,
                 success: function(data) {
-                if (data.code==404||data.code==500) {
-                    let error ='<span class="alert alert-danger">'+data.msg+'</span>';
-                        $("#res").html(error);
-                                // $("#btn").attr('disabled',false);
-                                // $("#btn").val('Save');
-                }else{
-                    //    console.log(data);
-                    $("#btn").attr('disabled',false);
-                    $("#btn").val('Save');
-                    swalWithBootstrapButtons.fire(
-                        'Added!',
-                        'Purchase Order is Created Successfully!...',
-                        'success'
-                        );
-                        location.reload(true);
-                    }
-                }
-            });
-                            // ajax request completed
-        }else if (
-         /* Read more about handling dismissals below */
-            result.dismiss === Swal.DismissReason.cancel
-            ) {
-                $("#btn").attr('disabled',false);
-                $("#btn").val('Save');
-                swalWithBootstrapButtons.fire(
-                'Cancelled',
-                'Your Purchase Order Datas is safe',
-                'error'
-                )
-            }
+                    // Clear previous errors
+                    toastr.success("Success", "Purchase order created successfully!");
+                    location.reload(true);
+                // console.log(data.responseJSON);
+                // if (data.code==404||data.code==500 || data.code==422) {
+                //     let error ='<span class="alert alert-danger">'+data.msg+'</span>';
+                //         $("#res").html(error);
+                //                 // $("#btn").attr('disabled',false);
+                //                 // $("#btn").val('Save');
+                // }else{
+                //     //    console.log(data);
+                //     $("#btn").attr('disabled',false);
+                //     $("#btn").val('Save');
+                //     swalWithBootstrapButtons.fire(
+                //         'Added!',
+                //         'Purchase Order is Created Successfully!...',
+                //         'success'
+                //         );
+                //         location.reload(true);
+                //     }
+                },error: function(xhr) {
+                    $('#po_formdata :input').each(function() {
+            formData[$(this).attr('name')] = $(this).val();
+            console.log($(this).attr('name'));
         });
+                // Handle validation errors
+                if (xhr.status == 422) {
+                    $('.error').remove();
+                    var errors = xhr.responseJSON.errors;
+                    $.each(errors, function(key, value) {
+                        // Display error next to input field
+                        // console.log(key);
+                        // console.log(value[0]);
+                        if ($('#' + key).length && !$('#' + key + '-error').length) {
+                            $('#' + key).closest('.form-control').addClass('is-invalid');
+                            $('#' + key).after('<div class="text-danger" id="' + key + '-error">' + value[0] + '</div>');
+                        }
+                       
+                    });
+                }
+            }
+    //         $('input').on('input', function() {
+    //     var inputId = $(this).attr('id');
+    //     $('#' + inputId + '-error').remove();
+    // });
+            });
+            
+            
+        // updated code
+
+
+        // $("#btn").attr('disabled',true);
+        // $("#btn").val('Updating...');
+        // const swalWithBootstrapButtons = Swal.mixin({
+        //     customClass: {
+        //             confirmButton: 'btn btn-success mr-5',
+        //             cancelButton: 'btn btn-danger'
+        //         },
+        //     buttonsStyling: false
+        // });
+
+        // swalWithBootstrapButtons.fire({
+        // title: 'Are you sure?',
+        // text: "You won't be able to revert this!",
+        // icon: 'warning',
+        // showCancelButton: true,
+        // confirmButtonText: 'Yes, Update it!',
+        // cancelButtonText: 'No, cancel!',
+        // reverseButtons: true
+        // }).then((result) => {
+        // if (result.isConfirmed) {
+        //     $.ajax({
+        //                         // url: editUrl,
+        //         url: this.action,
+        //         type:"POST",
+        //         data: formData,
+        //         cache:false,
+        //         processData:false,
+        //         contentType:false,
+        //         success: function(data) {
+        //         if (data.code==404||data.code==500 || data.code==422) {
+        //             let error ='<span class="alert alert-danger">'+data.msg+'</span>';
+        //                 $("#res").html(error);
+        //                         // $("#btn").attr('disabled',false);
+        //                         // $("#btn").val('Save');
+        //         }else{
+        //             //    console.log(data);
+        //             $("#btn").attr('disabled',false);
+        //             $("#btn").val('Save');
+        //             swalWithBootstrapButtons.fire(
+        //                 'Added!',
+        //                 'Purchase Order is Created Successfully!...',
+        //                 'success'
+        //                 );
+        //                 location.reload(true);
+        //             }
+        //         }
+        //     });
+        //                     // ajax request completed
+        // }else if (
+        //  /* Read more about handling dismissals below */
+        //     result.dismiss === Swal.DismissReason.cancel
+        //     ) {
+        //         $("#btn").attr('disabled',false);
+        //         $("#btn").val('Save');
+        //         swalWithBootstrapButtons.fire(
+        //         'Cancelled',
+        //         'Your Purchase Order Datas is safe',
+        //         'error'
+        //         )
+        //     }
+        // });
     });
     $("#reset").click(function (e) {
         e.preventDefault();
         location.reload(true);
     });
-});
+
+    function calculate()
+    {
+        var grand_total = 0;
+        $('table > tbody  > tr').each(function(index, row) { 
+            var rate = $(row).find('.products_rate').val();
+            var qty = $(row).find('.qty').val();
+            var total = rate * qty;
+            $(row).find('.rate').val(total);
+            grand_total+=total;
+            $("#grand_total").val(grand_total);
+        });
+    }
 </script>
 @endpush
 

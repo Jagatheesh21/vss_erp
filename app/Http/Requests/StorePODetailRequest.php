@@ -22,7 +22,21 @@ class StorePODetailRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
-        ];
+            'ponumber' => 'required',
+            'purchasetype' => 'required',
+            'podate' => 'required',
+            'supplier_id' => 'required',
+            'name' => 'required',
+            'contact_person' => 'required','min:3',
+            'gst_number' => 'required','max:15',
+            'address' => 'required',
+            'payment_terms' => 'required',
+            'indentno' => 'required',
+            'indentdate' => 'required',
+            'quotno' => 'required',
+            'quotdt' => 'required',
+            'indentdate' => 'required',
+            'packing_charges' => 'required'
+         ];
     }
 }

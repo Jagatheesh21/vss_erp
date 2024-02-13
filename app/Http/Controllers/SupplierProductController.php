@@ -134,4 +134,19 @@ class SupplierProductController extends Controller
     {
         //
     }
+    public function getRawMaterialCategory(Request $request)
+    {
+        if($request->input('supplier_id')){
+            $supplier_id = $request->input('supplier_id');
+            $supplier_products = SupplierProduct::with('category')->where('supplier_id',$supplier_id)->get();
+            $html = "";
+            if(!empty($supplier_products)){
+                foreach($supplier_products as $supplier_product){
+                    $html.="<option value='.$supplier_product->raw_material_category_id'>$supplier_product->category->name</option>";
+                }
+            }
+            
+            return response()->json(['category'=>$html]);
+        }
+    }
 }

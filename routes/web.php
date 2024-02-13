@@ -26,28 +26,32 @@ use App\Http\Controllers\RackStockmasterController;
 
 Auth::routes();
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('/suppliers-data/id', [SupplierController::class,'suppliersdata'])->name('suppliersdata');
-Route::get('/rmcategorydata-data/id', [SupplierProductController::class,'rmcategorydata'])->name('rmcategorydata');
-Route::get('/posuppliers-data/id', [PODetailController::class,'posuppliersdata'])->name('posuppliersdata');
-Route::post('/posuppliersrmdata-data', [PODetailController::class,'posuppliersrmdata'])->name('posuppliersrmdata');
-Route::post('/posuppliersproductdata-data', [PODetailController::class,'posuppliersproductdata'])->name('posuppliersproductdata');
-Route::get('/poprint-data/{id}', [PODetailController::class,'poprint'])->name('po.print');
-Route::get('/pocorrection-data/{id}', [PODetailController::class,'pocorrection'])->name('po.correction');
-Route::get('/pocorrection-approval-data/{id}', [PoCorrectionController::class,'approval'])->name('pocorrection.approval');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('/suppliers-data/id', [SupplierController::class,'suppliersdata'])->name('suppliersdata');
+    Route::get('/rmcategorydata-data/id', [SupplierProductController::class,'rmcategorydata'])->name('rmcategorydata');
+    Route::post('add_purchase_item', [PODetailController::class,'addPurchaseItem'])->name('add_purchase_item');
+    Route::get('/posuppliers-data/id', [PODetailController::class,'posuppliersdata'])->name('posuppliersdata');
+    Route::post('/posuppliersrmdata-data', [PODetailController::class,'posuppliersrmdata'])->name('posuppliersrmdata');
+    Route::post('/posuppliersproductdata-data', [PODetailController::class,'posuppliersproductdata'])->name('posuppliersproductdata');
+    Route::get('/poprint-data/{id}', [PODetailController::class,'poprint'])->name('po.print');
+    Route::get('/pocorrection-data/{id}', [PODetailController::class,'pocorrection'])->name('po.correction');
+    Route::get('/pocorrection-approval-data/{id}', [PoCorrectionController::class,'approval'])->name('pocorrection.approval');
+    
+    Route::resources([
+        'roles' => RoleController::class,
+        'users' => UserController::class,
+        'products' => ProductController::class,
+        'department' => DepartmentController::class,
+        'raw_material_category' => RawMaterialCategoryController::class,
+        'raw_material' => RawMaterialController::class,
+        'supplier' => SupplierController::class,
+        'supplier-products' => SupplierProductController::class,
+        'po' => PODetailController::class,
+        'po-products' => POProductDetailController::class,
+        'po-correction' => PoCorrectionController::class,
+        'rack-stockmaster' => RackStockmasterController::class,
+        'rack-master' => RackmasterController::class,
+    ]);  
+});
 
-Route::resources([
-    'roles' => RoleController::class,
-    'users' => UserController::class,
-    'products' => ProductController::class,
-    'department' => DepartmentController::class,
-    'raw_material_category' => RawMaterialCategoryController::class,
-    'raw_material' => RawMaterialController::class,
-    'supplier' => SupplierController::class,
-    'supplier-products' => SupplierProductController::class,
-    'po' => PODetailController::class,
-    'po-products' => POProductDetailController::class,
-    'po-correction' => PoCorrectionController::class,
-    'rack-stockmaster' => RackStockmasterController::class,
-    'rack-master' => RackmasterController::class,
-]);

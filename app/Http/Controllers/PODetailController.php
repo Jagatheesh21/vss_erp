@@ -155,8 +155,6 @@ class PODetailController extends Controller
      */
     public function store(StorePODetailRequest $request)
     {
-        //
-        // dd($request);
         DB::beginTransaction();
         try {
             $po_datas = new PODetail;
@@ -175,9 +173,7 @@ class PODetailController extends Controller
             $po_datas->remarks4 = $request->remarks4;
             $po_datas->prepared_by = auth()->user()->id;
             $po_datas->save();
-
             $po_id=$po_datas->id;
-        // dd($po_datas->id);
             $raw_material_category_datas=$request->raw_material_category_id;
             foreach ($raw_material_category_datas as $key => $raw_material_category_data) {
                 $po_product_datas = new POProductDetail;
@@ -195,10 +191,10 @@ class PODetailController extends Controller
         } catch (\Throwable $th) {
             //throw $th;
             DB::rollback();
-            return redirect()->back()->withErrors($th->getMessage());
+            //dd($th->getMessage());
+            return response()->json(['errors' => $th->getMessage()]);
+            // return redirect()->back()->withErrors($th->getMessage());
         }
-
-
     }
 
     /**
@@ -231,5 +227,19 @@ class PODetailController extends Controller
     public function destroy(PODetail $pODetail)
     {
         //
+    }
+    public function addPurchaseItem(Request $request)
+    {
+        if($request->supplier_id)
+        {
+            $supplier_id = $request->supplier_id;
+            $count2 = SupplierProduct::with(['category','product','material','uom'])->where('supplier_id',$supplier_id)->where('status','=','1')->get()->count();
+            if ($count2>0) {
+                $supplier_products = SupplierProduct::with(['category','product','material','uom'])->where('supplier_id',$supplier_id)->where('status','=','1')->groupBy('raw_material_category_id')->get();
+                $html = view('po.add_items',compact('supplier_products'))->render();
+                return response()->json(['category'=>$html]);
+            }
+
+        }
     }
 }
