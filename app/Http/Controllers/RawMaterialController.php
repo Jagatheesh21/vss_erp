@@ -56,6 +56,7 @@ class RawMaterialController extends Controller
             $raw_material->name = $request->name;
             $raw_material->material_code = $request->material_code;
             $raw_material->minimum_stock = $request->minimum_stock;
+            $raw_material->maximum_stock = $request->maximum_stock;
             $raw_material->prepared_by = auth()->user()->id;
             $raw_material->save();
             DB::commit();
@@ -90,6 +91,7 @@ class RawMaterialController extends Controller
     public function update(UpdateRawMaterialRequest $request, RawMaterial $rawMaterial)
     {
         // dd($rawMaterial);
+        // dd($request);
         DB::beginTransaction();
         try {
             $id=$request->id;
@@ -99,6 +101,7 @@ class RawMaterialController extends Controller
             $rawMaterial->status = $request->status;
             $rawMaterial->material_code = $request->material_code;
             $rawMaterial->minimum_stock = $request->minimum_stock;
+            $rawMaterial->maximum_stock = $request->maximum_stock;
             $rawMaterial->updated_by = auth()->user()->id;
             $rawMaterial->update();
             DB::commit();

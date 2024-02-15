@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Auth;
 use Illuminate\Http\Request;
 use App\Models\Supplier;
-// use App\Models\User;
 use App\Models\SupplierProduct;
 use App\Models\Currency;
 use App\Models\POProductDetail;
@@ -123,6 +122,8 @@ class PODetailController extends Controller
 
         }
     }
+
+
     public function posuppliersrmdata(Request $request){
         //return json_encode($request->all());
         if($request->raw_material_category_id){
@@ -136,6 +137,7 @@ class PODetailController extends Controller
             return $html;
         }
     }
+
 
     public function poprint(Request $request){
         $id=$request->id;

@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class HeatNumber extends Model
 {
     use HasFactory;
+
+    public function grndata()
+    {
+        return $this->belongsTo(GRNInwardRegister::class,'grnnumber_id');
+    }
 }

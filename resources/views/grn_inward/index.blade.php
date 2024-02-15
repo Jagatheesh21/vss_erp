@@ -5,8 +5,8 @@
 <div class="row d-flex justify-content-center">
     <div class="col-12">
         <div class="card">
-            <div class="card-header d-flex" style="justify-content:space-between"><span><b>Rack Master List</b>  </span>
-                <a class="btn btn-md btn-primary" href="{{route('rackmaster.create')}}"><b><i class='bx bx-plus bx-flashing' style='color:white;' ></i>&nbsp;&nbsp; New</b></a>
+            <div class="card-header d-flex" style="justify-content:space-between"><span><b>GRN Material Inward Register List</b>  </span>
+                <a class="btn btn-md btn-primary" href="{{route('grn_inward.create')}}"><b><i class='bx bx-plus bx-flashing' style='color:white;' ></i>&nbsp;&nbsp; New</b></a>
             </div>
             <div class="card-body">
                 <div class="table">
@@ -16,18 +16,22 @@
                                 <tr>
                                     <th>S.No</th>
                                     <th>Storage Area</th>
+                                    <th>GRN Number</th>
                                     <th>Rack ID</th>
                                     <th>RM Category</th>
                                     <th>RM Description</th>
-                                    <th>Minimum Stock</th>
-                                    <th>Maximum Stock</th>
+                                    <th>Total Inward Stock</th>
+                                    <th>Total Quality Clearance Stock</th>
+                                    <th>Total DC Issuance Stock</th>
+                                    <th>Total Production Issuance Stock</th>
+                                    <th>Total Rejection Stock</th>
                                     <th>Available Stock</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($rackmaster_datas as $rackmaster_data)
+                                @forelse ($inward_datas as $rackmaster_data)
                                 <tr>
                                     <td>{{$loop->iteration}}</td>
                                     <td>{{$rackmaster_data->rackstockmaster->name}}</td>
@@ -42,11 +46,11 @@
                                         @else
                                         <span class="btn btn-sm btn-danger text-white">Inactive</span>
                                     @endif</td>
-                                    <td><a href="{{route('rackmaster.edit',$rackmaster_data->id)}}" class="btn btn-sm btn-info"><i class='bx bxs-edit' style='color:white;'>&nbsp; Edit</a></td>
+                                    <td><a href="{{route('grn_inward.edit',$rackmaster_data->id)}}" class="btn btn-sm btn-info"><i class='bx bxs-edit' style='color:white;'>&nbsp; Edit</a></td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="3" align="center">No Records Found!</td>
+                                    <td colspan="14" align="center">No Records Found!</td>
                                 </tr>
                                 @endforelse
                             </tbody>

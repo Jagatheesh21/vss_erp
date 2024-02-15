@@ -19,4 +19,9 @@ class GRNInwardRegister extends Model
         return $this->belongsTo(POProductDetail::class,'p_o_product_id');
     }
 
+    public function rackmaster()
+    {
+        return $this->belongsTo(Rackmaster::class,'rack_id');
+    }
+
 }

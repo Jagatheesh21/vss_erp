@@ -16,12 +16,12 @@
             @endif
         <div class="card-header d-flex justify-content-space-around">
             <div class="col-md-8"><b>Create Rack Master</b></div>
-            <div class="col-md-4"><a class="btn btn-sm btn-primary" href="{{route('rack-master.index')}}">Rack Master List</a></div>
+            <div class="col-md-4"><a class="btn btn-sm btn-primary" href="{{route('rackmaster.index')}}">Rack Master List</a></div>
         </div>
         <div class="row col-md-3"id="res"></div>
 
             <div class="card-body">
-            <form action="{{route('rack-master.store')}}" id="rack-master_formdata" method="POST">
+            <form action="{{route('rackmaster.store')}}" id="rack-master_formdata" method="POST">
                 @csrf
                 @method('POST')
 
@@ -161,6 +161,7 @@
                     processData:false,
                     contentType:false,
                     success: function(data) {
+                        // console.log(data);
                     if (data.code==404||data.code==500) {
                         let error ='<span class="alert alert-danger">'+data.msg+'</span>';
                             $("#res").html(error);
@@ -175,7 +176,7 @@
                             'Stocking Point Rack Master is Created Successfully!...',
                             'success'
                             );
-                            location.reload(true);
+                            // location.reload(true);
                         }
                     }
                 });

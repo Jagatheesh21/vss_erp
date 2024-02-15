@@ -12,6 +12,9 @@ use App\Http\Controllers\POProductDetailController;
 use App\Http\Controllers\PoCorrectionController;
 use App\Http\Controllers\RackmasterController;
 use App\Http\Controllers\RackStockmasterController;
+use App\Http\Controllers\GRNInwardRegisterController;
+use App\Http\Controllers\GrnQualityController;
+use App\Http\Controllers\HeatNumberController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,7 +40,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/poprint-data/{id}', [PODetailController::class,'poprint'])->name('po.print');
     Route::get('/pocorrection-data/{id}', [PODetailController::class,'pocorrection'])->name('po.correction');
     Route::get('/pocorrection-approval-data/{id}', [PoCorrectionController::class,'approval'])->name('pocorrection.approval');
-    
+    Route::get('/grnsuppliers-fetchdata/id', [GRNInwardRegisterController::class,'grn_supplierfetchdata'])->name('grn_supplierfetchdata');
+
     Route::resources([
         'roles' => RoleController::class,
         'users' => UserController::class,
@@ -51,7 +55,10 @@ Route::middleware(['auth'])->group(function () {
         'po-products' => POProductDetailController::class,
         'po-correction' => PoCorrectionController::class,
         'rack-stockmaster' => RackStockmasterController::class,
-        'rack-master' => RackmasterController::class,
-    ]);  
+        'rackmaster' => RackmasterController::class,
+        'grn_inward' => GRNInwardRegisterController::class,
+        'grn_heat_no' => HeatNumberController::class,
+        'grn_qc' => GrnQualityController::class,
+    ]);
 });
 

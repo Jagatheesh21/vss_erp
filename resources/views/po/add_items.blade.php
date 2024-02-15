@@ -85,5 +85,5 @@
         // }).then((result) => {
         // if (result.isConfirmed) {
         // }
-        }); 
+        });
 </script>
