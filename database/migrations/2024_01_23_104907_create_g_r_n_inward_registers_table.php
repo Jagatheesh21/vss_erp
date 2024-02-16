@@ -18,7 +18,6 @@ return new class extends Migration
             $table->integer('grnnumber_category')->default(0);
             $table->integer('po_id');
             $table->integer('p_o_product_id');
-            $table->integer('rack_id');
             $table->string('invoice_number')->nullable();
             $table->date('invoice_date')->nullable();
             $table->string('dc_number')->nullable();

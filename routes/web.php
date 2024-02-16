@@ -34,13 +34,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/suppliers-data/id', [SupplierController::class,'suppliersdata'])->name('suppliersdata');
     Route::get('/rmcategorydata-data/id', [SupplierProductController::class,'rmcategorydata'])->name('rmcategorydata');
     Route::post('add_purchase_item', [PODetailController::class,'addPurchaseItem'])->name('add_purchase_item');
+    Route::post('add_grn_item', [GRNInwardRegisterController::class,'addGRNItem'])->name('add_grn_item');
     Route::get('/posuppliers-data/id', [PODetailController::class,'posuppliersdata'])->name('posuppliersdata');
     Route::post('/posuppliersrmdata-data', [PODetailController::class,'posuppliersrmdata'])->name('posuppliersrmdata');
     Route::post('/posuppliersproductdata-data', [PODetailController::class,'posuppliersproductdata'])->name('posuppliersproductdata');
     Route::get('/poprint-data/{id}', [PODetailController::class,'poprint'])->name('po.print');
     Route::get('/pocorrection-data/{id}', [PODetailController::class,'pocorrection'])->name('po.correction');
     Route::get('/pocorrection-approval-data/{id}', [PoCorrectionController::class,'approval'])->name('pocorrection.approval');
-    Route::get('/grnsuppliers-fetchdata/id', [GRNInwardRegisterController::class,'grn_supplierfetchdata'])->name('grn_supplierfetchdata');
+    Route::get('/grnsuppliers-fetchdata/id', [PODetailController::class,'grn_supplierfetchdata'])->name('grn_supplierfetchdata');
+    Route::get('/grnrm-fetchdata/id', [GRNInwardRegisterController::class,'grn_rmfetchdata'])->name('grn_rmfetchdata');
 
     Route::resources([
         'roles' => RoleController::class,

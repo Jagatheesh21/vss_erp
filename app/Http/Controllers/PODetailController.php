@@ -11,8 +11,7 @@ use App\Models\POProductDetail;
 use App\Models\PODetail;
 use App\Http\Requests\StorePODetailRequest;
 use App\Http\Requests\UpdatePODetailRequest;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\DB;
+
 
 class PODetailController extends Controller
 {
@@ -104,6 +103,22 @@ class PODetailController extends Controller
         // return $id;
     }
 
+    public function grn_supplierfetchdata(Request $request){
+        $id=$request->id;
+        $count = PODetail::where('id',$id)->get()->count();
+        if ($count>0) {
+            $po_datas = PODetail::find($id);
+                $sc_id=$po_datas->supplier_id;
+                $supplier_datas=Supplier::find($sc_id);
+                $sc_name=$supplier_datas->name;
+                $po_products=POProductDetail::with(['suppliers','product_names'])->where('po_id',$id)->get();
+                $html='<option value="" selected></option>';
+            foreach ($po_products as $key => $po_product) {
+                $html .= '<option value="'.$po_product->id.'">'.$po_product->product_names->name.'</option>';
+            }
+            return response()->json(['sc_name'=>$sc_name,'html'=>$html,'count'=>$count]);
+        }
+    }
 
     public function posuppliersproductdata(Request $request){
         // return json_encode($request->all());

@@ -15,8 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('heatnumber');
             $table->integer('grnnumber_id');
-            $table->integer('coil_no');
-            $table->integer('lot_no');
+            $table->integer('rack_id');
+            $table->string('tc_no')->default(0);
+            $table->integer('coil_no')->default(0);
+            $table->integer('lot_no')->default(0);
             $table->float('coil_inward_qty', 8, 2)->default(0);
             $table->integer('status')->default(0);
             $table->integer('prepared_by');

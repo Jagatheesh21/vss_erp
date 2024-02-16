@@ -16,8 +16,8 @@ return new class extends Migration
             $table->integer('grnnumber_id');
             $table->integer('rack_id');
             $table->integer('heat_no_id');
-            $table->integer('inspected_by');
-            $table->date('inspected_date');
+            $table->integer('inspected_by')->nullable();
+            $table->date('inspected_date')->nullable();
             $table->float('inspected_qty', 8, 2)->default(0);
             $table->float('approved_qty', 8, 2)->default(0);
             $table->float('onhold_qty', 8, 2)->default(0);

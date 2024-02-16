@@ -39,4 +39,10 @@ class POProductDetail extends Model
        return $this->belongsTo(SupplierProduct::class,'supplier_product_id');
    }
 
+
+   public function product_names()
+   {
+       return $this->belongsTo(RawMaterial::class,'supplier_product_id');
+   }
+
 }
