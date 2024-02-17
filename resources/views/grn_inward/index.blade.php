@@ -15,9 +15,8 @@
                             <thead>
                                 <tr>
                                     <th>S.No</th>
-                                    <th>Storage Area</th>
                                     <th>GRN Number</th>
-                                    <th>Rack ID</th>
+                                    <th>GRN Date</th>
                                     <th>RM Category</th>
                                     <th>RM Description</th>
                                     <th>Total Inward Stock</th>
@@ -31,22 +30,20 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($inward_datas as $rackmaster_data)
+                                @forelse ($inward_datas as $inward_data)
                                 <tr>
                                     <td>{{$loop->iteration}}</td>
-                                    <td>{{$rackmaster_data->rackstockmaster->name}}</td>
-                                    <td>{{$rackmaster_data->rack_name}}</td>
-                                    <td>{{$rackmaster_data->category->name}}</td>
-                                    <td>{{$rackmaster_data->material->name}}</td>
-                                    <td>{{$rackmaster_data->material->minimum_stock}}</td>
-                                    <td>{{$rackmaster_data->material->maximum_stock}}</td>
+                                    <td>{{$inward_data->grnnumber}}</td>
+                                    <td>{{$inward_data->grndate}}</td>
+                                    <td>{{$inward_data->material->minimum_stock}}</td>
+                                    <td>{{$inward_data->material->maximum_stock}}</td>
                                     <td>{{$available_stock}}</td>
-                                    <td>@if ($rackmaster_data->status==1)
+                                    <td>@if ($inward_data->status==1)
                                         <span class="btn btn-sm btn-success text-white">Active</span>
                                         @else
                                         <span class="btn btn-sm btn-danger text-white">Inactive</span>
                                     @endif</td>
-                                    <td><a href="{{route('grn_inward.edit',$rackmaster_data->id)}}" class="btn btn-sm btn-info"><i class='bx bxs-edit' style='color:white;'>&nbsp; Edit</a></td>
+                                    <td><a href="{{route('grn_inward.edit',$inward_data->id)}}" class="btn btn-sm btn-info"><i class='bx bxs-edit' style='color:white;'>&nbsp; Edit</a></td>
                                 </tr>
                                 @empty
                                 <tr>

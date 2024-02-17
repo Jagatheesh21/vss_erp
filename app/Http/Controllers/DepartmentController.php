@@ -7,6 +7,7 @@ use App\Http\Requests\StoreDepartmentRequest;
 use App\Http\Requests\UpdateDepartmentRequest;
 use DB;
 use Auth;
+use Illuminate\Http\Request;
 
 
 class DepartmentController extends Controller

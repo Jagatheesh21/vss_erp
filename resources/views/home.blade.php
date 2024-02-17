@@ -28,6 +28,7 @@
                         <li class="list-group-item"><a href="#">Material Issuance</a></li>
                         <li class="list-group-item"><a href="{{route('rack-stockmaster.index')}}">Stocking Point Rack Master</a></li>
                         <li class="list-group-item"><a href="{{route('rackmaster.index')}}">Rack Master</a></li>
+                        <li class="list-group-item"><a href="{{route('process-master.index')}}">Item Process Master</a></li>
                     </ul>
                 </div>
             </div>

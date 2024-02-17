@@ -15,6 +15,7 @@ use App\Http\Controllers\RackStockmasterController;
 use App\Http\Controllers\GRNInwardRegisterController;
 use App\Http\Controllers\GrnQualityController;
 use App\Http\Controllers\HeatNumberController;
+use App\Http\Controllers\ItemProcesmasterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,6 +62,7 @@ Route::middleware(['auth'])->group(function () {
         'grn_inward' => GRNInwardRegisterController::class,
         'grn_heat_no' => HeatNumberController::class,
         'grn_qc' => GrnQualityController::class,
+        'process-master' => ItemProcesmasterController::class,
     ]);
 });
 

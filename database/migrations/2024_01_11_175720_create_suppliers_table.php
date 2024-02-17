@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('suppliers', function (Blueprint $table) {
             $table->id();
             $table->string('supplier_code')->unique();
+            $table->string('supplier_type')->default(0);
             $table->string('name');
             $table->string('gst_number');
             $table->text('address');

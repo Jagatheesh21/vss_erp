@@ -27,7 +27,8 @@ class GRNInwardRegisterController extends Controller
     public function index()
     {
         //
-        $inward_datas=GRNInwardRegister::with(['podata','poproduct','rackmaster'])->where('status','=',1)->get();
+        $inward_datas=GRNInwardRegister::with(['podata','poproduct','rackmaster'])->get();
+        // dd($inward_datas);
         return view('grn_inward.index',compact('inward_datas'));
     }
 
@@ -44,7 +45,7 @@ class GRNInwardRegisterController extends Controller
 		$current_rcno=$rc.$current_year;
         $count=GRNInwardRegister::where('grnnumber','LIKE','%'.$current_rcno.'%')->orderBy('grnnumber', 'DESC')->get()->count();
         if ($count > 0) {
-            $po_data=PODetail::where('grnnumber','LIKE','%'.$current_rcno.'%')->orderBy('grnnumber', 'DESC')->first();
+            $po_data=GRNInwardRegister::where('grnnumber','LIKE','%'.$current_rcno.'%')->orderBy('grnnumber', 'DESC')->first();
             $grnnumber=$po_data['grnnumber']??NULL;
             $old_grnnumber=str_replace("G","",$grnnumber);
             $old_grnnumber_data=str_pad($old_grnnumber+1,9,0,STR_PAD_LEFT);
@@ -127,6 +128,7 @@ class GRNInwardRegisterController extends Controller
             $grn_id=$grn_datas->id;
 
             $rack_ids=$request->rack_id;
+
             foreach ($rack_ids as $key => $rack_id) {
                 $grn_heat_nos = new HeatNumber;
                 $grn_heat_nos->grnnumber_id =$grn_id;
@@ -150,7 +152,7 @@ class GRNInwardRegisterController extends Controller
                 $grn_qc->save();
             }
             DB::commit();
-            return redirect()->route('po.index')->withSuccess('GRN Created Successfully!');
+            return redirect()->route('grn_inward.index')->withSuccess('GRN Created Successfully!');
         } catch (\Throwable $th) {
             //throw $th;
             DB::rollback();
