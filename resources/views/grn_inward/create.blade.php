@@ -319,7 +319,76 @@ $("#po_id").select2({
         });
      }
     $("#tab_logic").on('change', 'input', updateGrandTotal);
+    $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+        $("#grn_inward_formdata").submit(function (e) {
+            e.preventDefault();
+            var formData = new FormData($("#grn_inward_formdata")[0]);
+            $("#btn").attr('disabled',true);
+            $("#btn").val('Updating...');
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                        confirmButton: 'btn btn-success',
+                        cancelButton: 'btn btn-danger'
+                    },
+                buttonsStyling: false
+            });
 
+            swalWithBootstrapButtons.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Add it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+            }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                                    // url: editUrl,
+                    url: this.action,
+                    type:"POST",
+                    data: formData,
+                    cache:false,
+                    processData:false,
+                    contentType:false,
+                    success: function(data) {
+                    if (data.code==404||data.code==500) {
+                        let error ='<span class="alert alert-danger">'+data.msg+'</span>';
+                            $("#res").html(error);
+                                    // $("#btn").attr('disabled',false);
+                                    // $("#btn").val('Save');
+                    }else{
+                        //    console.log(data);
+                        $("#btn").attr('disabled',false);
+                        $("#btn").val('Save');
+                        swalWithBootstrapButtons.fire(
+                            'Added!',
+                            'GRN is Created Successfully!...',
+                            'success'
+                            );
+                            location.reload(true);
+                        }
+                    }
+                });
+                                // ajax request completed
+            }else if (
+             /* Read more about handling dismissals below */
+                result.dismiss === Swal.DismissReason.cancel
+                ) {
+                    $("#btn").attr('disabled',false);
+                    $("#btn").val('Save');
+                    swalWithBootstrapButtons.fire(
+                    'Cancelled',
+                    'Your GRN Data is safe',
+                    'error'
+                    )
+                }
+            });
+        });
     $("#reset").click(function (e) {
         e.preventDefault();
         location.reload(true);

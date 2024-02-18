@@ -152,7 +152,7 @@ class GRNInwardRegisterController extends Controller
                 $grn_qc->save();
             }
             DB::commit();
-            return redirect()->route('grn_inward.index')->withSuccess('GRN Created Successfully!');
+            return back()->withSuccess('GRN is Created Successfully!');
         } catch (\Throwable $th) {
             //throw $th;
             DB::rollback();

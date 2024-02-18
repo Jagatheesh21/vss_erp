@@ -11,7 +11,8 @@ use App\Models\POProductDetail;
 use App\Models\PODetail;
 use App\Http\Requests\StorePODetailRequest;
 use App\Http\Requests\UpdatePODetailRequest;
-
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
 
 class PODetailController extends Controller
 {
