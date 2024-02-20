@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DcMaster;
-use App\Http\Requests\StoreDcMasterRequest;
-use App\Http\Requests\UpdateDcMasterRequest;
+use App\Models\NpdProductMaster;
+use App\Http\Requests\StoreNpdProductMasterRequest;
+use App\Http\Requests\UpdateNpdProductMasterRequest;
 
-class DcMasterController extends Controller
+class NpdProductMasterController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,7 +27,7 @@ class DcMasterController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreDcMasterRequest $request)
+    public function store(StoreNpdProductMasterRequest $request)
     {
         //
     }
@@ -35,7 +35,7 @@ class DcMasterController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(DcMaster $dCmaster)
+    public function show(NpdProductMaster $npdProductMaster)
     {
         //
     }
@@ -43,7 +43,7 @@ class DcMasterController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(DcMaster $dCmaster)
+    public function edit(NpdProductMaster $npdProductMaster)
     {
         //
     }
@@ -51,7 +51,7 @@ class DcMasterController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateDcMasterRequest $request, DCmaster $dCmaster)
+    public function update(UpdateNpdProductMasterRequest $request, NpdProductMaster $npdProductMaster)
     {
         //
     }
@@ -59,7 +59,7 @@ class DcMasterController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(DcMaster $dCmaster)
+    public function destroy(NpdProductMaster $npdProductMaster)
     {
         //
     }
