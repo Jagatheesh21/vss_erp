@@ -84,6 +84,17 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
+                                    <label for="po_qty">Purchase Order Quantity *</label>
+                                    <input type="number" name="po_qty" id="po_qty" readonly class="form-control @error('po_qty') is-invalid @enderror" >
+                                    @error('po_qty')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
                                     <label for="max_qty">Maximum Quantity *</label>
                                     <input type="number" name="max_qty" id="max_qty" readonly class="form-control @error('max_qty') is-invalid @enderror" >
                                     @error('max_qty')
@@ -104,6 +115,8 @@
                                     @enderror
                                 </div>
                             </div>
+                        </div>
+                        <div class="row d-flex justify-content-center">
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="invoice_date">Invoice Date *</label>
@@ -115,8 +128,6 @@
                                     @enderror
                                 </div>
                             </div>
-                        </div>
-                        <div class="row d-flex justify-content-center">
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="dc_number">DC No *</label>
@@ -182,7 +193,7 @@
                     <hr>
                     <div class="row mb-3 d-flex justify-content-end clearfix">
                         <div class="col-2"><h6>Grand Total:</h6></div>
-                        <div class="col-2"><input type="text" name="grand_total" class="form-control" id="grand_total" readonly></div>
+                        <div class="col-2"><input type="number" name="grand_total" class="form-control" id="grand_total"  readonly></div>
                         <!-- <div class="col-md-12">
                             <div class="col-md-10">Total</div>
                             <div class="col-md-2"></div>
@@ -269,6 +280,9 @@ $("#po_id").select2({
                 if (result.count > 0) {
                     $('#max_qty').val(result.max_qty);
                     $('#max_qty'). attr('readonly','true');
+                    $('#po_qty').val(result.po_qty);
+                    $('#po_qty'). attr('readonly','true');
+                    $('#grand_total'). attr('max',result.po_qty);
                     $('#rack_id').html(result.html);
                     $('#uom_id').html(result.uom);
                 }else{

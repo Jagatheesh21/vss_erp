@@ -22,5 +22,21 @@ class RawMaterialSeeder extends Seeder
             'maximum_stock'=>'100',
             'prepared_by'=>'1'
         ]);
+        $rm2=RawMaterial::create([
+            'material_code'=>'RM000000002',
+            'raw_material_category_id'=>'1',
+            'name' => '2.0 MM Spring Steel GR-3 DH',
+            'minimum_stock'=>'25',
+            'maximum_stock'=>'500',
+            'prepared_by'=>'1'
+        ]);
+        $rm3=RawMaterial::create([
+            'material_code'=>'RM000000003',
+            'raw_material_category_id'=>'2',
+            'name' => '1.0 MM Sheet CR-2',
+            'minimum_stock'=>'50',
+            'maximum_stock'=>'500',
+            'prepared_by'=>'1'
+        ]);
     }
 }

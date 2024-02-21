@@ -17,8 +17,8 @@ return new class extends Migration
             $table->integer('child_part_id');
             $table->integer('rm_id');
             $table->integer('uom_id');
-            $table->float('input_usage', 8, 2)->default(0);
-            $table->float('output_usage', 8, 2)->default(0);
+            $table->float('input_usage', 10,7)->default(0);
+            $table->float('output_usage', 10,7)->default(0);
             $table->integer('status')->default(1);
             $table->string('foreman');
             $table->integer('prepared_by');

@@ -104,6 +104,7 @@ class GRNInwardRegisterController extends Controller
         if ($count>0) {
             $po_product_datas = POProductDetail::find($id);
                 $sc_product_id=$po_product_datas->supplier_product_id;
+                $po_product_qty=$po_product_datas->qty;
                 $rm_datas=RawMaterial::find($sc_product_id);
                 $max_qty=$rm_datas->maximum_stock;
                 $racks=Rackmaster::where('raw_material_id',$sc_product_id)->get();
@@ -116,7 +117,7 @@ class GRNInwardRegisterController extends Controller
             }
             $uom='';
             $uom .= '<option value="'.$uom_data->id.'">'.$uom_data->name.'</option>';
-            return response()->json(['max_qty'=>$max_qty,'html'=>$html,'count'=>$count,'uom'=>$uom]);
+            return response()->json(['max_qty'=>$max_qty,'html'=>$html,'count'=>$count,'uom'=>$uom,'po_qty'=>$po_product_qty]);
         }
     }
 

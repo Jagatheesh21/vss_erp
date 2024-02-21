@@ -14,8 +14,12 @@ class RawMaterialCategorySeeder extends Seeder
     public function run(): void
     {
         //
-        $rm_category=RawMaterialCategory::create([
+        $rm_category1=RawMaterialCategory::create([
             'name' => 'Spring Steel',
+            'prepared_by'=>'1'
+        ]);
+        $rm_category2=RawMaterialCategory::create([
+            'name' => 'Sheet Metal',
             'prepared_by'=>'1'
         ]);
     }

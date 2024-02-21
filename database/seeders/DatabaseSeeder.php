@@ -25,7 +25,11 @@ class DatabaseSeeder extends Seeder
             SupplierProductSeeder::class,
             RackStockmasterSeeder::class,
             RackmasterSeeder::class,
-            ItemProcesmasterSeeder::class
+            ItemProcesmasterSeeder::class,
+            ProductMasterSeeder::class,
+            ChildProductMasterSeeder::class,
+            ProductProcessMasterSeeder::class,
+            BomMasterSeeder::class
         ]);
     }
 }

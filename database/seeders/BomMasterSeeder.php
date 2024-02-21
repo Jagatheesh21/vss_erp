@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\BomMaster;
 
 class BomMasterSeeder extends Seeder
 {
@@ -13,5 +14,23 @@ class BomMasterSeeder extends Seeder
     public function run(): void
     {
         //
+        $bomMaster1 = BomMaster::create([
+            'child_part_id' => 1,
+            'rm_id' => 1,
+            'uom_id' => 1,
+            'input_usage' => 0.0260850,
+            'output_usage' => 0.0260850,
+            'foreman' => 'LEAN',
+            'prepared_by'=>'1'
+        ]);
+        $bomMaster2 = BomMaster::create([
+            'child_part_id' => 2,
+            'rm_id' => 1,
+            'uom_id' => 1,
+            'input_usage' => 0.0040800,
+            'output_usage' => 0.0040800,
+            'foreman' => 'NON-LEAN',
+            'prepared_by'=>'1'
+        ]);
     }
 }
