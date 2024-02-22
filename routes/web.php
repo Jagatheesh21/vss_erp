@@ -45,6 +45,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/grnsuppliers-fetchdata/id', [PODetailController::class,'grn_supplierfetchdata'])->name('grn_supplierfetchdata');
     Route::get('/grnrm-fetchdata/id', [GRNInwardRegisterController::class,'grn_rmfetchdata'])->name('grn_rmfetchdata');
     Route::get('/grn_iqc-data/{id}', [GrnQualityController::class,'approval'])->name('grn_iqc.approval');
+    Route::get('rm_issuance', [GRNInwardRegisterController::class,'rmIssuance'])->name('grn_inward.rmissuance');
+    Route::post('/rm_issuance-data', [GRNInwardRegisterController::class,'storeData'])->name('rmissuance.storedata');
 
     Route::resources([
         'roles' => RoleController::class,

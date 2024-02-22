@@ -221,9 +221,9 @@ class GrnQualityController extends Controller
         try {
                 date_default_timezone_set('Asia/Kolkata');
                 $current_date=date('Y-m-d');
-                dd($request->all());
+                // dd($request->select_all);
                 $sub_ids=$request->sub_id;
-                $select_all=$request->select_all;
+                $select_all=($request->select_all)??NULL;
                 $status_all=$request->status_all;
                 // dd($select_all??NULL);
                 if($select_all==NULL){

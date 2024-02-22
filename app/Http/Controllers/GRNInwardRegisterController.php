@@ -14,6 +14,9 @@ use App\Models\GrnQuality;
 use App\Models\PODetail;
 use App\Models\POProductDetail;
 use App\Models\HeatNumber;
+use App\Models\TransDataD11;
+use App\Models\TransDataD12;
+use App\Models\TransDataD13;
 use App\Http\Requests\StoreGRNInwardRegisterRequest;
 use App\Http\Requests\UpdateGRNInwardRegisterRequest;
 use Illuminate\Support\Facades\Validator;
@@ -212,6 +215,38 @@ class GRNInwardRegisterController extends Controller
             // return redirect()->back()->withErrors($th->getMessage());
 
         }
+    }
+
+    public function rmIssuance(){
+        date_default_timezone_set('Asia/Kolkata');
+        $current_date=date('Y-m-d');
+        $current_year=date('Y');
+		$rc="A";
+		$current_rcno=$rc.$current_year;
+        $count=TransDataD11::where('rc_no','LIKE','%'.$current_rcno.'%')->orderBy('rc_no', 'DESC')->get()->count();
+        if ($count > 0) {
+            $rc_data=TransDataD11::where('rc_no','LIKE','%'.$current_rcno.'%')->orderBy('rc_no', 'DESC')->first();
+            $rcnumber=$rc_data['rc_no']??NULL;
+            $old_rcnumber=str_replace("G","",$rcnumber);
+            $old_rcnumber_data=str_pad($old_rcnumber+1,9,0,STR_PAD_LEFT);
+            $new_rcnumber='G'.$old_rcnumber_data;
+        }else{
+            $str='000001';
+            $new_rcnumber=$current_rcno.$str;
+        }
+        $grnDatas=DB::table('g_r_n_inward_registers as a')
+        ->join('heat_numbers AS b', 'a.id', '=', 'b.grnnumber_id')
+        ->select('a.id as grn_id','a.grnnumber')
+        ->where('b.status','=',1)
+        ->get();
+        // dd($grnDatas);
+        // dd($new_rcnumber);
+        return view('rm_issuance.create',compact('grnDatas','new_rcnumber','current_date'));
+    }
+    public function storeData(Request $request)
+    {
+        //
+        dd($request->all());
     }
 
     /**

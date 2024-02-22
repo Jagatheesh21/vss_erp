@@ -3,9 +3,9 @@
 
 @endpush
 @section('content')
-<form action="{{route('grn_qc.update',$grnqc_datas[0]->id)}}" id="grn_qc_formdata" method="POST">
+<form action="{{route('rmissuance.storedata')}}" id="rm_issuance_formdata" method="POST">
     @csrf
-    @method('PUT')
+    @method('POST')
 
 <div class="row d-flex justify-content-center">
     <div id="data"></div>
@@ -25,14 +25,15 @@
         <div class="card">
             <div class="card-header d-flex" style="justify-content:space-between"><span> <b>GRN Incoming Quality Clearance</b></span><a class="btn btn-sm btn-primary" href="{{route('grn_qc.index')}}">GRN Incoming QC List</a>
             </div>
-            <input type="hidden" name="id" value="{{$grnqc_datas[0]->id}}">
             <div class="card-body">
                         <div class="row d-flex justify-content-center">
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="grnnumber">GRN Number *</label>
-                                    <select name="grnnumber" class="form-control bg-light @error('grnnumber') is-invalid @enderror" readonly  id="grnnumber">
-                                        <option value="{{$grnqc_datas[0]->grn_id}}" selected>{{$grnqc_datas[0]->grnnumber}}</option>
+                                    <select name="grnnumber" class="form-control bg-light @error('grnnumber') is-invalid @enderror"  id="grnnumber">
+                                        @foreach ($grnDatas as $grnData)
+                                            <option value="{{$grnData->grn_id}}" selected>{{$grnData->grnnumber}}</option>
+                                        @endforeach
                                     </select>
                                     @error('grnnumber')
                                     <span class="invalid-feedback" role="alert">
@@ -44,7 +45,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="grndate">GRN Date *</label>
-                                    <input type="date" name="grndate" id="grndate" value="{{$grnqc_datas[0]->grndate}}" readonly class="form-control bg-light @error('grndate') is-invalid @enderror" >
+                                    <input type="date" name="grndate" id="grndate" value="{{$current_date}}" readonly class="form-control bg-light @error('grndate') is-invalid @enderror" >
                                     @error('grndate')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -54,18 +55,16 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="po_id">Purchase Order Number *</label>
-                                    <select name="po_id" class="form-control bg-light @error('po_id') is-invalid @enderror" readonly id="po_id">
-                                        <option value="{{$grnqc_datas[0]->po_id}}" selected>{{$grnqc_datas[0]->ponumber}}</option>
-                                    </select>
-                                    @error('po_id')
+                                    <label for="rc_no">Route Card Number *</label>
+                                    <input type="text" name="invoice_number" id="invoice_number" value="{{$new_rcnumber}}" class="form-control bg-light @error('rc_no') is-invalid @enderror" @readonly(true)>
+                                    @error('rc_no')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            {{-- <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="sc_id">Supplier Name *</label>
                                     <select name="sc_id" class="form-control bg-light @error('sc_id') is-invalid @enderror" @readonly(true) id="sc_id">
@@ -77,14 +76,13 @@
                                     </span>
                                     @enderror
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                         <div class="row d-flex justify-content-center">
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="rm_id">RM Description *</label>
                                     <select name="rm_id" id="rm_id" class="form-control bg-light @error('rm_id') is-invalid @enderror" @readonly(true)>
-                                        <option value="{{$grnqc_datas[0]->rm_id}}" selected>{{$grnqc_datas[0]->rm_desc}}</option>
                                     </select>
                                     @error('rm_id')
                                     <span class="invalid-feedback" role="alert">
@@ -94,7 +92,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-3">
+                            {{-- <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="invoice_number">Invoice No *</label>
                                     <input type="text" name="invoice_number" id="invoice_number" value="{{$grnqc_datas[0]->invoice_number}}" class="form-control bg-light @error('invoice_number') is-invalid @enderror" @readonly(true)>
@@ -115,9 +113,9 @@
                                     </span>
                                     @enderror
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
-                        <div class="row d-flex justify-content-center">
+                        {{-- <div class="row d-flex justify-content-center">
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="dc_number">DC No *</label>
@@ -140,11 +138,11 @@
                                     @enderror
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
 
                         <div class="row clearfix mt-3">
                         <div class="col-md-12">
-                        <div class="table-responsive">
+                        {{-- <div class="table-responsive">
                             <table class="table table-bordered table-striped table-responsive" id="tab_logic">
                                 <thead>
                                 <tr class="bg-info text-white">
@@ -202,18 +200,17 @@
                                 @endforelse
                                 </tbody>
                             </table>
-                        </div>
+                        </div> --}}
                     </div>
                     </div>
-                    <div class="row mb-3 d-flex justify-content-end clearfix">
+                    {{-- <div class="row mb-3 d-flex justify-content-end clearfix">
                         <div class="col-2"><h6>Grand Total:</h6></div>
                         <div class="col-2">
                             <input type="text" name="grand_total" class="form-control @error('grand_total') is-invalid @enderror" id="grand_total" readonly>
-
                         </div>
-                    </div>
+                    </div> --}}
 
-                    <div class="row d-flex justify-content-center ">
+                    {{-- <div class="row d-flex justify-content-center ">
 
                         <div class="col-md-4">
                             <label for="status_all">Status All</label>
@@ -233,7 +230,7 @@
                             <button class="btn btn-primary update_all" id="update_all" name="update_all" value="1" style="display: none;" >Save All</button>
                             <button class="btn btn-primary update_all" id="update_all" name="update_all" value="1"  >Save</button>
                         </div>
-                    </div>
+                    </div> --}}
             </div>
         </div>
     </div>
