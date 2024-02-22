@@ -370,6 +370,20 @@ $("#po_id").select2({
                     processData:false,
                     contentType:false,
                     success: function(data) {
+                        if(data.errors) {
+                            var values = '';
+                            jQuery.each(data.errors, function (key, value) {
+                                values += value
+                            });
+
+                            swal({
+                                title: "Error",
+                                text: values,
+                                timer: 5000,
+                                showConfirmButton: false,
+                                type: "error"
+                            })
+                        }
                     if (data.code==404||data.code==500) {
                         let error ='<span class="alert alert-danger">'+data.msg+'</span>';
                             $("#res").html(error);
@@ -384,7 +398,7 @@ $("#po_id").select2({
                             'GRN is Created Successfully!...',
                             'success'
                             );
-                            location.reload(true);
+                            // location.reload(true);
                         }
                     }
                 });

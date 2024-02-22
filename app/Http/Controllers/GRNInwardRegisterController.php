@@ -16,6 +16,7 @@ use App\Models\POProductDetail;
 use App\Models\HeatNumber;
 use App\Http\Requests\StoreGRNInwardRegisterRequest;
 use App\Http\Requests\UpdateGRNInwardRegisterRequest;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
 
@@ -150,55 +151,66 @@ class GRNInwardRegisterController extends Controller
         //SELECT `id`, `grnnumber_id`, `rack_id`, `heat_no_id`, `inspected_by`, `inspected_date`, `inspected_qty`, `approved_qty`, `onhold_qty`, `rejected_qty`, `status`, `prepared_by`, `updated_by`, `created_at`, `updated_at` FROM `grn_qualities` WHERE 1
 
         // dd($request);
+
         DB::beginTransaction();
         try {
-            $grn_datas = new GRNInwardRegister;
-            $grn_datas->grnnumber = $request->grnnumber;
-            $grn_datas->grndate = $request->grndate;
-            $grn_datas->po_id = $request->po_id;
-            $grn_datas->p_o_product_id = $request->rm_id;
-            $grn_datas->invoice_number = $request->invoice_number;
-            $grn_datas->invoice_date = $request->invoice_date;
-            $grn_datas->dc_number = $request->dc_number;
-            $grn_datas->dc_date = $request->dc_date;
-            $grn_datas->inward_qty = $request->grand_total;
-            $grn_datas->prepared_by = auth()->user()->id;
-            $grn_datas->save();
+            $validator = Validator::make($request->all(), [
+                'grand_total' => 'required|max:'.$request->grand_total
+            ]);
 
-            $grn_id=$grn_datas->id;
+            if ($validator->fails()) {
+                return back()->withErrors($validator->messages()->all()[0]);
+                // return back()->with('toast_error', $validator->messages()->all()[0])->withInput();
+            }else{
+                $grn_datas = new GRNInwardRegister;
+                $grn_datas->grnnumber = $request->grnnumber;
+                $grn_datas->grndate = $request->grndate;
+                $grn_datas->po_id = $request->po_id;
+                $grn_datas->p_o_product_id = $request->rm_id;
+                $grn_datas->invoice_number = $request->invoice_number;
+                $grn_datas->invoice_date = $request->invoice_date;
+                $grn_datas->dc_number = $request->dc_number;
+                $grn_datas->dc_date = $request->dc_date;
+                $grn_datas->inward_qty = $request->grand_total;
+                $grn_datas->prepared_by = auth()->user()->id;
+                $grn_datas->save();
 
-            $rack_ids=$request->rack_id;
+                $grn_id=$grn_datas->id;
 
-            foreach ($rack_ids as $key => $rack_id) {
-                $grn_heat_nos = new HeatNumber;
-                $grn_heat_nos->grnnumber_id =$grn_id;
-                $grn_heat_nos->heatnumber =$request->heatnumber[$key];
-                $grn_heat_nos->tc_no =$request->tc_no[$key];
-                $grn_heat_nos->rack_id =$rack_id;
-                $grn_heat_nos->lot_no =$request->lot_no[$key];
-                $grn_heat_nos->coil_no =$request->coil_no[$key];
-                $grn_heat_nos->coil_inward_qty =$request->coil_inward_qty[$key];
-                $grn_heat_nos->prepared_by = auth()->user()->id;
-                $grn_heat_nos->save();
+                $rack_ids=$request->rack_id;
 
-                $heat_no_id=$grn_heat_nos->id;
+                foreach ($rack_ids as $key => $rack_id) {
+                    $grn_heat_nos = new HeatNumber;
+                    $grn_heat_nos->grnnumber_id =$grn_id;
+                    $grn_heat_nos->heatnumber =$request->heatnumber[$key];
+                    $grn_heat_nos->tc_no =$request->tc_no[$key];
+                    $grn_heat_nos->rack_id =$rack_id;
+                    $grn_heat_nos->lot_no =$request->lot_no[$key];
+                    $grn_heat_nos->coil_no =$request->coil_no[$key];
+                    $grn_heat_nos->coil_inward_qty =$request->coil_inward_qty[$key];
+                    $grn_heat_nos->prepared_by = auth()->user()->id;
+                    $grn_heat_nos->save();
 
-                $grn_qc=new GrnQuality;
-                $grn_qc->grnnumber_id =$grn_id;
-                $grn_qc->heat_no_id =$heat_no_id;
-                $grn_qc->rack_id =$rack_id;
-                $grn_qc->inspected_qty =$request->coil_inward_qty[$key];
-                $grn_qc->prepared_by = auth()->user()->id;
-                $grn_qc->save();
+                    $heat_no_id=$grn_heat_nos->id;
+
+                    $grn_qc=new GrnQuality;
+                    $grn_qc->grnnumber_id =$grn_id;
+                    $grn_qc->heat_no_id =$heat_no_id;
+                    $grn_qc->rack_id =$rack_id;
+                    $grn_qc->inspected_qty =$request->coil_inward_qty[$key];
+                    $grn_qc->prepared_by = auth()->user()->id;
+                    $grn_qc->save();
+                }
+                DB::commit();
+                return back()->withSuccess('GRN is Created Successfully!');
             }
-            DB::commit();
-            return back()->withSuccess('GRN is Created Successfully!');
         } catch (\Throwable $th) {
             //throw $th;
             DB::rollback();
             //dd($th->getMessage());
             return response()->json(['errors' => $th->getMessage()]);
             // return redirect()->back()->withErrors($th->getMessage());
+
         }
     }
 

@@ -18,6 +18,8 @@ use App\Http\Requests\StoreGrnQualityRequest;
 use App\Http\Requests\UpdateGrnQualityRequest;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+
 
 class GrnQualityController extends Controller
 {
@@ -130,6 +132,7 @@ class GrnQualityController extends Controller
     public function store(StoreGrnQualityRequest $request)
     {
         //
+
     }
 
     /**
@@ -197,6 +200,7 @@ class GrnQualityController extends Controller
         'a.onhold_qty',
         'a.rejected_qty',
         'a.inspected_by',
+        'a.inspected_qty',
         'a.inspected_date')
         ->where('c.id',$id)
         ->where('b.status','!=',1)
@@ -213,9 +217,151 @@ class GrnQualityController extends Controller
     public function update(UpdateGrnQualityRequest $request, GrnQuality $grnQuality)
     {
         //
-        dd($request->all());
-    }
+        DB::beginTransaction();
+        try {
+                date_default_timezone_set('Asia/Kolkata');
+                $current_date=date('Y-m-d');
+                dd($request->all());
+                $sub_ids=$request->sub_id;
+                $select_all=$request->select_all;
+                $status_all=$request->status_all;
+                // dd($select_all??NULL);
+                if($select_all==NULL){
+                    foreach ($sub_ids as $key => $sub_id) {
+                        if ($request->status[$key]==1) {
+                            $grnQualityData=GrnQuality::find($sub_id);
+                            $grnQualityData->status=$request->status[$key];
+                            $grnQualityData->approved_qty=$request->coil_inward_qty[$key];
+                            $grnQualityData->onhold_qty=0;
+                            $grnQualityData->rejected_qty=0;
+                            $grnQualityData->inspected_by=auth()->user()->id;
+                            $grnQualityData->inspected_date=$current_date;
+                            $grnQualityData->updated_by = auth()->user()->id;
+                            $grnQualityData->update();
 
+                            $heatNumberData=HeatNumber::find($grnQualityData->heat_no_id);
+                            $heatNumberData->status=$request->status[$key];
+                            $heatNumberData->updated_by = auth()->user()->id;
+                            $heatNumberData->update();
+
+                        }elseif ($request->status[$key]==2) {
+                            $grnQualityData=GrnQuality::find($sub_id);
+                            $grnQualityData->status=$request->status[$key];
+                            $grnQualityData->approved_qty=0;
+                            $grnQualityData->rejected_qty=$request->coil_inward_qty[$key];
+                            $grnQualityData->onhold_qty=0;
+                            $grnQualityData->inspected_by=auth()->user()->id;
+                            $grnQualityData->inspected_date=$current_date;
+                            $grnQualityData->updated_by = auth()->user()->id;
+                            $grnQualityData->update();
+
+                        }elseif ($request->status[$key]==3) {
+                            $grnQualityData=GrnQuality::find($sub_id);
+                            $grnQualityData->status=$request->status[$key];
+                            $grnQualityData->approved_qty=0;
+                            $grnQualityData->onhold_qty=$request->coil_inward_qty[$key];
+                            $grnQualityData->rejected_qty=0;
+                            $grnQualityData->inspected_by=auth()->user()->id;
+                            $grnQualityData->inspected_date=$current_date;
+                            $grnQualityData->updated_by = auth()->user()->id;
+                            $grnQualityData->update();
+                        }
+
+                        $heatNumberData=HeatNumber::find($grnQualityData->heat_no_id);
+                        $heatNumberData->status=$request->status[$key];
+                        $heatNumberData->updated_by = auth()->user()->id;
+                        $heatNumberData->update();
+
+                        $grnqc_datas = DB::table('grn_qualities')
+                        ->select(DB::raw('SUM(approved_qty) as t_approved_qty'),DB::raw('SUM(onhold_qty) as t_onhold_qty'),DB::raw('SUM(rejected_qty) as t_rejected_qty'))
+                        ->where('grnnumber_id','=',$grnQualityData->grnnumber_id)
+                        ->first();
+
+                        $grbInwardData=GRNInwardRegister::find($grnQualityData->grnnumber_id);
+                        $grbInwardData->approved_qty=$grnqc_datas->t_approved_qty;
+                        $grbInwardData->onhold_qty=$grnqc_datas->t_onhold_qty;
+                        $grbInwardData->rejected_qty=$grnqc_datas->t_rejected_qty;
+                        $grbInwardData->status=$request->status[$key];
+                        $grbInwardData->updated_by = auth()->user()->id;
+                        $grbInwardData->update();
+
+                        $grbInwardData2=GRNInwardRegister::find($grnQualityData->grnnumber_id2);
+                        $avl_qty=(($grbInwardData2->approved_qty)-($grbInwardData2->return_qty)-($grbInwardData2->return_dc_qty)-($grbInwardData2->issued_qty));
+                        $grbInwardData2->avl_qty = $avl_qty;
+                        $grbInwardData2->updated_by = auth()->user()->id;
+                        $grbInwardData2->update();
+                        // dd($grnQualityData);
+                    }
+                }else{
+                    foreach ($sub_ids as $key => $sub_id) {
+                        if ($status_all==1) {
+                            $grnQualityData=GrnQuality::find($sub_id);
+                            $grnQualityData->status=$request->status_all;
+                            $grnQualityData->approved_qty=$request->coil_inward_qty[$key];
+                            $grnQualityData->onhold_qty=0;
+                            $grnQualityData->rejected_qty=0;
+                            $grnQualityData->inspected_by=auth()->user()->id;
+                            $grnQualityData->inspected_date=$current_date;
+                            $grnQualityData->updated_by = auth()->user()->id;
+                            $grnQualityData->update();
+                        }elseif ($status_all==2) {
+                            $grnQualityData=GrnQuality::find($sub_id);
+                            $grnQualityData->status=$request->status_all;
+                            $grnQualityData->approved_qty=0;
+                            $grnQualityData->rejected_qty=$request->coil_inward_qty[$key];
+                            $grnQualityData->onhold_qty=0;
+                            $grnQualityData->inspected_by=auth()->user()->id;
+                            $grnQualityData->inspected_date=$current_date;
+                            $grnQualityData->updated_by = auth()->user()->id;
+                            $grnQualityData->update();
+                        }elseif ($status_all==3) {
+                            $grnQualityData=GrnQuality::find($sub_id);
+                            $grnQualityData->status=$request->status_all;
+                            $grnQualityData->approved_qty=0;
+                            $grnQualityData->onhold_qty=$request->coil_inward_qty[$key];
+                            $grnQualityData->rejected_qty=0;
+                            $grnQualityData->inspected_by=auth()->user()->id;
+                            $grnQualityData->inspected_date=$current_date;
+                            $grnQualityData->updated_by = auth()->user()->id;
+                            $grnQualityData->update();
+                        }
+
+                        $heatNumberData=HeatNumber::find($grnQualityData->heat_no_id);
+                        $heatNumberData->status=$request->status_all;
+                        $heatNumberData->updated_by = auth()->user()->id;
+                        $heatNumberData->update();
+
+                        $grnqc_datas = DB::table('grn_qualities')
+                        ->select(DB::raw('SUM(approved_qty) as t_approved_qty'),DB::raw('SUM(onhold_qty) as t_onhold_qty'),DB::raw('SUM(rejected_qty) as t_rejected_qty'))
+                        ->where('grnnumber_id','=',$grnQualityData->grnnumber_id)
+                        ->first();
+
+                        $grbInwardData=GRNInwardRegister::find($grnQualityData->grnnumber_id);
+                        $grbInwardData->approved_qty=$grnqc_datas->t_approved_qty;
+                        $grbInwardData->onhold_qty=$grnqc_datas->t_onhold_qty;
+                        $grbInwardData->rejected_qty=$grnqc_datas->t_rejected_qty;
+                        $grbInwardData->status=$request->status_all;
+                        $grbInwardData->updated_by = auth()->user()->id;
+                        $grbInwardData->update();
+
+                        $grbInwardData2=GRNInwardRegister::find($grnQualityData->grnnumber_id2);
+                        $avl_qty=(($grbInwardData2->approved_qty)-($grbInwardData2->return_qty)-($grbInwardData2->return_dc_qty)-($grbInwardData2->issued_qty));
+                        $grbInwardData2->avl_qty = $avl_qty;
+                        $grbInwardData2->updated_by = auth()->user()->id;
+                        $grbInwardData2->update();
+
+                        // dd($grnQualityData);
+                    }
+                }
+                DB::commit();
+                return back()->withSuccess('Your Inspection Data Is Submitted Successfully!');
+
+            } catch (\Throwable $th) {
+                //throw $th;
+                DB::rollback();
+                return back()->withErrors($th->getMessage());
+            }
+    }
     /**
      * Remove the specified resource from storage.
      */

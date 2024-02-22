@@ -131,25 +131,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row me-auto mt-3 mb-3">
-                            <div class="col-md-4">
-                                <label for="status_all">Status All</label>
-                                <select name="status_all" class="form-control select2 status_all" id="status_all">
-                                    <option value="0">PENDING</option>
-                                    <option value="1">APPROVED</option>
-                                    <option value="2">REJECTED</option>
-                                    <option value="3">ON-HOLD</option>
-                                </select>
-                                @error('status_all')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                            </div>
-                            <div class="col-md-4 mt-4">
-                                <button class="btn btn-primary update_all" name="update_all" value="1" >Save All</button>
-                            </div>
-                        </div>
+
                         <div class="row clearfix mt-3">
                         <div class="col-md-12">
                         <div class="table-responsive">
@@ -158,7 +140,7 @@
                                 <tr class="bg-info text-white">
                                     <th><input type="checkbox" class="form-check-input select_all" name="select_all" id="select_all"></th>
                                     <th>Rack ID</th>
-                                    <th>Heat No</th>
+                                    <th>Heat Number </th>
                                     <th>Test Certificate No</th>
                                     <th>Lot No</th>
                                     <th>Coil No</th>
@@ -167,7 +149,6 @@
                                     <th>RM Approved Quantity</th>
                                     <th>RM Rejected Quantity</th>
                                     <th>RM On-Hold Quantity</th>
-                                    <th>Inspect Quantity</th>
                                     <th>Inspected By</th>
                                     <th>Inspected Date</th>
                                     <th>Status</th>
@@ -179,7 +160,8 @@
                                         <td><input type="checkbox" class="form-check-input sub_id" name="sub_id[]" data-id="{{$grnqc_data->id}}" value="{{$grnqc_data->id}}"></td>
                                         <td><select name="rack_id[]"  class="form-control rack_id bg-light" readonly id="rack_id">
                                             <option value="{{$grnqc_data->rack_id}}" selected>{{$grnqc_data->rack_name}}</option></select></td>
-                                        <td><input type="text" class="form-control heatnumber bg-light" readonly value="{{$grnqc_data->heatnumber}}"  name="heatnumber[]" id="heatnumber"></td>
+                                        <td><select name="heat_id[]"  class="form-control heat_id bg-light" readonly id="heat_id">
+                                                <option value="{{$grnqc_data->heat_id}}" selected aria-placeholder="SELECT HEAT NUMBER">{{$grnqc_data->heatnumber}}</option></select></td>
                                         <td><input type="text"  class="form-control tc_no bg-light" readonly value="{{$grnqc_data->tc_no}}" name="tc_no[]" id="tc_no"></td>
                                         <td><input type="text" class="form-control lot_no bg-light" readonly value="{{$grnqc_data->lot_no}}" id="lot_no" name="lot_no[]"></td>
                                         <td><input type="number"  class="form-control coil_no bg-light" readonly value="{{$grnqc_data->coil_no}}" name="coil_no[]" id="coil_no"></td>
@@ -188,9 +170,8 @@
                                         <td><input type="number" class="form-control approved_qty bg-light" readonly name="approved_qty[]" value="{{$grnqc_data->approved_qty}}" id="approved_qty"></td>
                                         <td><input type="number" class="form-control rejected_qty bg-light" readonly name="rejected_qty[]" value="{{$grnqc_data->rejected_qty}}" id="rejected_qty"></td>
                                         <td><input type="number" class="form-control onhold_qty bg-light" readonly name="onhold_qty[]" value="{{$grnqc_data->onhold_qty}}" id="onhold_qty"></td>
-                                        <td><input type="number" class="form-control inspected_qty" name="inspected_qty[]" value="{{(($grnqc_data->coil_inward_qty)-($grnqc_data->approved_qty)-($grnqc_data->rejected_qty)-($grnqc_data->onhold_qty))}}" id="inspected_qty"></td>
-                                        <td><input type="number" class="form-control inspected_by" name="inspected_by[]" value="{{$grnqc_data->inspected_by}}" id="inspected_by"></td>
-                                        <td><input type="date" class="form-control inspected_date" name="inspected_date[]" value="{{$grnqc_data->inspected_date}}" id="inspected_date"></td>
+                                        <td><input type="text" class="form-control inspected_by bg-light" @readonly(true) name="inspected_by[]" value="{{$grnqc_data->inspected_by}}" id="inspected_by"></td>
+                                        <td><input type="date" class="form-control inspected_date bg-light" @readonly(true) name="inspected_date[]" value="{{$grnqc_data->inspected_date}}" id="inspected_date"></td>
                                         <td> <select name="status[]" data-id="{{$grnqc_data->id}}" class="form-control select2 status" id="status">
                                             <option value="0" @if($grnqc_data->status==0) selected @endif >PENDING</option>
                                             <option value="1" @if($grnqc_data->status==1) selected @endif>APPROVED</option>
@@ -216,13 +197,31 @@
                     </div>
                     <div class="row mb-3 d-flex justify-content-end clearfix">
                         <div class="col-2"><h6>Grand Total:</h6></div>
-                        <div class="col-2"><input type="text" name="grand_total" class="form-control" id="grand_total" readonly></div>
+                        <div class="col-2">
+                            <input type="text" name="grand_total" class="form-control @error('grand_total') is-invalid @enderror" id="grand_total" readonly>
+
+                        </div>
                     </div>
 
                     <div class="row d-flex justify-content-center ">
-                        <div class="col-md-2 mt-4">
-                            <input type="submit" class=" save btn btn-success  text-white align-center" id="btn" value="Save">
-                            <input class="btn btn-danger text-white" id="reset" type="reset" value="Reset">
+
+                        <div class="col-md-4">
+                            <label for="status_all">Status All</label>
+                            <select name="status_all" class="form-control select2 status_all" id="status_all">
+                                <option value="0">PENDING</option>
+                                <option value="1">APPROVED</option>
+                                <option value="2">REJECTED</option>
+                                <option value="3">ON-HOLD</option>
+                            </select>
+                            @error('status_all')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                        </div>
+                        <div class="col-md-4 mt-4">
+                            <button class="btn btn-primary update_all" id="update_all" name="update_all" value="1" style="display: none;" >Save All</button>
+                            <button class="btn btn-primary update_all" id="update_all" name="update_all" value="1"  >Save</button>
                         </div>
                     </div>
             </div>
@@ -242,10 +241,15 @@ $(document).ready(function(){
     updateGrandTotal();
     // getRow();
 });
+$(".heat_id").select2({
+        placeholder:"Select Heat Number",
+        allowedClear:true
+    });
 $('.sub_id').change(function (e) {
     e.preventDefault();
     getRow();
 });
+
     $('.select_all').on('click', function(e) {
           if($(this).is(':checked',true))
           {
@@ -253,6 +257,23 @@ $('.sub_id').change(function (e) {
           } else {
               $(".sub_id").prop('checked',false);
           }
+    });
+    $('.status_all').change(function (e) {
+        e.preventDefault();
+        var allStatus=$(this).val();
+        // alert(allStatus);
+        if (allStatus==0) {
+            alert('Please Select Other Status');
+        }
+        if (allStatus==1) {
+            $('#status').html('<option value="1"selected>APPROVED</option>');
+        }
+        if (allStatus==2) {
+            $('#status').html('<option value="2"selected>REJECTED</option>');
+        }
+        if (allStatus==3) {
+            $('#status').html('<option value="3"selected>ON-HOLD</option>');
+        }
     });
 
     function getRow(){
@@ -283,6 +304,7 @@ $('.sub_id').change(function (e) {
 
 
     $('.update_all').on('click', function(e) {
+
             var allVals = [];
             $(".sub_id:checked").each(function() {
                 allVals.push($(this).attr('data-id'));
@@ -319,7 +341,7 @@ $('.sub_id').change(function (e) {
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
-                });
+        });
     $(".save").click(function (e) {
             e.preventDefault();
             var allVals = [];
