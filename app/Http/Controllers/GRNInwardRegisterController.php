@@ -234,19 +234,95 @@ class GRNInwardRegisterController extends Controller
             $str='000001';
             $new_rcnumber=$current_rcno.$str;
         }
-        $grnDatas=DB::table('g_r_n_inward_registers as a')
-        ->join('heat_numbers AS b', 'a.id', '=', 'b.grnnumber_id')
-        ->select('a.id as grn_id','a.grnnumber')
-        ->where('b.status','=',1)
-        ->get();
+        $grnDatas=GRNInwardRegister::where('status','=',0)->select('id','grnnumber')->get();
         // dd($grnDatas);
         // dd($new_rcnumber);
         return view('rm_issuance.create',compact('grnDatas','new_rcnumber','current_date'));
     }
+
+    public function grnRmFetchData(Request $request){
+        // dd($request->all());
+        $grn_id=$request->grn_id;
+        $heatnNoDatas=DB::table('g_r_n_inward_registers as a')
+        ->join('heat_numbers AS b', 'a.id', '=', 'b.grnnumber_id')
+        ->select('a.id as grn_id','a.grnnumber','b.id as heat_id','b.heatnumber')
+        ->where('b.status','=',1)
+        ->where('a.status','=',0)
+        ->where('a.id','=',$grn_id)
+        ->get();
+
+        $rmDatas=DB::table('g_r_n_inward_registers as a')
+        ->join('p_o_product_details AS b', 'a.p_o_product_id', '=', 'b.id')
+        ->join('supplier_products as c', 'b.supplier_product_id', '=', 'c.id')
+        ->join('raw_materials as d', 'c.raw_material_id', '=', 'd.id')
+        ->join('bom_masters as e', 'e.rm_id', '=', 'd.id')
+        ->join('child_product_masters as f', 'e.child_part_id', '=', 'f.id')
+        ->join('mode_of_units as g', 'c.uom_id', '=', 'g.id')
+        ->select('a.grnnumber','d.id as rm_id','d.name as rm_desc','f.id as part_id','f.child_part_no as part_no','c.uom_id','g.name as uom_name')
+        ->where('a.status','=',0)
+        ->where('a.id','=',$grn_id)
+        ->get();
+
+        // dd($heatnNoDatas2);
+        // dd($rmDatas);
+        $heat_no='<option value="" selected>Select The Heat No</option>';
+        foreach ($heatnNoDatas as $key => $heatnNoData) {
+            $heat_no.='<option value="'.$heatnNoData->heatnumber.'">'.$heatnNoData->heatnumber.'</option>';
+        }
+        $uom='<option value="'.$rmDatas[0]->uom_id.'">'.$rmDatas[0]->uom_name.'</option>';
+        $rm='<option value="'.$rmDatas[0]->rm_id.'">'.$rmDatas[0]->rm_desc.'</option>';
+        $part='<option value="" selected>Select The RM</option>';
+        foreach ($rmDatas as $key => $rmData) {
+            $part.='<option value="'.$rmData->part_id.'">'.$rmData->part_no.'</option>';
+        }
+        return response()->json(['rm'=>$rm,'part'=>$part,'heat_no'=>$heat_no,'uom'=>$uom]);
+    }
+
+    public function grnHeatFetchData(Request $request){
+        $grn_id=$request->grn_id;
+        $heat_id=$request->heat_id;
+        $count=HeatNumber::where('heatnumber','=',$heat_id)->where('status','=',1)->get()->count();
+        if($count>0){
+            $heatDatas=HeatNumber::where('heatnumber','=',$heat_id)->where('status','=',1)->get();
+            $coil_no='<option value="" selected>Select The Coil No</option>';
+            foreach ($heatDatas as $key => $heatData) {
+                $coil_no.='<option value="'.$heatData->coil_no.'">'.$heatData->coil_no.'</option>';
+            }
+            return response()->json(['count'=>$count,'coil_no'=>$coil_no]);
+        }else{
+            return response()->json(['count'=>0]);
+        }
+    }
+
+    public function grnCoilFetchData(Request $request){
+        $grn_id=$request->grn_id;
+        $heat_no_id=$request->heat_id;
+        $coil_no=$request->coil_no;
+        $count=HeatNumber::where('heatnumber','=',$heat_no_id)->where('coil_no','=',$coil_no)->first()->count();
+        if($count>0){
+            $heatDatas=HeatNumber::where('heatnumber','=',$heat_no_id)->where('coil_no','=',$coil_no)->first();
+            $heat_id=$heatDatas->id;
+            $tc_no=$heatDatas->tc_no;
+            $lot_no=$heatDatas->lot_no;
+            $count2=GrnQuality::where('heat_no_id','=',$heat_id)->where('grnnumber_id','=',$grn_id)->first()->count();
+            if ($count2>0) {
+                $grnQcDatas=GrnQuality::where('heat_no_id','=',$heat_id)->where('grnnumber_id','=',$grn_id)->first();
+                $avl_qty=(($grnQcDatas->approved_qty)-($grnQcDatas->issue_qty)-($grnQcDatas->return_qty));
+                $grn_qc_id=$grnQcDatas->id;
+            }else{
+                $avl_qty=0;
+            }
+        return response()->json(['count'=>$count,'avl_qty'=>$avl_qty,'grn_qc_id'=>$grn_qc_id,'heat_id'=>$heat_id,'tc_no'=>$tc_no,'lot_no'=>$lot_no]);
+        }else{
+        return response()->json(['count'=>0]);
+        }
+
+    }
     public function storeData(Request $request)
     {
-        //
+        //grn_id
         dd($request->all());
+
     }
 
     /**

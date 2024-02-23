@@ -22,6 +22,8 @@ return new class extends Migration
             $table->float('approved_qty', 8, 2)->default(0);
             $table->float('onhold_qty', 8, 2)->default(0);
             $table->float('rejected_qty', 8, 2)->default(0);
+            $table->float('issue_qty', 8, 2)->default(0);
+            $table->float('return_qty', 8, 2)->default(0);
             $table->integer('status')->default(0);
             $table->integer('prepared_by');
             $table->integer('updated_by')->nullable();

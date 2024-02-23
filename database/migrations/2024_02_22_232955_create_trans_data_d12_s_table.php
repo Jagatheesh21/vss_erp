@@ -24,6 +24,9 @@ return new class extends Migration
             $table->float('reject_qty', 8, 2)->default(0);
             $table->float('rework_qty', 8, 2)->default(0);
             $table->float('issue_qty', 8, 2)->default(0);
+            $table->integer('grn_id')->nullable();
+            $table->integer('heat_id')->nullable();
+            $table->integer('coil_no')->nullable();
             $table->string('remarks')->nullable();
             $table->integer('status')->default(1);
             $table->integer('prepared_by');
