@@ -23,7 +23,7 @@
         <div class="row col-md-3"id="res"></div>
 
         <div class="card">
-            <div class="card-header d-flex" style="justify-content:space-between"><span> <b>RM Issuance Register</b></span><a class="btn btn-sm btn-primary" href="#">GRN Incoming QC List</a>
+            <div class="card-header d-flex" style="justify-content:space-between"><span> <b>RM Issuance Register</b></span><a class="btn btn-sm btn-primary" href="{{route('rmissuance.index')}}">RM Issuance List</a>
             </div>
             <div class="card-body">
                         <div class="row d-flex justify-content-center">
@@ -34,6 +34,17 @@
                                     <label for="rc_no">Route Card Number *</label>
                                     <input type="text" name="rc_no" id="rc_no" value="{{$new_rcnumber}}" class="form-control bg-light @error('rc_no') is-invalid @enderror" @readonly(true)>
                                     @error('rc_no')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="rc_date">Route Card Date *</label>
+                                    <input type="date" name="rc_date" id="rc_date" value="{{$current_date}}" readonly class="form-control bg-light @error('rc_date') is-invalid @enderror" >
+                                    @error('rc_date')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -56,17 +67,7 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="grndate">GRN Date *</label>
-                                    <input type="date" name="grndate" id="grndate" value="{{$current_date}}" readonly class="form-control bg-light @error('grndate') is-invalid @enderror" >
-                                    @error('grndate')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
-                            </div>
+
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="rm_id">RM Description *</label>

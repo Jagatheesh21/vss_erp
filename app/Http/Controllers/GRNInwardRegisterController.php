@@ -13,6 +13,7 @@ use App\Models\GRNInwardRegister;
 use App\Models\GrnQuality;
 use App\Models\PODetail;
 use App\Models\POProductDetail;
+use App\Models\ProductProcessMaster;
 use App\Models\HeatNumber;
 use App\Models\TransDataD11;
 use App\Models\TransDataD12;
@@ -217,6 +218,17 @@ class GRNInwardRegisterController extends Controller
         }
     }
 
+    public function rmIssuanceData(){
+        $d12Datas=DB::table('trans_data_d12_s as a')
+        ->join('heat_numbers AS b', 'a.heat_id', '=', 'b.id')
+        ->join('raw_materials AS c', 'a.rm_id', '=', 'c.id')
+        ->select('a.rc_no','a.open_date','a.rm_issue_qty','a.previous_rc_no','a.status','b.id as heat_id','b.heatnumber','b.tc_no','b.coil_no','c.name as rm_desc')
+        ->where('a.process_id','=',1)
+        ->orderBy('a.id', 'DESC')
+        ->get();
+        return view('rm_issuance.index',compact('d12Datas'));
+    }
+
     public function rmIssuance(){
         date_default_timezone_set('Asia/Kolkata');
         $current_date=date('Y-m-d');
@@ -227,9 +239,9 @@ class GRNInwardRegisterController extends Controller
         if ($count > 0) {
             $rc_data=TransDataD11::where('rc_no','LIKE','%'.$current_rcno.'%')->orderBy('rc_no', 'DESC')->first();
             $rcnumber=$rc_data['rc_no']??NULL;
-            $old_rcnumber=str_replace("G","",$rcnumber);
+            $old_rcnumber=str_replace("A","",$rcnumber);
             $old_rcnumber_data=str_pad($old_rcnumber+1,9,0,STR_PAD_LEFT);
-            $new_rcnumber='G'.$old_rcnumber_data;
+            $new_rcnumber='A'.$old_rcnumber_data;
         }else{
             $str='000001';
             $new_rcnumber=$current_rcno.$str;
@@ -320,9 +332,70 @@ class GRNInwardRegisterController extends Controller
     }
     public function storeData(Request $request)
     {
-        //grn_id
-        dd($request->all());
+        // dd($request->all());
+        DB::beginTransaction();
+        try {
+            // stock add in grn quality table
+            $grnqcDatas=GrnQuality::find($request->grn_qc_id);
+            $grnqcDatas->issue_qty=$request->issue_qty;
+            $grnqcDatas->updated_by = auth()->user()->id;
+            $grnqcDatas->update();
 
+            // stock add in grn inward table
+            $grnInwardDatas=GRNInwardRegister::find($request->grnnumber);
+            $total_issue_qty=(($grnInwardDatas->issued_qty)+($request->issue_qty));
+            $grnInwardDatas->issued_qty = $total_issue_qty;
+            $grnInwardDatas->updated_by = auth()->user()->id;
+            $grnInwardDatas->update();
+            // dd($total_issue_qty);
+
+            $part_id=$request->part_id;
+            $productProcess=ProductProcessMaster::where('part_id','=',$part_id)->where('status','=',1)->where('process_order_id','=',1)->first();
+            $nextproductProcess=ProductProcessMaster::where('part_id','=',$part_id)->where('status','=',1)->where('process_order_id','=',2)->first();
+            $current_processproduct_id=$productProcess->id;
+            $current_process_id=$productProcess->process_master_id;
+            // $next_processproduct_id=$nextproductProcess->id;
+            // $next_process_id=$nextproductProcess->process_master_id;
+            // dd($productProcess);
+
+            $d11Datas=new TransDataD11;
+            $d11Datas->open_date=$request->rc_date;
+            $d11Datas->rc_no=$request->rc_no;
+            $d11Datas->part_id=$request->part_id;
+            $d11Datas->process_id=$current_process_id;
+            $d11Datas->product_process_id=$current_processproduct_id;
+            $d11Datas->process_issue_qty=$request->issue_qty;
+            $d11Datas->prepared_by = auth()->user()->id;
+            $d11Datas->save();
+
+            $d12Datas=new TransDataD12;
+            $d12Datas->open_date=$request->rc_date;
+            $d12Datas->rc_no=$request->rc_no;
+            $d12Datas->previous_rc_no=$grnInwardDatas->grnnumber;
+            $d12Datas->part_id=$request->part_id;
+            $d12Datas->rm_id=$request->part_id;
+            $d12Datas->process_id=$current_process_id;
+            $d12Datas->product_process_id=$current_processproduct_id;
+            $d12Datas->rm_issue_qty=$request->issue_qty;
+            $d12Datas->grn_id=$request->grnnumber;
+            $d12Datas->heat_id=$request->heat_id;
+            $d12Datas->coil_no=$request->coil_no;
+            $d12Datas->prepared_by = auth()->user()->id;
+            $d12Datas->save();
+
+            $d13Datas=new TransDataD13;
+            $d13Datas->rc_id=$request->rc_no;
+            $d13Datas->previous_rc_id=$grnInwardDatas->grnnumber;
+            $d13Datas->prepared_by = auth()->user()->id;
+            $d13Datas->save();
+            DB::commit();
+            return back()->withSuccess('RM Issued is Created Successfully!');
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollback();
+            dd($th->getMessage());
+            return redirect()->back()->withErrors($th->getMessage());
+        }
     }
 
     /**
