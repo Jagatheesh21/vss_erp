@@ -25,7 +25,7 @@ use Carbon\Carbon;
 
 class StagewiseReceiveController extends Controller
 {
-    //
+    //Semi Finished Receive Entry  Start
     public function sfReceiveList(){
         $d12Datas=DB::table('trans_data_d12_s as a')
         ->join('item_procesmasters AS b', 'a.process_id', '=', 'b.id')
@@ -33,6 +33,7 @@ class StagewiseReceiveController extends Controller
         ->join('users AS d', 'a.prepared_by', '=', 'd.id')
         ->select('b.operation','b.id as process_id','a.open_date','a.rc_no','a.previous_rc_no','a.receive_qty','c.child_part_no as part_no','a.prepared_by','a.created_at','d.name as user_name')
         ->whereIn('process_id', [3,4,5])
+        ->whereRaw('a.rc_no=a.previous_rc_no')
         ->orderBy('a.id', 'DESC')
         ->get();
         // dd($d12Datas);
@@ -160,4 +161,8 @@ class StagewiseReceiveController extends Controller
             return redirect()->back()->withErrors($th->getMessage());
         }
     }
+
+    //Semi Finished Receive Entry  End
+
+
 }

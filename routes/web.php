@@ -17,6 +17,7 @@ use App\Http\Controllers\GrnQualityController;
 use App\Http\Controllers\HeatNumberController;
 use App\Http\Controllers\ItemProcesmasterController;
 use App\Http\Controllers\StagewiseReceiveController;
+use App\Http\Controllers\StagewiseIssueController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,6 +57,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('sf_receive/create', [StagewiseReceiveController::class,'sfReceiveCreateForm'])->name('sfreceive.create');
     Route::post('sf-receive', [StagewiseReceiveController::class,'sfReceiveEntry'])->name('sfreceive.store');
     Route::post('sf-receive/part_no', [StagewiseReceiveController::class,'sfPartFetchEntry'])->name('sfpartfetchdata');
+    Route::get('sf_issue/list', [StagewiseIssueController::class,'sfIssueList'])->name('sfissue');
+    Route::get('sf_issue/create', [StagewiseIssueController::class,'sfIssueCreateForm'])->name('sfissue.create');
+    Route::post('sf_issue', [StagewiseIssueController::class,'sfIssueEntry'])->name('sfissue.store');
+    Route::post('sf_issue/part_no', [StagewiseIssueController::class,'sfPartFetchEntry'])->name('sfpartfetchdata2');
 
 
     Route::resources([
