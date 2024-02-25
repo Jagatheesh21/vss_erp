@@ -15,10 +15,13 @@ return new class extends Migration
             $table->id();
             $table->date('open_date');
             $table->integer('process_id');
-            $table->string('process_name');
+            $table->integer('product_process_id');
             $table->integer('part_id');
+            $table->integer('rc_id');
+            $table->integer('previous_rc_id');
             $table->string('rc_no')->nullable();
             $table->string('previous_rc_no')->nullable();
+            $table->integer('rm_id')->default(0);
             $table->float('rm_issue_qty', 8, 2)->default(0);
             $table->float('receive_qty', 8, 2)->default(0);
             $table->float('reject_qty', 8, 2)->default(0);

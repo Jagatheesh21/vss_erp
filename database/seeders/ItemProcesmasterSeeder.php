@@ -15,71 +15,83 @@ class ItemProcesmasterSeeder extends Seeder
     {
         //
         $processMaster1 = ItemProcesmaster::create([
-            'operation' => 'Store',
+            'operation' => 'Purchase Order',
             'operation_type' => 'STOCKING POINT',
             'valuation_rate' => '0',
             'prepared_by'=>'1'
         ]);
         $processMaster2 = ItemProcesmaster::create([
+            'operation' => 'RM Inward',
+            'operation_type' => 'STOCKING POINT',
+            'valuation_rate' => '0',
+            'prepared_by'=>'1'
+        ]);
+        $processMaster3 = ItemProcesmaster::create([
+            'operation' => 'Store',
+            'operation_type' => 'STOCKING POINT',
+            'valuation_rate' => '0',
+            'prepared_by'=>'1'
+        ]);
+        $processMaster4 = ItemProcesmaster::create([
             'operation' => 'CNC',
             'operation_type' => 'OPERATION',
             'valuation_rate' => '70',
             'prepared_by'=>'1'
         ]);
-        $processMaster3 = ItemProcesmaster::create([
+        $processMaster5 = ItemProcesmaster::create([
             'operation' => 'Semifinished1',
             'operation_type' => 'STOCKING POINT',
             'valuation_rate' => '70',
             'prepared_by'=>'1'
         ]);
-        $processMaster4 = ItemProcesmaster::create([
+        $processMaster6 = ItemProcesmaster::create([
             'operation' => 'Semifinished2',
             'operation_type' => 'STOCKING POINT',
             'valuation_rate' => '70',
             'prepared_by'=>'1'
         ]);
-        $processMaster4 = ItemProcesmaster::create([
+        $processMaster7 = ItemProcesmaster::create([
             'operation' => 'Semifinished3',
             'operation_type' => 'STOCKING POINT',
             'valuation_rate' => '70',
             'prepared_by'=>'1'
         ]);
-        $processMaster5 = ItemProcesmaster::create([
+        $processMaster8 = ItemProcesmaster::create([
             'operation' => 'Manual Area - Big Spring',
             'operation_type' => 'OPERATION',
             'valuation_rate' => '70',
             'prepared_by'=>'1'
         ]);
 
-        $processMaster6 = ItemProcesmaster::create([
+        $processMaster9 = ItemProcesmaster::create([
             'operation' => 'Manual Area - End Grinding',
             'operation_type' => 'OPERATION',
             'valuation_rate' => '70',
             'prepared_by'=>'1'
         ]);
 
-        $processMaster7 = ItemProcesmaster::create([
+        $processMaster10 = ItemProcesmaster::create([
             'operation' => 'Manual Area - ABC Ring',
             'operation_type' => 'OPERATION',
             'valuation_rate' => '70',
             'prepared_by'=>'1'
         ]);
 
-        $processMaster8 = ItemProcesmaster::create([
+        $processMaster11 = ItemProcesmaster::create([
             'operation' => 'To S/C',
             'operation_type' => 'STOCKING POINT',
             'valuation_rate' => '70',
             'prepared_by'=>'1'
         ]);
 
-        $processMaster9 = ItemProcesmaster::create([
+        $processMaster12 = ItemProcesmaster::create([
             'operation' => 'From S/C',
             'operation_type' => 'STOCKING POINT',
             'valuation_rate' => '70',
             'prepared_by'=>'1'
         ]);
 
-        $processMaster10 = ItemProcesmaster::create([
+        $processMaster13 = ItemProcesmaster::create([
             'operation' => 'FG For Invoicing',
             'operation_type' => 'STOCKING POINT',
             'valuation_rate' => '90',

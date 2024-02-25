@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('trans_data_d13_s', function (Blueprint $table) {
+        Schema::create('route_masters', function (Blueprint $table) {
             $table->id();
-            $table->integer('rc_id')->unique();
-            $table->integer('previous_rc_id');
-            $table->string('rc_no')->unique();
-            $table->string('previous_rc_no')->nullable();
+            $table->date('create_date');
+            $table->integer('process_id');
+            $table->string('rc_id')->unique();
             $table->integer('status')->default(1);
             $table->integer('prepared_by');
             $table->integer('updated_by')->nullable();
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('trans_data_d13_s');
+        Schema::dropIfExists('route_masters');
     }
 };
