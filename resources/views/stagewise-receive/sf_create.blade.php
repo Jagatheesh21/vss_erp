@@ -23,16 +23,18 @@
         <div class="row col-md-3"id="res"></div>
 
         <div class="card">
-            <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Semi Finished Store Receive Register</b></span><a class="btn btn-sm btn-primary" href="{{route('rmissuance.index')}}">RM Issuance List</a>
+            <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Semi Finished Store Receive Register</b></span><a class="btn btn-sm btn-primary" href="{{route('sfreceive')}}">SF Receive List</a>
             </div>
             <div class="card-body">
                         <div class="row d-flex justify-content-center">
                             <input type="hidden" name="previous_process_id" id="previous_process_id">
                             <input type="hidden" name="previous_product_process_id" id="previous_product_process_id">
+                            <input type="hidden" name="next_process_id" id="next_process_id">
+
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="rc_no">Route Card Number *</label>
-                                    <select name="rc_no" class="form-control @error('rc_no') is-invalid @enderror"  id="rc_no">
+                                    <select name="rc_no" class="form-control @error('rc_no') is-invalid @enderror" @required(true) id="rc_no">
                                         <option value="" selected></option>
                                         @foreach ($d11Datas as $d11Data)
                                             <option value="{{$d11Data->rc_no}}" >{{$d11Data->rc_no}}</option>
@@ -69,6 +71,18 @@
                                     @enderror
                                 </div>
                             </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="next_productprocess_id">Stocking Point *</label>
+                                    <select name="next_productprocess_id" id="next_productprocess_id" class="form-control bg-light @error('next_productprocess_id') is-invalid @enderror" @readonly(true)>
+                                    </select>
+                                    @error('next_productprocess_id')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
                         </div>
                         <div class="row d-flex justify-content-center">
                             <div class="col-md-3">
@@ -96,7 +110,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="receive_kg">Receive Quantity IN KG *</label>
-                                    <input type="number" name="receive_kg" id="receive_kg" required min="0" class="form-control @error('receive_kg') is-invalid @enderror">
+                                    <input type="number" name="receive_kg" id="receive_kg" required min="0" step="0.0000000000000001" class="form-control @error('receive_kg') is-invalid @enderror">
                                     @error('receive_kg')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -217,7 +231,8 @@ $(document).ready(function(){
             success: function (response) {
                 // console.log(response);
                 if(response.success){
-                    if(response.message){
+                    if (response.process) {
+                        if(response.message){
                         $('#part_id').html(response.part);
                         $('#avl_kg').val(response.avl_kg);
                         $('#avl_qty').val(response.avl_qty);
@@ -227,8 +242,14 @@ $(document).ready(function(){
                         $('#inlineRadio1').hide();
                         $('#previous_process_id').val(response.process_id);
                         $('#previous_product_process_id').val(response.product_process_id);
-                    }else{
-                        alert('This Part Number is Not connected Item Process Master..So Please Contact Mr.PBR/ERP Team');
+                        $('#next_process_id').val(response.next_process_id);
+                        $('#next_productprocess_id').html(response.next_productprocess_id);
+
+                        }else{
+                            alert('This Part Number is Not connected Item Process Master..So Please Contact Mr.PPC/ERP Team');
+                        }
+                    } else {
+                        alert('This Part Number Process is Not connected SemiFinished Store..So Please Contact Mr.PPC/ERP Team');
                     }
                 }else{
                     var msg='Please Follow The FIFO ..Try RC No Is '+response.fifoRcNo;

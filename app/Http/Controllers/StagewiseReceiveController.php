@@ -20,6 +20,8 @@ use App\Models\TransDataD12;
 use App\Models\BomMaster;
 use App\Models\ChildProductMaster;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
 
 class StagewiseReceiveController extends Controller
 {
@@ -28,7 +30,8 @@ class StagewiseReceiveController extends Controller
         $d12Datas=DB::table('trans_data_d12_s as a')
         ->join('item_procesmasters AS b', 'a.process_id', '=', 'b.id')
         ->join('child_product_masters AS c', 'a.part_id', '=', 'c.id')
-        ->select('b.operation','b.id as process_id','a.open_date','a.rc_no','a.previous_rc_no','a.receive_qty','c.child_part_no as part_no','a.prepared_by','a.created_at')
+        ->join('users AS d', 'a.prepared_by', '=', 'd.id')
+        ->select('b.operation','b.id as process_id','a.open_date','a.rc_no','a.previous_rc_no','a.receive_qty','c.child_part_no as part_no','a.prepared_by','a.created_at','d.name as user_name')
         ->whereIn('process_id', [3,4,5])
         ->orderBy('a.id', 'DESC')
         ->get();
@@ -72,7 +75,25 @@ class StagewiseReceiveController extends Controller
             $avl_kg=$avl_qty*$bom;
             $process_id=$current_process_id;
             $product_process_id=$current_product_process_id;
-
+            $process_check1=ProductProcessMaster::whereIn('process_master_id',[3,4,5])->where('part_id','=',$part_id)->where('status','=',1)->orderBy('id', 'ASC')->count();
+            // dd($process_check1);
+            if ($process_check1==0) {
+                $process=false;
+                $next_process_id=0;
+                $next_productprocess_id='<option value=""></option>';
+            }else{
+                $process=true;
+                $process_checkData=DB::table('product_process_masters as a')
+                ->join('item_procesmasters AS b', 'a.process_master_id', '=', 'b.id')
+                ->select('b.operation','b.id as next_process_id','a.id as next_productprocess_id')
+                ->whereIn('process_master_id', [3,4,5])
+                ->where('part_id','=',$part_id)
+                ->orderBy('a.id', 'DESC')
+                ->first();
+                // dd($process_checkData);
+                $next_process_id=$process_checkData->next_process_id;
+                $next_productprocess_id='<option value="'.$process_checkData->next_productprocess_id.'">'.$process_checkData->operation.'</option>';
+            }
             $process_check=ProductProcessMaster::where('process_master_id','=',$process_id)->where('id','=',$current_product_process_id)->where('part_id','=',$part_id)->where('status','=',1)->orderBy('id', 'ASC')->count();
             if($process_check==0){
                 $message=false;
@@ -90,18 +111,53 @@ class StagewiseReceiveController extends Controller
             $process_id=0;
             $product_process_id=0;
             $message=false;
-
+            $process=false;
+            $next_process_id=0;
+            $next_productprocess_id='<option value=""></option>';
         }
 
         // dd($success);
 
-        return response()->json(['success'=>$success,'fifoRcNo'=>$fifoRcNo,'avl_qty'=>$avl_qty,'part'=>$part,'bom'=>$bom,'avl_kg'=>$avl_kg,'message'=>$message,'process_id'=>$process_id,'product_process_id'=>$product_process_id]);
+        return response()->json(['success'=>$success,'fifoRcNo'=>$fifoRcNo,'avl_qty'=>$avl_qty,'part'=>$part,'bom'=>$bom,'avl_kg'=>$avl_kg,'message'=>$message,'process_id'=>$process_id,'product_process_id'=>$product_process_id,'next_process_id'=>$next_process_id,'next_productprocess_id'=>$next_productprocess_id,'process'=>$process]);
 
         // $avl_qty=(($process_issue_qty)-($receive_qty)-($reject_qty)-($rework_qty));
         // dd($d11Datas->part_id);
     }
 
     public function sfReceiveEntry(Request $request){
-        dd($request->all());
+        // dd($request->all());
+        DB::beginTransaction();
+        try {
+            $d11Datas=TransDataD11::where('process_id','=',$request->previous_process_id)->where('product_process_id','=',$request->previous_product_process_id)->first();
+            if($request->rc_close=="yes"){
+                // dd($request->rc_date);
+                $d11Datas->close_date=$request->rc_date;
+                $d11Datas->status=0;
+            }
+            $d11Datas->receive_qty=$request->receive_qty;
+            $d11Datas->updated_by = auth()->user()->id;
+            $d11Datas->updated_at = Carbon::now();
+            $d11Datas->update();
+            // dd($d11Datas->receive_qty);
+
+            $d12Datas=new TransDataD12;
+            $d12Datas->open_date=$request->rc_date;
+            $d12Datas->rc_no=$request->rc_no;
+            $d12Datas->previous_rc_no=$request->rc_no;
+            $d12Datas->part_id=$request->part_id;
+            $d12Datas->rm_id=$request->part_id;
+            $d12Datas->process_id=$request->next_process_id;
+            $d12Datas->product_process_id=$request->next_productprocess_id;
+            $d12Datas->receive_qty=$request->receive_qty;
+            $d12Datas->prepared_by = auth()->user()->id;
+            $d12Datas->save();
+            DB::commit();
+            return back()->withSuccess('Part Received is Successfully!');
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollback();
+            dd($th->getMessage());
+            return redirect()->back()->withErrors($th->getMessage());
+        }
     }
 }

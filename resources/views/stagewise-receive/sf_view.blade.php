@@ -30,11 +30,12 @@
                                 <tr>
                                     <td>{{$loop->iteration}}</td>
                                     <td>{{$d12Data->open_date}}</td>
+                                    <td>{{$d12Data->operation}}</td>
                                     <td>{{$d12Data->part_no}}</td>
                                     <td>{{$d12Data->rc_no}}</td>
                                     <td>{{$d12Data->previous_rc_no}}</td>
                                     <td>{{$d12Data->receive_qty}}</td>
-                                    <td>{{$d12Data->prepared_by}}</td>
+                                    <td>{{$d12Data->user_name}}</td>
                                     <td>{{$d12Data->created_at}}</td>
                                 </tr>
                                 @empty
