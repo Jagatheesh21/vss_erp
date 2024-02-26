@@ -18,6 +18,7 @@ use App\Http\Controllers\HeatNumberController;
 use App\Http\Controllers\ItemProcesmasterController;
 use App\Http\Controllers\StagewiseReceiveController;
 use App\Http\Controllers\StagewiseIssueController;
+use App\Http\Controllers\GrnRejectionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,6 +81,7 @@ Route::middleware(['auth'])->group(function () {
         'grn_inward' => GRNInwardRegisterController::class,
         'grn_heat_no' => HeatNumberController::class,
         'grn_qc' => GrnQualityController::class,
+        'grnqcrejection' => GrnRejectionController::class,
         'process-master' => ItemProcesmasterController::class,
     ]);
 });

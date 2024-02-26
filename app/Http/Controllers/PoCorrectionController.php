@@ -72,7 +72,7 @@ class PoCorrectionController extends Controller
         $po_correction_data=PoCorrection::with(['podetails'])->where('id','=',$id)->get();
         $po_id=$po_correction_data[0]->po_id;
         $correction_id=$po_correction_data[0]->id;
-        $po_datas=PODetail::with(['supplier'])->where('id','=',$po_id)->where('status','!=',1)->get();
+        $po_datas=PODetail::with(['supplier','rcmaster'])->where('id','=',$po_id)->where('status','!=',1)->get();
         $total_rate=POProductDetail::where('po_id','=',$po_id)->sum('rate');
         dd($po_datas);
 

@@ -45,7 +45,7 @@
                                     <select name="po_id" id="po_id" class="form-control @error('po_id') is-invalid @enderror">
                                     <option value=""></option>
                                     @forelse ($po_datas as $code)
-                                        <option value="{{$code->id}}">{{$code->ponumber}}</option>
+                                        <option value="{{$code->id}}">{{$code->rcmaster->rc_id}}</option>
                                     @empty
                                     @endforelse
                                     </select>
@@ -398,7 +398,7 @@ $("#po_id").select2({
                             'GRN is Created Successfully!...',
                             'success'
                             );
-                            // location.reload(true);
+                            location.reload(true);
                         }
                     }
                 });

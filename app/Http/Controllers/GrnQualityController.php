@@ -11,6 +11,7 @@ use App\Models\Rackmaster;
 use App\Models\ModeOfUnit;
 use App\Models\GRNInwardRegister;
 use App\Models\GrnQuality;
+use App\Models\GrnRejection;
 use App\Models\PODetail;
 use App\Models\POProductDetail;
 use App\Models\HeatNumber;
@@ -85,6 +86,7 @@ class GrnQualityController extends Controller
     // 3-on-hold
         $grnqc_datas = DB::table('grn_qualities as j')
             ->join('g_r_n_inward_registers AS a', 'j.grnnumber_id', '=', 'a.id')
+            ->join('route_masters AS n', 'a.grnnumber', '=', 'n.id')
             ->join('heat_numbers AS h', 'j.heat_no_id', '=', 'h.id')
             ->join('rackmasters AS r', 'h.rack_id', '=', 'r.id')
             ->join('p_o_details AS b', 'a.po_id', '=', 'b.id')
@@ -93,7 +95,7 @@ class GrnQualityController extends Controller
             ->join('supplier_products AS e', 'c.supplier_product_id', '=', 'e.id')
             ->join('raw_material_categories AS f', 'e.raw_material_category_id', '=', 'f.id')
             ->join('raw_materials AS g', 'e.raw_material_id', '=', 'g.id')
-            ->select('j.id as id','a.id as grn_id','a.grnnumber',
+            ->select('j.id as id','a.id as grn_id','n.rc_id as grnnumber',
             'a.grndate',
             'b.ponumber',
             'd.name AS sc_name',
@@ -162,8 +164,10 @@ class GrnQualityController extends Controller
         $grnqc_datas = DB::table('grn_qualities AS a')
         ->join('heat_numbers AS b', 'a.heat_no_id', '=', 'b.id')
         ->join('g_r_n_inward_registers AS c', 'a.grnnumber_id', '=', 'c.id')
+        ->join('route_masters AS n', 'c.grnnumber', '=', 'n.id')
         ->join('rackmasters AS d', 'a.rack_id', '=', 'd.id')
         ->join('p_o_details AS e', 'c.po_id', '=', 'e.id')
+        ->join('route_masters AS o', 'e.ponumber', '=', 'o.id')
         ->join('p_o_product_details AS f', 'c.p_o_product_id', '=', 'f.id')
         ->join('suppliers AS g', 'e.supplier_id', '=', 'g.id')
         ->join('supplier_products AS h', 'f.supplier_product_id', '=', 'h.id')
@@ -172,14 +176,14 @@ class GrnQualityController extends Controller
         ->join('mode_of_units AS k', 'h.uom_id', '=', 'k.id')
         ->select('a.id AS id',
         'a.grnnumber_id AS grn_id',
-        'c.grnnumber',
+        'n.rc_id as grnnumber',
         'c.grndate',
         'c.invoice_number',
         'c.invoice_date',
         'c.dc_number',
         'c.dc_date',
         'e.id As po_id',
-        'e.ponumber',
+        'o.rc_id as ponumber',
         'g.id AS sc_id',
         'g.supplier_code AS sc_code',
         'g.name AS sc_name',
@@ -217,6 +221,7 @@ class GrnQualityController extends Controller
     public function update(UpdateGrnQualityRequest $request, GrnQuality $grnQuality)
     {
         //
+        // dd($request->select_all);
         DB::beginTransaction();
         try {
                 date_default_timezone_set('Asia/Kolkata');
@@ -231,6 +236,7 @@ class GrnQualityController extends Controller
                         if ($request->status[$key]==1) {
                             $grnQualityData=GrnQuality::find($sub_id);
                             $grnQualityData->status=$request->status[$key];
+                            $grnQualityData->reason=$request->reason[$key];
                             $grnQualityData->approved_qty=$request->coil_inward_qty[$key];
                             $grnQualityData->onhold_qty=0;
                             $grnQualityData->rejected_qty=0;
@@ -247,6 +253,7 @@ class GrnQualityController extends Controller
                         }elseif ($request->status[$key]==2) {
                             $grnQualityData=GrnQuality::find($sub_id);
                             $grnQualityData->status=$request->status[$key];
+                            $grnQualityData->reason=$request->reason[$key];
                             $grnQualityData->approved_qty=0;
                             $grnQualityData->rejected_qty=$request->coil_inward_qty[$key];
                             $grnQualityData->onhold_qty=0;
@@ -255,9 +262,20 @@ class GrnQualityController extends Controller
                             $grnQualityData->updated_by = auth()->user()->id;
                             $grnQualityData->update();
 
+                            $qc_id=$grnQualityData->id;
+
+                            $grnQcRejectionData=new GrnRejection;
+                            $grnQcRejectionData->grnnumber_id=$request->grnnumber;
+                            $grnQcRejectionData->heat_no_id=$request->heat_id;
+                            $grnQcRejectionData->grnqc_id=$qc_id;
+                            $grnQcRejectionData->reason=$request->reason[$key];
+                            $grnQualityData->prepared_by = auth()->user()->id;
+                            $grnQualityData->save();
+
                         }elseif ($request->status[$key]==3) {
                             $grnQualityData=GrnQuality::find($sub_id);
                             $grnQualityData->status=$request->status[$key];
+                            $grnQualityData->reason=$request->reason[$key];
                             $grnQualityData->approved_qty=0;
                             $grnQualityData->onhold_qty=$request->coil_inward_qty[$key];
                             $grnQualityData->rejected_qty=0;
@@ -276,7 +294,7 @@ class GrnQualityController extends Controller
                         ->select(DB::raw('SUM(approved_qty) as t_approved_qty'),DB::raw('SUM(onhold_qty) as t_onhold_qty'),DB::raw('SUM(rejected_qty) as t_rejected_qty'))
                         ->where('grnnumber_id','=',$grnQualityData->grnnumber_id)
                         ->first();
-
+                        // dd($grnqc_datas);
                         $grbInwardData=GRNInwardRegister::find($grnQualityData->grnnumber_id);
                         $grbInwardData->approved_qty=$grnqc_datas->t_approved_qty;
                         $grbInwardData->onhold_qty=$grnqc_datas->t_onhold_qty;
@@ -285,7 +303,9 @@ class GrnQualityController extends Controller
                         $grbInwardData->updated_by = auth()->user()->id;
                         $grbInwardData->update();
 
-                        $grbInwardData2=GRNInwardRegister::find($grnQualityData->grnnumber_id2);
+                        $grbInwardData2=GRNInwardRegister::find($grnQualityData->grnnumber_id);
+                        // dd($grbInwardData2);
+
                         $avl_qty=(($grbInwardData2->approved_qty)-($grbInwardData2->return_qty)-($grbInwardData2->return_dc_qty)-($grbInwardData2->issued_qty));
                         $grbInwardData2->avl_qty = $avl_qty;
                         $grbInwardData2->updated_by = auth()->user()->id;
@@ -307,6 +327,7 @@ class GrnQualityController extends Controller
                         }elseif ($status_all==2) {
                             $grnQualityData=GrnQuality::find($sub_id);
                             $grnQualityData->status=$request->status_all;
+                            $grnQualityData->reason=$request->reason_all;
                             $grnQualityData->approved_qty=0;
                             $grnQualityData->rejected_qty=$request->coil_inward_qty[$key];
                             $grnQualityData->onhold_qty=0;
@@ -314,9 +335,20 @@ class GrnQualityController extends Controller
                             $grnQualityData->inspected_date=$current_date;
                             $grnQualityData->updated_by = auth()->user()->id;
                             $grnQualityData->update();
+
+                            $qc_id=$grnQualityData->id;
+
+                            $grnQcRejectionData=new GrnRejection;
+                            $grnQcRejectionData->grnnumber_id=$request->grnnumber;
+                            $grnQcRejectionData->heat_no_id=$request->heat_id;
+                            $grnQcRejectionData->grnqc_id=$qc_id;
+                            $grnQcRejectionData->reason=$request->reason[$key];
+                            $grnQualityData->prepared_by = auth()->user()->id;
+                            $grnQualityData->save();
                         }elseif ($status_all==3) {
                             $grnQualityData=GrnQuality::find($sub_id);
                             $grnQualityData->status=$request->status_all;
+                            $grnQualityData->reason=$request->reason_all;
                             $grnQualityData->approved_qty=0;
                             $grnQualityData->onhold_qty=$request->coil_inward_qty[$key];
                             $grnQualityData->rejected_qty=0;
@@ -344,7 +376,9 @@ class GrnQualityController extends Controller
                         $grbInwardData->updated_by = auth()->user()->id;
                         $grbInwardData->update();
 
-                        $grbInwardData2=GRNInwardRegister::find($grnQualityData->grnnumber_id2);
+                        $grbInwardData2=GRNInwardRegister::find($grnQualityData->grnnumber_id);
+                        dd($grbInwardData2);
+
                         $avl_qty=(($grbInwardData2->approved_qty)-($grbInwardData2->return_qty)-($grbInwardData2->return_dc_qty)-($grbInwardData2->issued_qty));
                         $grbInwardData2->avl_qty = $avl_qty;
                         $grbInwardData2->updated_by = auth()->user()->id;
@@ -358,6 +392,8 @@ class GrnQualityController extends Controller
 
             } catch (\Throwable $th) {
                 //throw $th;
+            dd($th->getMessage());
+
                 DB::rollback();
                 return back()->withErrors($th->getMessage());
             }

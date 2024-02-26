@@ -24,4 +24,9 @@ class GRNInwardRegister extends Model
         return $this->belongsTo(Rackmaster::class,'rack_id');
     }
 
+    public function rcmaster()
+    {
+        return $this->belongsTo(RouteMaster::class,'grnnumber');
+    }
+
 }

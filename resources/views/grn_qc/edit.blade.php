@@ -162,6 +162,7 @@
                                     <th>Inspected By</th>
                                     <th>Inspected Date</th>
                                     <th>Status</th>
+                                    <th>Reason</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -194,6 +195,9 @@
                                             </span>
                                         @enderror
                                         </td>
+                                        <td>
+                                            <textarea name="reason[]" id="reason" class="form-control reason" cols="30" rows="5"></textarea>
+                                        </td>
                                     </tr>
                                     @empty
                                     <tr>
@@ -209,7 +213,6 @@
                         <div class="col-2"><h6>Grand Total:</h6></div>
                         <div class="col-2">
                             <input type="text" name="grand_total" class="form-control @error('grand_total') is-invalid @enderror" id="grand_total" readonly>
-
                         </div>
                     </div>
 
@@ -223,6 +226,15 @@
                                 <option value="2">REJECTED</option>
                                 <option value="3">ON-HOLD</option>
                             </select>
+                            @error('status_all')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                        </div>
+                        <div class="col-md-4">
+                            <label for="status_all">Reason All</label>
+                            <textarea name="reason_all" id="reason_all" class="form-control" cols="30" rows="5"  style="display: none;"></textarea>
                             @error('status_all')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -274,16 +286,24 @@ $('.sub_id').change(function (e) {
         // alert(allStatus);
         if (allStatus==0) {
             alert('Please Select Other Status');
+          $('#reason_all').hide();
+
         }
         if (allStatus==1) {
             $('#status').html('<option value="1"selected>APPROVED</option>');
+          $('#reason_all').hide();
+
         }
         if (allStatus==2) {
             $('#status').html('<option value="2"selected>REJECTED</option>');
+          $('#reason_all').show();
         }
         if (allStatus==3) {
             $('#status').html('<option value="3"selected>ON-HOLD</option>');
+          $('#reason_all').show();
+
         }
+
     });
 
     function getRow(){
@@ -309,7 +329,7 @@ $('.sub_id').change(function (e) {
 
     $('.status').change(function (event) {
         $(this).closest("tr").find('td .sub_id').prop('checked', true);
-        getRow();
+        // getRow();
     });
 
 
@@ -324,7 +344,7 @@ $('.sub_id').change(function (e) {
                 alert("Please select row.");
                 return false;
             }  else {
-                var check = confirm("Are you sure you want to delete this row?");
+                var check = confirm("Are you sure you want to submit inspection data this row?");
                 if(check == true){
                     var join_selected_values = allVals.join(",");
                     alert(join_selected_values);

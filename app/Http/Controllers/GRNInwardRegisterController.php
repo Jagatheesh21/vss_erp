@@ -18,6 +18,8 @@ use App\Models\HeatNumber;
 use App\Models\TransDataD11;
 use App\Models\TransDataD12;
 use App\Models\TransDataD13;
+use App\Models\ItemProcesmaster;
+use App\Models\RouteMaster;
 use App\Http\Requests\StoreGRNInwardRegisterRequest;
 use App\Http\Requests\UpdateGRNInwardRegisterRequest;
 use Illuminate\Support\Facades\Validator;
@@ -63,12 +65,14 @@ class GRNInwardRegisterController extends Controller
 
         $inward_datas = DB::table('g_r_n_inward_registers as a')
             ->join('p_o_details AS b', 'a.po_id', '=', 'b.id')
+            ->join('route_masters AS r', 'b.ponumber', '=', 'r.id')
+            ->join('route_masters AS h', 'a.grnnumber', '=', 'h.id')
             ->join('p_o_product_details AS c', 'a.p_o_product_id', '=', 'c.id')
             ->join('suppliers AS d', 'c.supplier_id', '=', 'd.id')
             ->join('supplier_products AS e', 'c.supplier_product_id', '=', 'e.id')
             ->join('raw_material_categories AS f', 'e.raw_material_category_id', '=', 'f.id')
             ->join('raw_materials AS g', 'e.raw_material_id', '=', 'g.id')
-            ->select('a.id as id','a.grnnumber', 'a.grndate', 'b.ponumber','d.name AS sc_name','d.supplier_code AS sc_code','f.name AS rm_category','g.name AS rm_desc','a.inward_qty','a.approved_qty', 'a.onhold_qty', 'a.rejected_qty', 'a.issued_qty', 'a.return_qty', 'a.return_dc_qty', 'a.avl_qty', 'a.grn_close_date', 'a.approved_status', 'a.status')
+            ->select('a.id as id','h.rc_id as grnnumber','r.rc_id as ponumber', 'a.grndate','d.name AS sc_name','d.supplier_code AS sc_code','f.name AS rm_category','g.name AS rm_desc','a.inward_qty','a.approved_qty', 'a.onhold_qty', 'a.rejected_qty', 'a.issued_qty', 'a.return_qty', 'a.return_dc_qty', 'a.avl_qty', 'a.grn_close_date', 'a.approved_status', 'a.status')
             ->get();
         // dd($inward_datas);
 
@@ -87,10 +91,14 @@ class GRNInwardRegisterController extends Controller
         $current_year=date('Y');
 		$rc="G";
 		$current_rcno=$rc.$current_year;
-        $count=GRNInwardRegister::where('grnnumber','LIKE','%'.$current_rcno.'%')->orderBy('grnnumber', 'DESC')->get()->count();
-        if ($count > 0) {
-            $po_data=GRNInwardRegister::where('grnnumber','LIKE','%'.$current_rcno.'%')->orderBy('grnnumber', 'DESC')->first();
-            $grnnumber=$po_data['grnnumber']??NULL;
+        $process=ItemProcesmaster::where('operation','=','RM Inward')->where('status','=',1)->first();
+        $process_id=$process->id;
+        $count1=RouteMaster::where('process_id','=',$process_id)->where('rc_id','LIKE','%'.$current_rcno.'%')->orderBy('rc_id', 'DESC')->get()->count();
+        // $count=GRNInwardRegister::where('grnnumber','LIKE','%'.$current_rcno.'%')->orderBy('grnnumber', 'DESC')->get()->count();
+        if ($count1 > 0) {
+            // $po_data=GRNInwardRegister::where('grnnumber','LIKE','%'.$current_rcno.'%')->orderBy('grnnumber', 'DESC')->first();
+            $po_data=RouteMaster::where('process_id','=',$process_id)->where('rc_id','LIKE','%'.$current_rcno.'%')->first();
+            $grnnumber=$po_data['rc_id']??NULL;
             $old_grnnumber=str_replace("G","",$grnnumber);
             $old_grnnumber_data=str_pad($old_grnnumber+1,9,0,STR_PAD_LEFT);
             $new_grnnumber='G'.$old_grnnumber_data;
@@ -166,8 +174,21 @@ class GRNInwardRegisterController extends Controller
                 return back()->withErrors($validator->messages()->all()[0]);
                 // return back()->with('toast_error', $validator->messages()->all()[0])->withInput();
             }else{
+                $process=ItemProcesmaster::where('operation','=','RM Inward')->where('status','=',1)->first();
+                $process_id=$process->id;
+
+                $rcMaster=new RouteMaster;
+                $rcMaster->create_date=$request->grndate;
+                $rcMaster->process_id=$process_id;
+                $rcMaster->rc_id=$request->grnnumber;
+                $rcMaster->prepared_by=auth()->user()->id;
+                $rcMaster->save();
+
+                $rcMasterData=RouteMaster::where('rc_id','=',$request->grnnumber)->where('process_id','=',$process_id)->first();
+                $rc_id=$rcMasterData->id;
+
                 $grn_datas = new GRNInwardRegister;
-                $grn_datas->grnnumber = $request->grnnumber;
+                $grn_datas->grnnumber = $rc_id;
                 $grn_datas->grndate = $request->grndate;
                 $grn_datas->po_id = $request->po_id;
                 $grn_datas->p_o_product_id = $request->rm_id;

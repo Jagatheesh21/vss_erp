@@ -9,6 +9,8 @@ use App\Models\SupplierProduct;
 use App\Models\Currency;
 use App\Models\POProductDetail;
 use App\Models\PODetail;
+use App\Models\RouteMaster;
+use App\Models\ItemProcesmaster;
 use App\Http\Requests\StorePODetailRequest;
 use App\Http\Requests\UpdatePODetailRequest;
 use Illuminate\Support\Facades\File;
@@ -22,7 +24,8 @@ class PODetailController extends Controller
     public function index()
     {
         //
-        $po_datas=PODetail::with(['supplier'])->get();
+        $po_datas=PODetail::with(['supplier','rcmaster'])->get();
+        // dd($po_datas[0]->rcmaster);
         // return view('po.index',compact('suppliers'));
         return view('po.index',compact('po_datas'));
     }
@@ -38,10 +41,14 @@ class PODetailController extends Controller
         $current_year=date('Y');
 		$rc="PO";
 		$current_rcno=$rc.$current_year;
-        $count=PODetail::where('ponumber','LIKE','%'.$current_rcno.'%')->orderBy('ponumber', 'DESC')->get()->count();
-        if ($count > 0) {
-            $po_data=PODetail::where('ponumber','LIKE','%'.$current_rcno.'%')->orderBy('ponumber', 'DESC')->first();
-            $ponumber=$po_data['ponumber']??NULL;
+        $process=ItemProcesmaster::where('operation','=','Purchase Order')->where('status','=',1)->first();
+        $process_id=$process->id;
+        $count1=RouteMaster::where('process_id','=',$process_id)->where('rc_id','LIKE','%'.$current_rcno.'%')->orderBy('rc_id', 'DESC')->get()->count();
+        // $count=PODetail::where('ponumber','LIKE','%'.$current_rcno.'%')->orderBy('ponumber', 'DESC')->get()->count();
+        if ($count1 > 0) {
+            // $po_data=PODetail::where('ponumber','LIKE','%'.$current_rcno.'%')->orderBy('ponumber', 'DESC')->first();
+            $po_data=RouteMaster::where('process_id','=',$process_id)->where('rc_id','LIKE','%'.$current_rcno.'%')->orderBy('rc_id', 'DESC')->first();
+            $ponumber=$po_data['rc_id']??NULL;
             $old_ponumber=str_replace("PO","",$ponumber);
             $old_ponumber_data=str_pad($old_ponumber+1,9,0,STR_PAD_LEFT);
             $new_ponumber='PO'.$old_ponumber_data;
@@ -163,7 +170,7 @@ class PODetailController extends Controller
     public function pocorrection(Request $request){
         $id=$request->id;
         $user_id=auth()->user()->id;
-        $po_datas=PODetail::with(['supplier'])->where('status','!=',1)->where('id','=',$id)->get();
+        $po_datas=PODetail::with(['supplier','rcmaster'])->where('status','!=',1)->where('id','=',$id)->get();
         $total_rate=POProductDetail::where('po_id','=',$id)->sum('rate');
         return view('po_correction.create',compact('po_datas','total_rate'));
     }
@@ -175,8 +182,21 @@ class PODetailController extends Controller
     {
         DB::beginTransaction();
         try {
+            $process=ItemProcesmaster::where('operation','=','Purchase Order')->where('status','=',1)->first();
+            $process_id=$process->id;
+
+            $rcMaster=new RouteMaster;
+            $rcMaster->create_date=$request->podate;
+            $rcMaster->process_id=$process_id;
+            $rcMaster->rc_id=$request->ponumber;
+            $rcMaster->prepared_by=auth()->user()->id;
+            $rcMaster->save();
+
+            $rcMasterData=RouteMaster::where('rc_id','=',$request->ponumber)->where('process_id','=',$process_id)->first();
+            $rc_id=$rcMasterData->id;
+
             $po_datas = new PODetail;
-            $po_datas->ponumber = $request->ponumber;
+            $po_datas->ponumber = $rc_id;
             $po_datas->podate = $request->podate;
             $po_datas->purchasetype = $request->purchasetype;
             $po_datas->payment_terms = $request->payment_terms;

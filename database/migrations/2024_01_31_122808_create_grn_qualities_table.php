@@ -24,7 +24,8 @@ return new class extends Migration
             $table->float('rejected_qty', 8, 2)->default(0);
             $table->float('issue_qty', 8, 2)->default(0);
             $table->float('return_qty', 8, 2)->default(0);
-            $table->integer('status')->default(0);
+            $table->string('reason')->default(0);
+            $table->integer('status')->nullable();
             $table->integer('prepared_by');
             $table->integer('updated_by')->nullable();
             $table->timestamps();
