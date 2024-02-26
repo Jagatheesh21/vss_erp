@@ -177,6 +177,9 @@ class GRNInwardRegisterController extends Controller
                 $process=ItemProcesmaster::where('operation','=','RM Inward')->where('status','=',1)->first();
                 $process_id=$process->id;
 
+                $poDatas=PODetail::find($request->po_id);
+                $pre_rc_id=$poDatas->ponumber;
+
                 $rcMaster=new RouteMaster;
                 $rcMaster->create_date=$request->grndate;
                 $rcMaster->process_id=$process_id;
@@ -186,6 +189,12 @@ class GRNInwardRegisterController extends Controller
 
                 $rcMasterData=RouteMaster::where('rc_id','=',$request->grnnumber)->where('process_id','=',$process_id)->first();
                 $rc_id=$rcMasterData->id;
+
+                $d13Datas=new TransDataD13;
+                $d13Datas->rc_id=$rc_id;
+                $d13Datas->previous_rc_id=$pre_rc_id;
+                $d13Datas->prepared_by = auth()->user()->id;
+                $d13Datas->save();
 
                 $grn_datas = new GRNInwardRegister;
                 $grn_datas->grnnumber = $rc_id;
@@ -243,10 +252,13 @@ class GRNInwardRegisterController extends Controller
         $d12Datas=DB::table('trans_data_d12_s as a')
         ->join('heat_numbers AS b', 'a.heat_id', '=', 'b.id')
         ->join('raw_materials AS c', 'a.rm_id', '=', 'c.id')
-        ->select('a.rc_no','a.open_date','a.rm_issue_qty','a.previous_rc_no','a.status','b.id as heat_id','b.heatnumber','b.tc_no','b.coil_no','c.name as rm_desc')
-        ->where('a.process_id','=',1)
+        ->join('route_masters AS d', 'a.rc_id', '=', 'd.id')
+        ->join('route_masters AS e', 'a.previous_rc_id', '=', 'e.id')
+        ->select('d.rc_id as rc_no','a.open_date','a.rm_issue_qty','e.rc_id as previous_rc_no','a.status','b.id as heat_id','b.heatnumber','b.tc_no','b.coil_no','c.name as rm_desc')
+        ->where('a.process_id','=',3)
         ->orderBy('a.id', 'DESC')
         ->get();
+        // dd($d12Datas);
         return view('rm_issuance.index',compact('d12Datas'));
     }
 
@@ -256,10 +268,14 @@ class GRNInwardRegisterController extends Controller
         $current_year=date('Y');
 		$rc="A";
 		$current_rcno=$rc.$current_year;
-        $count=TransDataD11::where('rc_no','LIKE','%'.$current_rcno.'%')->orderBy('rc_no', 'DESC')->get()->count();
-        if ($count > 0) {
-            $rc_data=TransDataD11::where('rc_no','LIKE','%'.$current_rcno.'%')->orderBy('rc_no', 'DESC')->first();
-            $rcnumber=$rc_data['rc_no']??NULL;
+        $process=ItemProcesmaster::where('operation','=','Store')->where('status','=',1)->first();
+        $process_id=$process->id;
+        $count1=RouteMaster::where('process_id','=',$process_id)->where('rc_id','LIKE','%'.$current_rcno.'%')->orderBy('rc_id', 'DESC')->get()->count();
+        // $count=TransDataD11::where('rc_no','LIKE','%'.$current_rcno.'%')->orderBy('rc_no', 'DESC')->get()->count();
+        if ($count1 > 0) {
+            // $rc_data=TransDataD11::where('rc_no','LIKE','%'.$current_rcno.'%')->orderBy('rc_no', 'DESC')->first();
+            $rc_data=RouteMaster::where('process_id','=',$process_id)->where('rc_id','LIKE','%'.$current_rcno.'%')->orderBy('rc_id', 'DESC')->first();
+            $rcnumber=$rc_data['rc_id']??NULL;
             $old_rcnumber=str_replace("A","",$rcnumber);
             $old_rcnumber_data=str_pad($old_rcnumber+1,9,0,STR_PAD_LEFT);
             $new_rcnumber='A'.$old_rcnumber_data;
@@ -267,7 +283,14 @@ class GRNInwardRegisterController extends Controller
             $str='000001';
             $new_rcnumber=$current_rcno.$str;
         }
-        $grnDatas=GRNInwardRegister::where('status','=',0)->select('id','grnnumber')->get();
+        // $grnDatas=GRNInwardRegister::where('status','=',0)->select('id','grnnumber')->get();
+        $grnDatas=DB::table('g_r_n_inward_registers as a')
+        ->join('heat_numbers AS b', 'a.id', '=', 'b.grnnumber_id')
+        ->join('route_masters AS n', 'a.grnnumber', '=', 'n.id')
+        ->select('a.id as id','n.rc_id as grnnumber')
+        ->where('b.status','=',1)
+        ->where('a.status','=',0)
+        ->get();
         // dd($grnDatas);
         // dd($new_rcnumber);
         return view('rm_issuance.create',compact('grnDatas','new_rcnumber','current_date'));
@@ -356,11 +379,17 @@ class GRNInwardRegisterController extends Controller
         // dd($request->all());
         DB::beginTransaction();
         try {
-            // stock add in grn quality table
-            $grnqcDatas=GrnQuality::find($request->grn_qc_id);
-            $grnqcDatas->issue_qty=$request->issue_qty;
-            $grnqcDatas->updated_by = auth()->user()->id;
-            $grnqcDatas->update();
+
+            $process=ItemProcesmaster::where('operation','=','Store')->where('status','=',1)->first();
+            // dd($process);
+            $process_id=$process->id;
+
+            $rcMaster=new RouteMaster;
+            $rcMaster->create_date=$request->rc_date;
+            $rcMaster->process_id=$process_id;
+            $rcMaster->rc_id=$request->rc_no;
+            $rcMaster->prepared_by=auth()->user()->id;
+            $rcMaster->save();
 
             // stock add in grn inward table
             $grnInwardDatas=GRNInwardRegister::find($request->grnnumber);
@@ -368,33 +397,78 @@ class GRNInwardRegisterController extends Controller
             $grnInwardDatas->issued_qty = $total_issue_qty;
             $grnInwardDatas->updated_by = auth()->user()->id;
             $grnInwardDatas->update();
-            // dd($total_issue_qty);
 
+            // dd($grnInwardDatas->grnnumber);
+            $rcMasterData=RouteMaster::where('rc_id','=',$request->rc_no)->where('process_id','=',$process_id)->first();
+            $rc_id=$rcMasterData->id;
+            // dd($rcMasterData);
+
+            // stock add in grn quality table
+            $grnqcDatas=GrnQuality::find($request->grn_qc_id);
+            $grnqcDatas->issue_qty=$request->issue_qty;
+            $grnqcDatas->updated_by = auth()->user()->id;
+            $grnqcDatas->update();
+
+
+
+            // dd($total_issue_qty);
             $part_id=$request->part_id;
-            $productProcess=ProductProcessMaster::where('part_id','=',$part_id)->where('status','=',1)->where('process_order_id','=',1)->first();
-            $nextproductProcess=ProductProcessMaster::where('part_id','=',$part_id)->where('status','=',1)->where('process_order_id','=',2)->first();
+            $productProcess=DB::table('item_procesmasters as a')
+            ->join('product_process_masters AS b', 'a.id', '=', 'b.process_master_id')
+            ->join('child_product_masters as c', 'b.part_id', '=', 'c.id')
+            ->select('b.process_master_id as process_id','b.process_order_id','b.id')
+            ->where('a.operation','=','Store')
+            ->where('a.status','=',1)
+            ->where('c.id','=',$part_id)
+            ->first();
+            // dd($productProcess);
+
             $current_processproduct_id=$productProcess->id;
-            $current_process_id=$productProcess->process_master_id;
+            $current_process_id=$productProcess->process_id;
+            $current_order_id=$productProcess->process_order_id;
+
+            $next_productProcess=DB::table('item_procesmasters as a')
+            ->join('product_process_masters AS b', 'a.id', '=', 'b.process_master_id')
+            ->join('child_product_masters as c', 'b.part_id', '=', 'c.id')
+            ->select('b.process_master_id as process_id','b.process_order_id','b.id')
+            ->where('a.operation_type','=','STOCKING POINT')
+            ->where('b.process_order_id','>',$current_order_id)
+            ->where('a.status','=',1)
+            ->where('b.status','=',1)
+            ->where('c.id','=',$part_id)
+            ->first();
+            // dd($next_productProcess);
+
+            $next_processproduct_id=$next_productProcess->id;
+            $next_process_id=$next_productProcess->process_id;
+            $next_order_id=$next_productProcess->process_order_id;
+            // $productProcess=ProductProcessMaster::where('part_id','=',$part_id)->where('status','=',1)->where('process_order_id','=',1)->first();
+            // $nextproductProcess=ProductProcessMaster::where('part_id','=',$part_id)->where('status','=',1)->where('process_order_id','=',2)->first();
+            // $current_processproduct_id=$productProcess->id;
+            // $current_process_id=$productProcess->process_master_id;
+
+
             // $next_processproduct_id=$nextproductProcess->id;
             // $next_process_id=$nextproductProcess->process_master_id;
-            // dd($productProcess);
 
             $d11Datas=new TransDataD11;
             $d11Datas->open_date=$request->rc_date;
-            $d11Datas->rc_no=$request->rc_no;
+            $d11Datas->rc_id=$rc_id;
             $d11Datas->part_id=$request->part_id;
             $d11Datas->process_id=$current_process_id;
             $d11Datas->product_process_id=$current_processproduct_id;
+            $d11Datas->next_process_id=$next_process_id;
+            $d11Datas->next_product_process_id=$next_processproduct_id;
             $d11Datas->process_issue_qty=$request->issue_qty;
             $d11Datas->prepared_by = auth()->user()->id;
             $d11Datas->save();
 
             $d12Datas=new TransDataD12;
             $d12Datas->open_date=$request->rc_date;
-            $d12Datas->rc_no=$request->rc_no;
-            $d12Datas->previous_rc_no=$grnInwardDatas->grnnumber;
+            $d12Datas->rc_id=$rc_id;
+            $d12Datas->previous_rc_id=$grnInwardDatas->grnnumber;
             $d12Datas->part_id=$request->part_id;
-            $d12Datas->rm_id=$request->part_id;
+            $d12Datas->rm_id=$request->rm_id;
             $d12Datas->process_id=$current_process_id;
             $d12Datas->product_process_id=$current_processproduct_id;
             $d12Datas->rm_issue_qty=$request->issue_qty;
@@ -405,10 +479,11 @@ class GRNInwardRegisterController extends Controller
             $d12Datas->save();
 
             $d13Datas=new TransDataD13;
-            $d13Datas->rc_id=$request->rc_no;
+            $d13Datas->rc_id=$rc_id;
             $d13Datas->previous_rc_id=$grnInwardDatas->grnnumber;
             $d13Datas->prepared_by = auth()->user()->id;
             $d13Datas->save();
+
             DB::commit();
             return back()->withSuccess('RM Issued is Created Successfully!');
         } catch (\Throwable $th) {

@@ -221,7 +221,9 @@ class GrnQualityController extends Controller
     public function update(UpdateGrnQualityRequest $request, GrnQuality $grnQuality)
     {
         //
-        // dd($request->select_all);
+                // dd($request->select_all);
+
+        // dd($request->all());
         DB::beginTransaction();
         try {
                 date_default_timezone_set('Asia/Kolkata');
@@ -232,6 +234,7 @@ class GrnQualityController extends Controller
                 $status_all=$request->status_all;
                 // dd($select_all??NULL);
                 if($select_all==NULL){
+                    // dd($request->status);
                     foreach ($sub_ids as $key => $sub_id) {
                         if ($request->status[$key]==1) {
                             $grnQualityData=GrnQuality::find($sub_id);
