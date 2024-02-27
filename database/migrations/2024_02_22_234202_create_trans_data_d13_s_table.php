@@ -15,8 +15,6 @@ return new class extends Migration
             $table->id();
             $table->integer('rc_id')->unique();
             $table->integer('previous_rc_id');
-            $table->string('rc_no')->unique();
-            $table->string('previous_rc_no')->nullable();
             $table->integer('status')->default(1);
             $table->integer('prepared_by');
             $table->integer('updated_by')->nullable();

@@ -302,7 +302,7 @@ class GrnQualityController extends Controller
                         $grbInwardData->approved_qty=$grnqc_datas->t_approved_qty;
                         $grbInwardData->onhold_qty=$grnqc_datas->t_onhold_qty;
                         $grbInwardData->rejected_qty=$grnqc_datas->t_rejected_qty;
-                        $grbInwardData->status=$request->status[$key];
+                        $grbInwardData->approved_status=$request->status[$key];
                         $grbInwardData->updated_by = auth()->user()->id;
                         $grbInwardData->update();
 
@@ -375,7 +375,7 @@ class GrnQualityController extends Controller
                         $grbInwardData->approved_qty=$grnqc_datas->t_approved_qty;
                         $grbInwardData->onhold_qty=$grnqc_datas->t_onhold_qty;
                         $grbInwardData->rejected_qty=$grnqc_datas->t_rejected_qty;
-                        $grbInwardData->status=$request->status_all;
+                        $grbInwardData->approved_status=$request->status_all;
                         $grbInwardData->updated_by = auth()->user()->id;
                         $grbInwardData->update();
 

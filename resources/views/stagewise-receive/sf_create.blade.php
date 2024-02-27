@@ -37,7 +37,7 @@
                                     <select name="rc_no" class="form-control @error('rc_no') is-invalid @enderror" @required(true) id="rc_no">
                                         <option value="" selected></option>
                                         @foreach ($d11Datas as $d11Data)
-                                            <option value="{{$d11Data->rc_no}}" >{{$d11Data->rc_no}}</option>
+                                            <option value="{{$d11Data->rcmaster->id}}" >{{$d11Data->rcmaster->rc_id}}</option>
                                         @endforeach
                                     </select>
                                     @error('rc_no')

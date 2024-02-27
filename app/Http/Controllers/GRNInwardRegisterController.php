@@ -290,6 +290,7 @@ class GRNInwardRegisterController extends Controller
         ->select('a.id as id','n.rc_id as grnnumber')
         ->where('b.status','=',1)
         ->where('a.status','=',0)
+        ->groupBy('a.id')
         ->get();
         // dd($grnDatas);
         // dd($new_rcnumber);

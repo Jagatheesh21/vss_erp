@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('child_part_no');
             $table->integer('part_id');
             $table->integer('product_type')->default(1);
+            $table->integer('machine_id')->default(1);
             $table->integer('status')->default(1);
             $table->integer('prepared_by');
             $table->integer('updated_by')->nullable();

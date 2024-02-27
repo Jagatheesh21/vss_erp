@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('trans_data_d11_s', function (Blueprint $table) {
             $table->id();
             $table->date('open_date');
-            $table->integer('rc_id');
-            $table->string('rc_no')->unique();
+            $table->integer('rc_id')->unique();
             $table->integer('part_id');
             $table->integer('process_id');
             $table->integer('product_process_id');

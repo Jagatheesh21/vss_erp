@@ -3,7 +3,7 @@
 
 @endpush
 @section('content')
-<form action="{{route('sfreceive.store')}}" id="sf_receive_formdata" method="POST">
+<form action="{{route('sfissue.store')}}" id="sfissue_formdata" method="POST">
     @csrf
     @method('POST')
 
@@ -27,20 +27,20 @@
             </div>
             <div class="card-body">
                         <div class="row d-flex justify-content-center">
-                            <input type="hidden" name="previous_process_id" id="previous_process_id">
-                            <input type="hidden" name="previous_product_process_id" id="previous_product_process_id">
                             <input type="hidden" name="next_process_id" id="next_process_id">
+                            <input type="hidden" name="next_product_process_id" id="next_product_process_id">
+                            <input type="hidden" name="previous_product_process_id" id="previous_product_process_id">
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="rc_no">Route Card Number *</label>
-                                    <select name="rc_no" class="form-control @error('rc_no') is-invalid @enderror" @required(true) id="rc_no">
+                                    <label for="pre_rc_no">Previous Route Card Number *</label>
+                                    <select name="pre_rc_no" class="form-control @error('pre_rc_no') is-invalid @enderror" @required(true) id="pre_rc_no">
                                         <option value="" selected></option>
                                         @foreach ($d11Datas as $d11Data)
-                                            <option value="{{$d11Data->rc_no}}" >{{$d11Data->rc_no}}</option>
+                                            <option value="{{$d11Data->id}}" >{{$d11Data->rc_no}}</option>
                                         @endforeach
                                     </select>
-                                    @error('rc_no')
+                                    @error('pre_rc_no')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -73,10 +73,10 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="next_productprocess_id">Stocking Point *</label>
-                                    <select name="next_productprocess_id" id="next_productprocess_id" class="form-control bg-light @error('next_productprocess_id') is-invalid @enderror" @readonly(true)>
+                                    <label for="previous_process_id">Stocking Point *</label>
+                                    <select name="previous_process_id" id="previous_process_id" class="form-control bg-light @error('previous_process_id') is-invalid @enderror" @readonly(true)>
                                     </select>
-                                    @error('next_productprocess_id')
+                                    @error('previous_process_id')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -85,11 +85,12 @@
                             </div>
                         </div>
                         <div class="row d-flex justify-content-center">
+
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="avl_kg">Available Stock (In KG) *</label>
-                                    <input type="number" name="avl_kg" id="avl_kg"  class="form-control bg-light @error('avl_kg') is-invalid @enderror" @readonly(true)>
-                                    @error('avl_kg')
+                                    <label for="rc_no">Route Card Number *</label>
+                                    <input type="text" name="rc_no" id="rc_no"  class="form-control bg-light @error('rc_no') is-invalid @enderror" @readonly(true)>
+                                    @error('rc_no')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -107,21 +108,11 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="receive_kg">Receive Quantity IN KG *</label>
-                                    <input type="number" name="receive_kg" id="receive_kg" required min="0" step="0.0000000000000001" class="form-control @error('receive_kg') is-invalid @enderror">
-                                    @error('receive_kg')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
-                            </div>
+
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="receive_qty">Receive Quantity In Numbers*</label>
-                                    <input type="number" name="receive_qty" id="receive_qty" required min="0" class="form-control bg-light @error('receive_qty') is-invalid @enderror" @readonly(true)>
+                                    <input type="number" name="receive_qty" id="receive_qty" required min="0" class="form-control @error('receive_qty') is-invalid @enderror">
                                     @error('receive_qty')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -205,7 +196,7 @@ $(document).ready(function(){
 
 });
 
-    $("#rc_no").select2({
+    $("#pre_rc_no").select2({
         placeholder:"Select Route Card Number",
         allowedClear:true
     });
@@ -216,7 +207,7 @@ $(document).ready(function(){
         location.reload(true);
     });
 
-    $('#rc_no').change(function (e) {
+    $('#pre_rc_no').change(function (e) {
         e.preventDefault();
         var rc_no=$(this).val();
         // alert(rc_no);
@@ -230,6 +221,16 @@ $(document).ready(function(){
             },
             success: function (response) {
                  console.log(response);
+                 $('#part_id').html(response.part);
+                 $('#avl_qty').val(response.avl_qty);
+                 $('#previous_process_id').html(response.process);
+                 $('#previous_product_process_id').val(response.current_product_process_id);
+                 $('#next_process_id').val(response.next_process_id);
+                 $('#next_product_process_id').val(response.next_productprocess_id);
+                 $('#bom').val(response.bom);
+                 $('#receive_qty').attr('max', response.avl_qty);
+                 $('#receive_qty').attr('min', 0);
+                 $('#rc_no').val(response.rcno);
             }
         });
         }
@@ -249,29 +250,20 @@ $(document).ready(function(){
         }
     });
 
-    $('#receive_kg').change(function (e) {
+    $('#receive_qty').change(function (e) {
         e.preventDefault();
-        var bom_kg=$('#bom').val();
-        var receive_wt=$(this).val();
-        if (bom_kg!=''&&receive_wt!='') {
-            var nos=receive_wt/bom_kg;
-            var bom= Math.floor(nos);
-            if (bom) {
-                $('#receive_qty').val(bom);
-                var avl_kg=$('#avl_kg').val();
-                var diff=avl_kg-receive_wt;
-                // alert(diff);
-                if(diff < 1){
+        var receive_qty=$(this).val();
+        var avl_qty=$('#avl_qty').val();
+        if (avl_qty!=''&&receive_qty!='') {
+                var diff=avl_qty-receive_qty;
+                if(diff == 0){
                     $('#inlineRadio1').show();
                 }else{
                     $('#inlineRadio1').hide();
                 }
-            }
-
         }else{
-            alert('Please Check The Receive Weight And BOM...');
+            alert('Please Check The Receive Quantity And Part Available Quantity...');
             $('#inlineRadio1').hide();
-
         }
     });
 

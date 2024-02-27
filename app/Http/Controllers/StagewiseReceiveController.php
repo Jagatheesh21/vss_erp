@@ -31,9 +31,11 @@ class StagewiseReceiveController extends Controller
         ->join('item_procesmasters AS b', 'a.process_id', '=', 'b.id')
         ->join('child_product_masters AS c', 'a.part_id', '=', 'c.id')
         ->join('users AS d', 'a.prepared_by', '=', 'd.id')
-        ->select('b.operation','b.id as process_id','a.open_date','a.rc_no','a.previous_rc_no','a.receive_qty','c.child_part_no as part_no','a.prepared_by','a.created_at','d.name as user_name')
-        ->whereIn('process_id', [3,4,5])
-        ->whereRaw('a.rc_no=a.previous_rc_no')
+        ->join('route_masters AS e', 'a.rc_id', '=', 'e.id')
+        ->join('route_masters AS f', 'a.previous_rc_id', '=', 'f.id')
+        ->select('b.operation','b.id as process_id','a.open_date','e.rc_id as rc_no','f.rc_id as previous_rc_no','a.receive_qty','c.child_part_no as part_no','a.prepared_by','a.created_at','d.name as user_name')
+        ->whereIn('a.process_id', [6,7,8])
+        ->whereRaw('a.rc_id=a.previous_rc_id')
         ->orderBy('a.id', 'DESC')
         ->get();
         // dd($d12Datas);
@@ -42,7 +44,7 @@ class StagewiseReceiveController extends Controller
     public function sfReceiveCreateForm(){
         date_default_timezone_set('Asia/Kolkata');
         $current_date=date('Y-m-d');
-        $d11Datas=TransDataD11::where('process_id','=',1)->where('status','=',1)->get();
+        $d11Datas=TransDataD11::where('process_id','=',3)->where('status','=',1)->get();
         return view('stagewise-receive.sf_create',compact('d11Datas','current_date'));
     }
 
@@ -50,7 +52,8 @@ class StagewiseReceiveController extends Controller
         // $request->all();
         // dd($request->all());
         $rc_no=$request->rc_no;
-        $d11Datas=TransDataD11::where('process_id','=',1)->where('rc_no','=',$rc_no)->where('status','=',1)->first();
+        $d11Datas=TransDataD11::where('process_id','=',3)->where('rc_id','=',$rc_no)->where('status','=',1)->first();
+        // dd($d11Datas);
         $part_id=$d11Datas->part_id;
         $current_process_id=$d11Datas->process_id;
         $current_product_process_id=$d11Datas->product_process_id;
@@ -64,8 +67,8 @@ class StagewiseReceiveController extends Controller
 
         $partCheck=ChildProductMaster::find($part_id);
         $part_no=$partCheck->child_part_no;
-        $fifoCheck=TransDataD11::where('process_id','=',1)->where('part_id','=',$part_id)->where('status','=',1)->orderBy('id', 'ASC')->first();
-        $fifoRcNo=$fifoCheck->rc_no;
+        $fifoCheck=TransDataD11::where('process_id','=',3)->where('part_id','=',$part_id)->where('status','=',1)->orderBy('id', 'ASC')->first();
+        $fifoRcNo=$fifoCheck->rc_id;
 
         if($rc_no==$fifoRcNo){
             $success = true;
@@ -76,7 +79,7 @@ class StagewiseReceiveController extends Controller
             $avl_kg=$avl_qty*$bom;
             $process_id=$current_process_id;
             $product_process_id=$current_product_process_id;
-            $process_check1=ProductProcessMaster::whereIn('process_master_id',[3,4,5])->where('part_id','=',$part_id)->where('status','=',1)->orderBy('id', 'ASC')->count();
+            $process_check1=ProductProcessMaster::whereIn('process_master_id',[6,7,8])->where('part_id','=',$part_id)->where('status','=',1)->orderBy('id', 'ASC')->count();
             // dd($process_check1);
             if ($process_check1==0) {
                 $process=false;
@@ -87,7 +90,7 @@ class StagewiseReceiveController extends Controller
                 $process_checkData=DB::table('product_process_masters as a')
                 ->join('item_procesmasters AS b', 'a.process_master_id', '=', 'b.id')
                 ->select('b.operation','b.id as next_process_id','a.id as next_productprocess_id')
-                ->whereIn('process_master_id', [3,4,5])
+                ->whereIn('process_master_id', [6,7,8])
                 ->where('part_id','=',$part_id)
                 ->orderBy('a.id', 'DESC')
                 ->first();
@@ -104,7 +107,7 @@ class StagewiseReceiveController extends Controller
 
         }else{
             $success = false;
-            $fifoRcNo=$fifoCheck->rc_no;
+            $fifoRcNo=$fifoCheck->rc_id;
             $avl_qty=0;
             $avl_kg=0;
             $part='<option value=""></option>';
@@ -143,10 +146,9 @@ class StagewiseReceiveController extends Controller
 
             $d12Datas=new TransDataD12;
             $d12Datas->open_date=$request->rc_date;
-            $d12Datas->rc_no=$request->rc_no;
-            $d12Datas->previous_rc_no=$request->rc_no;
+            $d12Datas->rc_id=$request->rc_no;
+            $d12Datas->previous_rc_id=$request->rc_no;
             $d12Datas->part_id=$request->part_id;
-            $d12Datas->rm_id=$request->part_id;
             $d12Datas->process_id=$request->next_process_id;
             $d12Datas->product_process_id=$request->next_productprocess_id;
             $d12Datas->receive_qty=$request->receive_qty;
