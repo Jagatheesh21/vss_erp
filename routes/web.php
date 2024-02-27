@@ -16,6 +16,7 @@ use App\Http\Controllers\GRNInwardRegisterController;
 use App\Http\Controllers\GrnQualityController;
 use App\Http\Controllers\HeatNumberController;
 use App\Http\Controllers\ItemProcesmasterController;
+use App\Http\Controllers\DcMasterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,6 +65,8 @@ Route::middleware(['auth'])->group(function () {
         'grn_heat_no' => HeatNumberController::class,
         'grn_qc' => GrnQualityController::class,
         'process-master' => ItemProcesmasterController::class,
+        'dc_master' => DcMasterController::class,
+        
     ]);
 });
 
