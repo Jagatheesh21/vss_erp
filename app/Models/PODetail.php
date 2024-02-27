@@ -18,4 +18,9 @@ class PODetail extends Model
     {
         return $this->belongsTo(Supplier::class,'supplier_id');
     }
+
+    public function rcmaster()
+    {
+        return $this->belongsTo(RouteMaster::class,'ponumber');
+    }
 }

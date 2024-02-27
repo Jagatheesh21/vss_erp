@@ -16,6 +16,9 @@ use App\Http\Controllers\GRNInwardRegisterController;
 use App\Http\Controllers\GrnQualityController;
 use App\Http\Controllers\HeatNumberController;
 use App\Http\Controllers\ItemProcesmasterController;
+use App\Http\Controllers\StagewiseReceiveController;
+use App\Http\Controllers\StagewiseIssueController;
+use App\Http\Controllers\GrnRejectionController;
 use App\Http\Controllers\DcMasterController;
 
 /*
@@ -46,6 +49,21 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/grnsuppliers-fetchdata/id', [PODetailController::class,'grn_supplierfetchdata'])->name('grn_supplierfetchdata');
     Route::get('/grnrm-fetchdata/id', [GRNInwardRegisterController::class,'grn_rmfetchdata'])->name('grn_rmfetchdata');
     Route::get('/grn_iqc-data/{id}', [GrnQualityController::class,'approval'])->name('grn_iqc.approval');
+    Route::get('rm_issuance', [GRNInwardRegisterController::class,'rmIssuanceData'])->name('rmissuance.index');
+    Route::get('rm_issuance-create', [GRNInwardRegisterController::class,'rmIssuance'])->name('rmissuance.create');
+    Route::post('/rm_issuance-data', [GRNInwardRegisterController::class,'storeData'])->name('rmissuance.storedata');
+    Route::post('/rm_issuance-fetchdata', [GRNInwardRegisterController::class,'grnRmFetchData'])->name('grnrmfetchdata');
+    Route::post('/rm_heatno-fetchdata', [GRNInwardRegisterController::class,'grnHeatFetchData'])->name('grnheatfetchdata');
+    Route::post('/rm_coilno-fetchdata', [GRNInwardRegisterController::class,'grnCoilFetchData'])->name('grncoilfetchdata');
+    Route::get('sf_receive/list', [StagewiseReceiveController::class,'sfReceiveList'])->name('sfreceive');
+    Route::get('sf_receive/create', [StagewiseReceiveController::class,'sfReceiveCreateForm'])->name('sfreceive.create');
+    Route::post('sf-receive', [StagewiseReceiveController::class,'sfReceiveEntry'])->name('sfreceive.store');
+    Route::post('sf-receive/part_no', [StagewiseReceiveController::class,'sfPartFetchEntry'])->name('sfpartfetchdata');
+    Route::get('sf_issue/list', [StagewiseIssueController::class,'sfIssueList'])->name('sfissue');
+    Route::get('sf_issue/create', [StagewiseIssueController::class,'sfIssueCreateForm'])->name('sfissue.create');
+    Route::post('sf_issue', [StagewiseIssueController::class,'sfIssueEntry'])->name('sfissue.store');
+    Route::post('sf_issue/part_no', [StagewiseIssueController::class,'sfIssuePartFetchEntry'])->name('sfissuepartfetchdata');
+
 
     Route::resources([
         'roles' => RoleController::class,
@@ -64,6 +82,7 @@ Route::middleware(['auth'])->group(function () {
         'grn_inward' => GRNInwardRegisterController::class,
         'grn_heat_no' => HeatNumberController::class,
         'grn_qc' => GrnQualityController::class,
+        'grnqcrejection' => GrnRejectionController::class,
         'process-master' => ItemProcesmasterController::class,
         'dc_master' => DcMasterController::class,
         

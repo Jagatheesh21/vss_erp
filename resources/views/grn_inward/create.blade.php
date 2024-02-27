@@ -45,7 +45,7 @@
                                     <select name="po_id" id="po_id" class="form-control @error('po_id') is-invalid @enderror">
                                     <option value=""></option>
                                     @forelse ($po_datas as $code)
-                                        <option value="{{$code->id}}">{{$code->ponumber}}</option>
+                                        <option value="{{$code->id}}">{{$code->rcmaster->rc_id}}</option>
                                     @empty
                                     @endforelse
                                     </select>
@@ -370,6 +370,20 @@ $("#po_id").select2({
                     processData:false,
                     contentType:false,
                     success: function(data) {
+                        if(data.errors) {
+                            var values = '';
+                            jQuery.each(data.errors, function (key, value) {
+                                values += value
+                            });
+
+                            swal({
+                                title: "Error",
+                                text: values,
+                                timer: 5000,
+                                showConfirmButton: false,
+                                type: "error"
+                            })
+                        }
                     if (data.code==404||data.code==500) {
                         let error ='<span class="alert alert-danger">'+data.msg+'</span>';
                             $("#res").html(error);

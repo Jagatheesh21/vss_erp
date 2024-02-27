@@ -41,7 +41,7 @@
                                 <tr>
 
                                     <td>{{$loop->iteration}}</td>
-                                    <td>{{$pocorrection->podetails->ponumber}}</td>
+                                    <td>{{$pocorrection->podetails->rcmaster->rc_id}}</td>
                                     <td>{{date('d-m-Y', strtotime($pocorrection->po_corrections_date))}}</td>
                                     <td>{{$pocorrection->request_reason}}</td>
                                     <td>

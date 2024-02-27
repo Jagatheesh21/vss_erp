@@ -13,4 +13,5 @@ class HeatNumber extends Model
     {
         return $this->belongsTo(GRNInwardRegister::class,'grnnumber_id');
     }
+
 }

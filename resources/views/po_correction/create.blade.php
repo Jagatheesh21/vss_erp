@@ -19,7 +19,7 @@
                                     <label for="po_id">PO Number *</label>
                                     <select name="po_id" id="po_id" class="form-control bg-light @error('po_id') is-invalid @enderror">
                                     @forelse ($po_datas as $po_data)
-                                        <option name="po_id" value="{{$po_data->id}}" selected>{{$po_data->ponumber}}</option>
+                                        <option name="po_id" value="{{$po_data->id}}" selected>{{$po_data->rcmaster->rc_id}}</option>
                                     @empty
                                     @endforelse
                                     </select>
