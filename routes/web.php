@@ -19,7 +19,6 @@ use App\Http\Controllers\ItemProcesmasterController;
 use App\Http\Controllers\StagewiseReceiveController;
 use App\Http\Controllers\StagewiseIssueController;
 use App\Http\Controllers\GrnRejectionController;
-use App\Http\Controllers\DcMasterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -84,8 +83,6 @@ Route::middleware(['auth'])->group(function () {
         'grn_qc' => GrnQualityController::class,
         'grnqcrejection' => GrnRejectionController::class,
         'process-master' => ItemProcesmasterController::class,
-        'dc_master' => DcMasterController::class,
-        
     ]);
 });
 
