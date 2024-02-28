@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             ProductMasterSeeder::class,
             ChildProductMasterSeeder::class,
             ProductProcessMasterSeeder::class,
+            DcMasterSeeder::class,
             BomMasterSeeder::class
         ]);
     }

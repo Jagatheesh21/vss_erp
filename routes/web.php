@@ -62,7 +62,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('sf_issue/create', [StagewiseIssueController::class,'sfIssueCreateForm'])->name('sfissue.create');
     Route::post('sf_issue', [StagewiseIssueController::class,'sfIssueEntry'])->name('sfissue.store');
     Route::post('sf_issue/part_no', [StagewiseIssueController::class,'sfIssuePartFetchEntry'])->name('sfissuepartfetchdata');
-
+    Route::get('os_receive/list', [StagewiseReceiveController::class,'osReceiveList'])->name('osreceive');
+    Route::get('os_receive/create', [StagewiseReceiveController::class,'osReceiveCreateForm'])->name('osreceive.create');
+    Route::post('os-receive', [StagewiseReceiveController::class,'osReceiveEntry'])->name('osreceive.store');
+    Route::post('os-receive/part_no', [StagewiseReceiveController::class,'osPartFetchEntry'])->name('ospartfetchdata');
+    Route::get('fqc_inspection/list', [StagewiseReceiveController::class,'osReceiveList'])->name('osreceive');
 
     Route::resources([
         'roles' => RoleController::class,

@@ -23,7 +23,7 @@
         <div class="row col-md-3"id="res"></div>
 
         <div class="card">
-            <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Semi Finished Store Receive Register</b></span><a class="btn btn-sm btn-primary" href="{{route('sfreceive')}}">SF Receive List</a>
+            <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Semi Finished Store Issue Register</b></span><a class="btn btn-sm btn-primary" href="{{route('sfissue')}}">SF Issue List</a>
             </div>
             <div class="card-body">
                         <div class="row d-flex justify-content-center">
@@ -112,7 +112,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="receive_qty">Receive Quantity In Numbers*</label>
-                                    <input type="number" name="receive_qty" id="receive_qty" required min="0" class="form-control @error('receive_qty') is-invalid @enderror">
+                                    <input type="number" name="issue_qty" id="receive_qty" required min="0" class="form-control @error('receive_qty') is-invalid @enderror">
                                     @error('receive_qty')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>

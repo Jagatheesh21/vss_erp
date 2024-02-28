@@ -32,8 +32,8 @@
                                     <td>{{$d12Data->open_date}}</td>
                                     <td>{{$d12Data->operation}}</td>
                                     <td>{{$d12Data->part_no}}</td>
-                                    <td>{{$d12Data->rc_no}}</td>
-                                    <td>{{$d12Data->previous_rc_no}}</td>
+                                    <td>{{$d12Data->rc_id}}</td>
+                                    <td>{{$d12Data->previous_rc_id}}</td>
                                     <td>{{$d12Data->issue_qty}}</td>
                                     <td>{{$d12Data->user_name}}</td>
                                     <td>{{$d12Data->created_at}}</td>

@@ -28,6 +28,7 @@
                         <li class="list-group-item"><a href="{{route('rmissuance.index')}}">Material Issuance</a></li>
                         <li class="list-group-item"><a href="{{route('sfreceive')}}">Semi-Finished Material Receive</a></li>
                         <li class="list-group-item"><a href="{{route('sfissue')}}">Semi-Finished Material Issuance</a></li>
+                        <li class="list-group-item"><a href="{{route('osreceive')}}">Out-Store Material Receive</a></li>
                         <li class="list-group-item"><a href="{{route('rack-stockmaster.index')}}">Stocking Point Rack Master</a></li>
                         <li class="list-group-item"><a href="{{route('rackmaster.index')}}">Rack Master</a></li>
                         <li class="list-group-item"><a href="{{route('process-master.index')}}">Item Process Master</a></li>
@@ -53,6 +54,7 @@
                 <div class="card-body text-secondary">
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item"><a href="{{route('grn_qc.index')}}">Incoming QA Clearance</a></li>
+                        {{-- <li class="list-group-item"><a href="{{route('fqc_approval.index')}}">Final QA Clearance</a></li> --}}
                         <li class="list-group-item">A second item</li>
                         <li class="list-group-item">A third item</li>
                     </ul>

@@ -17,6 +17,7 @@ use App\Models\ProductProcessMaster;
 use App\Models\HeatNumber;
 use App\Models\TransDataD11;
 use App\Models\TransDataD12;
+use App\Models\TransDataD13;
 use App\Models\BomMaster;
 use App\Models\ItemProcesmaster;
 use App\Models\ChildProductMaster;
@@ -32,8 +33,10 @@ class StagewiseIssueController extends Controller
         ->join('item_procesmasters AS b', 'a.process_id', '=', 'b.id')
         ->join('child_product_masters AS c', 'a.part_id', '=', 'c.id')
         ->join('users AS d', 'a.prepared_by', '=', 'd.id')
-        ->select('b.operation','b.id as process_id','a.open_date','a.rc_id','a.previous_rc_id','a.issue_qty','c.child_part_no as part_no','a.prepared_by','a.created_at','d.name as user_name')
-        ->whereIn('process_id', [6,7,8])
+        ->join('route_masters AS e', 'a.rc_id', '=', 'e.id')
+        ->join('route_masters AS f', 'a.previous_rc_id', '=', 'f.id')
+        ->select('b.operation','b.id as process_id','a.open_date','e.rc_id','f.rc_id as previous_rc_id','a.issue_qty','c.child_part_no as part_no','a.prepared_by','a.created_at','d.name as user_name')
+        ->whereIn('a.process_id', [6,7,8])
         ->whereRaw('a.rc_id!=a.previous_rc_id')
         ->orderBy('a.id', 'DESC')
         ->get();
@@ -139,7 +142,69 @@ class StagewiseIssueController extends Controller
     }
 
     public function sfIssueEntry(Request $request){
-        dd($request->all());
+        // dd($request->all());
+        DB::beginTransaction();
+        try {
+            $rcMaster=new RouteMaster;
+            $rcMaster->create_date=$request->rc_date;
+            $rcMaster->process_id=$request->previous_process_id;
+            $rcMaster->rc_id=$request->rc_no;
+            $rcMaster->prepared_by=auth()->user()->id;
+            $rcMaster->save();
+
+            $rcMasterData=RouteMaster::where('rc_id','=',$request->rc_no)->where('process_id','=',$request->previous_process_id)->first();
+            $rc_id=$rcMasterData->id;
+
+            $previousD11Datas=TransDataD11::where('rc_id','=',$request->pre_rc_no)->where('next_process_id','=',$request->previous_process_id)->first();
+            // dd($previousD11Datas);
+            $old_issueqty=$previousD11Datas->issue_qty;
+            $total_issue_qty=$old_issueqty+$request->issue_qty;
+            $previousD11Datas->issue_qty=$total_issue_qty;
+            if($request->rc_close=="yes"){
+                $previousD11Datas->status=0;
+                $previousD11Datas->close_date=$request->rc_date;
+            }
+            $previousD11Datas->updated_by = auth()->user()->id;
+            $previousD11Datas->updated_at = Carbon::now();
+            $previousD11Datas->update();
+
+            $d11Datas=new TransDataD11;
+            $d11Datas->open_date=$request->rc_date;
+            $d11Datas->rc_id=$rc_id;
+            $d11Datas->part_id=$request->part_id;
+            $d11Datas->process_id=$request->previous_process_id;
+            $d11Datas->product_process_id=$request->previous_product_process_id;
+            $d11Datas->next_process_id=$request->next_process_id;
+            $d11Datas->next_product_process_id=$request->next_product_process_id;
+            $d11Datas->process_issue_qty=$request->issue_qty;
+            $d11Datas->prepared_by = auth()->user()->id;
+            $d11Datas->save();
+
+            $d12Datas=new TransDataD12;
+            $d12Datas->open_date=$request->rc_date;
+            $d12Datas->rc_id=$rc_id;
+            $d12Datas->previous_rc_id=$request->pre_rc_no;
+            $d12Datas->part_id=$request->part_id;
+            $d12Datas->process_id=$request->previous_process_id;
+            $d12Datas->product_process_id=$request->previous_product_process_id;
+            $d12Datas->issue_qty=$request->issue_qty;
+            $d12Datas->prepared_by = auth()->user()->id;
+            $d12Datas->save();
+
+            $d13Datas=new TransDataD13;
+            $d13Datas->rc_id=$rc_id;
+            $d13Datas->previous_rc_id=$request->pre_rc_no;
+            $d13Datas->prepared_by = auth()->user()->id;
+            $d13Datas->save();
+            DB::commit();
+
+            return back()->withSuccess('Part Issued is Successfully!');
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollback();
+            dd($th->getMessage());
+            return redirect()->back()->withErrors($th->getMessage());
+        }
 
     }
 }
