@@ -19,6 +19,8 @@ use App\Http\Controllers\ItemProcesmasterController;
 use App\Http\Controllers\StagewiseReceiveController;
 use App\Http\Controllers\StagewiseIssueController;
 use App\Http\Controllers\GrnRejectionController;
+use App\Http\Controllers\DcMasterController;
+use App\Http\Controllers\FinalQcInspectionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,7 +68,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('os_receive/create', [StagewiseReceiveController::class,'osReceiveCreateForm'])->name('osreceive.create');
     Route::post('os-receive', [StagewiseReceiveController::class,'osReceiveEntry'])->name('osreceive.store');
     Route::post('os-receive/part_no', [StagewiseReceiveController::class,'osPartFetchEntry'])->name('ospartfetchdata');
-    Route::get('fqc_inspection/list', [StagewiseReceiveController::class,'osReceiveList'])->name('osreceive');
+    Route::get('fg_receive/list', [StagewiseReceiveController::class,'fgReceiveList'])->name('fgreceive');
+    Route::get('fg_receive/create', [StagewiseReceiveController::class,'fgReceiveCreateForm'])->name('fgreceive.create');
+    Route::post('fg-receive', [StagewiseReceiveController::class,'fgReceiveEntry'])->name('fgreceive.store');
+    Route::post('fg-receive/part_no', [StagewiseReceiveController::class,'fgPartFetchEntry'])->name('fgpartfetchdata');
 
     Route::resources([
         'roles' => RoleController::class,
@@ -88,6 +93,7 @@ Route::middleware(['auth'])->group(function () {
         'grnqcrejection' => GrnRejectionController::class,
         'process-master' => ItemProcesmasterController::class,
         'dc_master' => DcMasterController::class,
+        'fqc_approval'=>FinalQcInspectionController::class,
     ]);
 });
 

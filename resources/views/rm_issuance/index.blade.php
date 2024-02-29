@@ -17,11 +17,12 @@
                                     <th>S.No</th>
                                     <th>Route Card Number</th>
                                     <th>Route Card Date</th>
+                                    <th>Part Number</th>
                                     <th>GRN Number</th>
+                                    <th>RM Desc</th>
                                     <th>Heat Number</th>
                                     <th>Coil Number</th>
                                     <th>Test Certificate Number</th>
-                                    <th>RM Desc</th>
                                     <th>Issue Qty</th>
                                     <th>Status</th>
                                 </tr>
@@ -30,13 +31,22 @@
                                 @forelse ($d12Datas as $d12Data)
                                 <tr>
                                     <td>{{$loop->iteration}}</td>
-                                    <td>{{$d12Data->rc_no}}</td>
+                                    {{-- <td>{{$d12Data->rc_no}}</td>
                                     <td>{{$d12Data->open_date}}</td>
                                     <td>{{$d12Data->previous_rc_no}}</td>
                                     <td>{{$d12Data->heatnumber}}</td>
                                     <td>{{$d12Data->coil_no}}</td>
                                     <td>{{$d12Data->tc_no}}</td>
                                     <td>{{$d12Data->rm_desc}}</td>
+                                    <td>{{$d12Data->rm_issue_qty}}</td> --}}
+                                    <td>{{$d12Data->current_rcmaster->rc_id}}</td>
+                                    <td>{{$d12Data->open_date}}</td>
+                                    <td>{{$d12Data->partmaster->child_part_no}}</td>
+                                    <td>{{$d12Data->previous_rcmaster->rc_id}}</td>
+                                    <td>{{$d12Data->rm_master->name}}</td>
+                                    <td>{{$d12Data->heat_nomaster->heatnumber}}</td>
+                                    <td>{{$d12Data->heat_nomaster->coil_no}}</td>
+                                    <td>{{$d12Data->heat_nomaster->tc_no}}</td>
                                     <td>{{$d12Data->rm_issue_qty}}</td>
                                     <td>@if ($d12Data->status==1)
                                         <span class="btn btn-sm btn-success text-white">Active</span>

@@ -49,9 +49,9 @@ class StagewiseIssueController extends Controller
         $current_date=date('Y-m-d');
         $d11Datas  = DB::table('trans_data_d11_s as a')
             ->join('route_masters AS e', 'a.rc_id', '=', 'e.id')
-            ->select('e.rc_id as rc_no','e.id')
+            ->select('e.rc_id as rc_no','e.id',DB::raw('((a.receive_qty)-(a.issue_qty)) as avl_qty'))
             ->whereIn('a.next_process_id', [6,7,8])
-            ->havingRaw('(SUM(a.receive_qty)-SUM(a.issue_qty)) >?', [0])
+            ->havingRaw('avl_qty >?', [0])
             ->get();
     // dd($d11Datas);
         return view('stagewise-issue.sf_create',compact('d11Datas','current_date'));
@@ -103,21 +103,29 @@ class StagewiseIssueController extends Controller
         date_default_timezone_set('Asia/Kolkata');
         $current_date=date('Y-m-d');
         $current_year=date('Y');
-        if ($current_process_id==6||$current_process_id==8) {
+        if ($current_process_id==6) {
             $rc="B";
+            $current_operation_id=[6,8];
+        }elseif ($current_process_id==8) {
+            $rc="B";
+            $current_operation_id=[6,8];
         }else{
             $rc="C";
+            $current_operation_id=[7];
         }
 		$current_rcno=$rc.$current_year;
-        $count1=RouteMaster::where('process_id','=',$current_process_id)->where('rc_id','LIKE','%'.$current_rcno.'%')->orderBy('rc_id', 'DESC')->get()->count();
+        $count1=RouteMaster::whereIn('process_id',$current_operation_id)->where('rc_id','LIKE','%'.$current_rcno.'%')->orderBy('rc_id', 'DESC')->get()->count();
         // $count=TransDataD11::where('rc_no','LIKE','%'.$current_rcno.'%')->orderBy('rc_no', 'DESC')->get()->count();
         if ($count1 > 0) {
             // $rc_data=TransDataD11::where('rc_no','LIKE','%'.$current_rcno.'%')->orderBy('rc_no', 'DESC')->first();
-            $rc_data=RouteMaster::where('process_id','=',$current_process_id)->where('rc_id','LIKE','%'.$current_rcno.'%')->orderBy('rc_id', 'DESC')->first();
+            $rc_data=RouteMaster::whereIn('process_id',$current_operation_id)->where('rc_id','LIKE','%'.$current_rcno.'%')->orderBy('rc_id', 'DESC')->first();
             $rcnumber=$rc_data['rc_id']??NULL;
-            if ($current_process_id==6||$current_process_id==8) {
+            if ($current_process_id==6) {
                 $old_rcnumber=str_replace("B","",$rcnumber);
-            }else {
+            }elseif ($current_process_id==8) {
+                $old_rcnumber=str_replace("B","",$rcnumber);
+            }
+            else {
                 $old_rcnumber=str_replace("C","",$rcnumber);
             }
             $old_rcnumber_data=str_pad($old_rcnumber+1,9,0,STR_PAD_LEFT);

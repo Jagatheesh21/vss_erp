@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('final_qc_inspections', function (Blueprint $table) {
+        Schema::create('part_rejection_histories', function (Blueprint $table) {
             $table->id();
             $table->date('offer_date');
             $table->integer('rc_id');
@@ -21,16 +21,11 @@ return new class extends Migration
             $table->integer('product_process_id');
             $table->integer('next_process_id');
             $table->integer('next_product_process_id');
-            $table->float('offer_qty', 8, 2)->default(0);
             $table->float('inspect_qty', 8, 2)->default(0);
-            $table->float('approve_qty', 8, 2)->default(0);
             $table->float('reject_qty', 8, 2)->default(0);
-            $table->float('rework_qty', 8, 2)->default(0);
+            $table->string('type')->nullable();
             $table->string('reason')->nullable();
-            $table->integer('inspect_by')->nullable();
-            $table->timestamp('inspect_date')->useCurrentOnUpdate();
-            $table->integer('rc_status')->default(0);
-            $table->integer('status')->default(0);
+            $table->integer('status')->default(1);
             $table->integer('prepared_by');
             $table->integer('updated_by')->nullable();
             $table->timestamps();
@@ -42,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('final_qc_inspections');
+        Schema::dropIfExists('part_rejection_histories');
     }
 };

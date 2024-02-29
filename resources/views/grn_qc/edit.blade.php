@@ -217,7 +217,6 @@
                     </div>
 
                     <div class="row d-flex justify-content-center ">
-
                         <div class="col-md-4">
                             <label for="status_all">Status All</label>
                             <select name="status_all" class="form-control select2 status_all" id="status_all">

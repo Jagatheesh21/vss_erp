@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dc_masters', function (Blueprint $table) {
+        Schema::create('dc_prints', function (Blueprint $table) {
             $table->id();
-            $table->integer('supplier_id');
-            $table->integer('part_id');
-            $table->integer('operation_id');
-            $table->string('hsnc');
+            $table->integer('s_no');
+            $table->integer('rc_id');
+            $table->integer('print_status')->default(1);
             $table->integer('status')->default(1);
             $table->integer('prepared_by');
             $table->integer('updated_by')->nullable();
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('dc_masters');
+        Schema::dropIfExists('dc_prints');
     }
 };

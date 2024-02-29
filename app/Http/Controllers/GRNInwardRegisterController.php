@@ -249,16 +249,18 @@ class GRNInwardRegisterController extends Controller
     }
 
     public function rmIssuanceData(){
-        $d12Datas=DB::table('trans_data_d12_s as a')
-        ->join('heat_numbers AS b', 'a.heat_id', '=', 'b.id')
-        ->join('raw_materials AS c', 'a.rm_id', '=', 'c.id')
-        ->join('route_masters AS d', 'a.rc_id', '=', 'd.id')
-        ->join('route_masters AS e', 'a.previous_rc_id', '=', 'e.id')
-        ->select('d.rc_id as rc_no','a.open_date','a.rm_issue_qty','e.rc_id as previous_rc_no','a.status','b.id as heat_id','b.heatnumber','b.tc_no','b.coil_no','c.name as rm_desc')
-        ->where('a.process_id','=',3)
-        ->orderBy('a.id', 'DESC')
-        ->get();
+        $d12Datas=TransDataD12::with(['partmaster','currentprocessmaster','currentproductprocessmaster','current_rcmaster','previous_rcmaster','heat_nomaster','grndata','rm_master'])->where('process_id','=',3)->orderBy('id', 'DESC')->get();
         // dd($d12Datas);
+        // $d11Datas=DB::table('trans_data_d12_s as a')
+        // ->join('heat_numbers AS b', 'a.heat_id', '=', 'b.id')
+        // ->join('raw_materials AS c', 'a.rm_id', '=', 'c.id')
+        // ->join('route_masters AS d', 'a.rc_id', '=', 'd.id')
+        // ->join('route_masters AS e', 'a.previous_rc_id', '=', 'e.id')
+        // ->select('d.rc_id as rc_no','a.open_date','a.rm_issue_qty','e.rc_id as previous_rc_no','a.status','b.id as heat_id','b.heatnumber','b.tc_no','b.coil_no','c.name as rm_desc')
+        // ->where('a.process_id','=',3)
+        // ->orderBy('a.id', 'DESC')
+        // ->get();
+        // dd($d11Datas);
         return view('rm_issuance.index',compact('d12Datas'));
     }
 

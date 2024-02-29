@@ -14,6 +14,8 @@ class FinalQcInspectionController extends Controller
     public function index()
     {
         //
+        $fqcDatas=FinalQcInspection::with(['current_rcmaster','previous_rcmaster','partmaster','currentprocessmaster','nextprocessmaster','inspector_usermaster'])->whereNotIn('process_id',[18,19,20])->orderBy('id', 'DESC')->get();
+        return view('fqc_inspection.fqc_view',compact('fqcDatas'));
     }
 
     /**
@@ -22,6 +24,8 @@ class FinalQcInspectionController extends Controller
     public function create()
     {
         //
+        $fqcDatas=FinalQcInspection::with(['current_rcmaster','previous_rcmaster','partmaster','currentprocessmaster','nextprocessmaster','inspector_usermaster'])->where('status','=',0)->whereNotIn('process_id',[18,19,20])->orderBy('id', 'ASC')->get();
+        return view('fqc_inspection.fqc_create',compact('fqcDatas'));
     }
 
     /**
@@ -30,6 +34,7 @@ class FinalQcInspectionController extends Controller
     public function store(StoreFinalQcInspectionRequest $request)
     {
         //
+        dd($request->all());
     }
 
     /**

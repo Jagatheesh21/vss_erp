@@ -13,14 +13,17 @@ return new class extends Migration
     {
         Schema::create('dc_transaction_details', function (Blueprint $table) {
             $table->id();
-            $table->integer('dc_master_id');
+            $table->integer('rc_id')->unique();
             $table->date('issue_date');
+            $table->integer('dc_master_id');
             $table->float('issue_qty', 8, 2)->default(0);
             $table->float('receive_qty', 8, 2)->default(0);
             $table->float('unit_rate', 8, 2)->default(0);
+            $table->float('basic_rate', 8, 2)->default(0);
             $table->float('total_rate', 8, 2)->default(0);
             $table->string('reason')->nullable();
-            $table->integer('status')->default(0);
+            $table->integer('rc_status')->default(1);
+            $table->integer('status')->default(1);
             $table->integer('prepared_by');
             $table->integer('updated_by')->nullable();
             $table->timestamps();

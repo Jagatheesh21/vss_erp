@@ -33,4 +33,18 @@ class TransDataD12 extends Model
         return $this->belongsTo(RouteMaster::class,'previous_rc_id');
     }
 
+    public function heat_nomaster()
+    {
+        return $this->belongsTo(HeatNumber::class,'heat_id');
+    }
+
+    public function grndata()
+    {
+        return $this->belongsTo(GRNInwardRegister::class,'grn_id');
+    }
+
+    public function rm_master()
+    {
+        return $this->belongsTo(RawMaterial::class,'rm_id');
+    }
 }
