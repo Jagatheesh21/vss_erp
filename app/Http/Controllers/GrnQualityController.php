@@ -380,7 +380,7 @@ class GrnQualityController extends Controller
                         $grbInwardData->update();
 
                         $grbInwardData2=GRNInwardRegister::find($grnQualityData->grnnumber_id);
-                        dd($grbInwardData2);
+                        // dd($grbInwardData2);
 
                         $avl_qty=(($grbInwardData2->approved_qty)-($grbInwardData2->return_qty)-($grbInwardData2->return_dc_qty)-($grbInwardData2->issued_qty));
                         $grbInwardData2->avl_qty = $avl_qty;

@@ -39,10 +39,11 @@
         </div>
         <div class="col-3">
             <div class="card border-secondary mb-3">
-                <div class="card-header">CNC</div>
+                <div class="card-header">Sales</div>
                 <div class="card-body text-secondary">
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item">An item</li>
+                        <li class="list-group-item"><a href="{{route('customer.index')}}">Customer Master</a></li>
+                        <li class="list-group-item"><a href="{{route('customer-products.index')}}">Customer Product Master</a></li>
                         <li class="list-group-item">A second item</li>
                         <li class="list-group-item">A third item</li>
                     </ul>

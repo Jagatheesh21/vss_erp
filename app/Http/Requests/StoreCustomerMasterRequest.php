@@ -11,7 +11,7 @@ class StoreCustomerMasterRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,25 @@ class StoreCustomerMasterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'cus_code' => 'required|unique:customer_masters,cus_code',
+            'cus_name' => 'required',
+            'cus_gst_number' => 'required|digits:10',
+            'cus_address' => 'required',
+            'cus_address1' => 'required',
+            'cus_city' => 'required',
+            'cus_state' => 'required',
+            'cus_country' => 'required',
+            'cus_pincode' => 'required',
+            'delivery_cus_name' => 'required',
+            'delivery_cus_gst_number' => 'required',
+            'delivery_cus_address' => 'required',
+            'delivery_cus_address1' => 'required',
+            'delivery_cus_city' => 'required',
+            'delivery_cus_state' => 'required',
+            'delivery_cus_country' => 'required',
+            'delivery_cus_pincode' => 'required',
+            'supplier_vendor_code' => 'required',
+            'supplytype' => 'required'
         ];
     }
 }

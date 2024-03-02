@@ -20,6 +20,8 @@ use App\Http\Controllers\StagewiseReceiveController;
 use App\Http\Controllers\StagewiseIssueController;
 use App\Http\Controllers\GrnRejectionController;
 use App\Http\Controllers\DcMasterController;
+use App\Http\Controllers\CustomerMasterController;
+use App\Http\Controllers\CustomerProductMasterController;
 use App\Http\Controllers\FinalQcInspectionController;
 
 /*
@@ -38,6 +40,7 @@ Auth::routes();
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('/suppliers-data/id', [SupplierController::class,'suppliersdata'])->name('suppliersdata');
+    Route::get('/customers-data/id', [CustomerMasterController::class,'customersData'])->name('customersdata');
     Route::get('/rmcategorydata-data/id', [SupplierProductController::class,'rmcategorydata'])->name('rmcategorydata');
     Route::post('add_purchase_item', [PODetailController::class,'addPurchaseItem'])->name('add_purchase_item');
     Route::post('add_grn_item', [GRNInwardRegisterController::class,'addGRNItem'])->name('add_grn_item');
@@ -94,6 +97,8 @@ Route::middleware(['auth'])->group(function () {
         'process-master' => ItemProcesmasterController::class,
         'dc_master' => DcMasterController::class,
         'fqc_approval'=>FinalQcInspectionController::class,
+        'customer'=>CustomerMasterController::class,
+        'customer-products'=>CustomerProductMasterController::class,
     ]);
 });
 

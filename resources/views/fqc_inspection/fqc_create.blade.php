@@ -32,12 +32,12 @@
                             <tbody>
                                 @forelse ($fqcDatas as $fqcData)
                                 <tr id="tr_{{$fqcData->id}}">
-                                    <input type="hidden"  class="form-control process_product_id bg-light" readonly value="{{$fqcData->product_process_id}}" name="process_product_id[]" id="process_product_id">
-                                    <input type="hidden"  class="form-control next_process_product_id bg-light" readonly value="{{$fqcData->next_product_process_id}}" name="next_process_product_id[]" id="next_process_product_id">
+                                    <input type="hidden"  class="form-control previous_product_process_id bg-light" readonly value="{{$fqcData->product_process_id}}" name="previous_product_process_id[]" id="previous_product_process_id">
+                                    <input type="hidden"  class="form-control next_productprocess_id bg-light" readonly value="{{$fqcData->next_product_process_id}}" name="next_productprocess_id[]" id="next_productprocess_id">
                                     <input type="hidden"  class="form-control rc_status bg-light" readonly value="{{$fqcData->rc_status}}" name="rc_status[]" id="rc_status">
                                     <td><input type="checkbox" class="form-check-input fqc_id" name="fqc_id[]" data-id="{{$fqcData->id}}" value="{{$fqcData->id}}"></td>
                                     <td>{{$fqcData->offer_date}}</td>
-                                    <td><select name="process_id[]"  class="form-control process_id bg-light" readonly id="process_id">
+                                    <td><select name="previous_process_id[]"  class="form-control previous_process_id bg-light" readonly id="previous_process_id">
                                         <option value="{{$fqcData->currentprocessmaster->id}}" selected>{{$fqcData->currentprocessmaster->operation}}</option></select></td>
                                     <td><select name="next_process_id[]"  class="form-control next_process_id bg-light" readonly id="next_process_id">
                                             <option value="{{$fqcData->nextprocessmaster->id}}" selected>{{$fqcData->nextprocessmaster->operation}}</option></select></td>
