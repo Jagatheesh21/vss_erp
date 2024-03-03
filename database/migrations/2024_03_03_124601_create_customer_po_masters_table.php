@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Ramsey\Uuid\Type\Integer;
 
 return new class extends Migration
 {
@@ -12,16 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('child_product_masters', function (Blueprint $table) {
+        Schema::create('customer_po_masters', function (Blueprint $table) {
             $table->id();
-            $table->string('stocking_point');
-            $table->string('child_part_no');
+            $table->date('create_date');
+            $table->integer('cus_id');
             $table->integer('part_id');
-            $table->integer('product_type')->default(1);
-            $table->integer('machine_id')->default(1);
-            $table->integer('foreman_id')->default(1);
-            $table->integer('item_type')->default(1);
-            $table->integer('no_item_id')->default(1);
+            $table->string('cus_po_no')->default(1);
+            $table->date('cus_po_date')->nullable();
+            $table->integer('cus_po_item_no')->default(1);
+            $table->integer('cus_po_qty')->default(0);
+            $table->integer('uom_id')->default(2);
+            $table->integer('part_per')->default(1);
+            $table->integer('rate')->default(1);
             $table->integer('status')->default(1);
             $table->integer('prepared_by');
             $table->integer('updated_by')->nullable();
@@ -34,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('child_product_masters');
+        Schema::dropIfExists('customer_po_masters');
     }
 };

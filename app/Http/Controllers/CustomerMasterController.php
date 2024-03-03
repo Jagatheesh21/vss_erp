@@ -27,7 +27,8 @@ class CustomerMasterController extends Controller
     public function create()
     {
         //
-        return view('customer.create');
+        $prepared_by = auth()->user()->id;
+        return view('customer.create',compact('prepared_by'));
     }
 
     public function customersData(Request $request){
@@ -36,7 +37,7 @@ class CustomerMasterController extends Controller
         $count = CustomerMaster::where('cus_code',$id)->get()->count();
         // dd($count);
         if ($count>0) {
-            $customerDatas = CustomerMaster::where('cus_code',$id)->get();
+            $customerDatas = CustomerMaster::where('cus_code',$id)->first();
             return response()->json(['cus_name'=>$customerDatas->cus_name,'cus_gst_number'=>$customerDatas->cus_gst_number,'cus_address'=>$customerDatas->cus_address,'cus_address1'=>$customerDatas->cus_address1,'cus_city'=>$customerDatas->cus_city,'cus_state'=>$customerDatas->cus_state,'cus_country'=>$customerDatas->cus_country,'cus_pincode'=>$customerDatas->cus_pincode,'delivery_cus_name'=>$customerDatas->delivery_cus_name,'delivery_cus_gst_number'=>$customerDatas->delivery_cus_gst_number,'delivery_cus_address'=>$customerDatas->delivery_cus_address,'delivery_cus_address1'=>$customerDatas->delivery_cus_address1,'delivery_cus_city'=>$customerDatas->delivery_cus_city,'delivery_cus_state'=>$customerDatas->delivery_cus_state,'delivery_cus_country'=>$customerDatas->delivery_cus_country,'delivery_cus_pincode'=>$customerDatas->delivery_cus_pincode,'supplier_vendor_code'=>$customerDatas->supplier_vendor_code,'supplytype'=>$customerDatas->supplytype,'count'=>$count]);
         }else {
             # code...
@@ -49,7 +50,33 @@ class CustomerMasterController extends Controller
     public function store(StoreCustomerMasterRequest $request)
     {
         //
-        dd($request->all());
+        // dd($request->all());
+        // dd($request->_token);
+        DB::beginTransaction();
+        try {
+            $data=$request->except('_token');
+            $cus_name=$request->cus_name;
+            $cus_gst_number=$request->cus_gst_number;
+            $delivery_cus_name=$request->delivery_cus_name;
+            $delivery_cus_gst_number=$request->delivery_cus_gst_number;
+
+            $count=CustomerMaster::where('cus_gst_number','=',$cus_gst_number)->where('cus_name','!=',$cus_name)->count();
+            // dd($count);
+            if ($count>1) {
+                # code...
+                return back()->withErrors('This GST Number Taken Already Another Customer.');
+            } else {
+                $customerData=CustomerMaster::create($data);
+                DB::commit();
+                return back()->withSuccess('Custmoer is Created Successfully!');
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollback();
+            dd($th->getMessage());
+            return redirect()->back()->withErrors($th->getMessage());
+        }
+        // dd($data);
 
     }
 

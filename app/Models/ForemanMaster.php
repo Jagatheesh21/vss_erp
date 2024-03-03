@@ -5,10 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CustomerMaster extends Model
+class ForemanMaster extends Model
 {
     use HasFactory;
 
-    protected $guarded =['cus_type','cus_address1','delivery_cus_address1'];
-
+    protected $fillable=['name','department'];
 }

@@ -11,18 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bom_masters', function (Blueprint $table) {
+        Schema::create('customer_po_rate_revises', function (Blueprint $table) {
             $table->id();
-            // child_part_id means manufacturing parts
-            $table->integer('child_part_id');
-            $table->integer('rm_id');
-            $table->integer('uom_id');
-            $table->float('input_usage', 10,7)->default(0);
-            $table->float('manual_usage', 10,7)->default(0);
-            $table->float('finish_usage', 10,7)->default(0);
-            $table->float('output_usage', 10,7)->default(0);
+            $table->integer('cus_id');
+            $table->integer('part_id');
+            $table->integer('cus_po_id');
+            $table->integer('cus_po_qty')->default(0);
+            $table->integer('uom_id')->default(2);
+            $table->integer('part_per')->default(1);
             $table->integer('status')->default(1);
-            $table->string('foreman');
             $table->integer('prepared_by');
             $table->integer('updated_by')->nullable();
             $table->timestamps();
@@ -34,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bom_masters');
+        Schema::dropIfExists('customer_po_rate_revises');
     }
 };

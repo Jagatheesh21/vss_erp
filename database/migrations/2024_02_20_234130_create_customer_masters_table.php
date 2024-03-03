@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('cus_name');
             $table->string('cus_gst_number');
             $table->text('cus_address');
-            $table->text('cus_address1');
+            $table->text('cus_address1')->nullable();
             $table->text('cus_city');
             $table->text('cus_state');
             $table->text('cus_country');
@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('delivery_cus_name');
             $table->string('delivery_cus_gst_number');
             $table->text('delivery_cus_address');
-            $table->text('delivery_cus_address1');
+            $table->text('delivery_cus_address1')->nullable();
             $table->text('delivery_cus_city');
             $table->text('delivery_cus_state');
             $table->text('delivery_cus_country');

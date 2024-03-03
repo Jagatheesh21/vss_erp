@@ -57,8 +57,8 @@ class FinalQcInspectionController extends Controller
         //
         // dd($request->all());
      // dd($request->all());
-    //  DB::beginTransaction();
-    //  try {
+     DB::beginTransaction();
+     try {
              date_default_timezone_set('Asia/Kolkata');
              $current_date=date('Y-m-d');
              // dd($request->select_all);
@@ -201,12 +201,15 @@ class FinalQcInspectionController extends Controller
                         $partRejectionData->save();
 
                         $d11Datas=TransDataD11::where('process_id','=',$request->previous_process_id[$key])->where('product_process_id','=',$request->previous_product_process_id[$key])->first();
+                        // dd($d11Datas);
                         if($request->rc_status[$key]==0){
                             // dd($request->rc_date);
                             $d11Datas->close_date=$current_date;
                             $d11Datas->status=0;
                         }
                         $total_reject_qty=(($d11Datas->reject_qty)+($request->inspect_qty[$key]));
+                        // dd($total_reject_qty);
+
                         $d11Datas->reject_qty=$total_reject_qty;
                         $d11Datas->updated_by = auth()->user()->id;
                         $d11Datas->updated_at = Carbon::now();
@@ -278,6 +281,8 @@ class FinalQcInspectionController extends Controller
                             $partRejectionData->next_process_id=$request->next_process_id[$key];
                             $partRejectionData->next_product_process_id=$request->next_productprocess_id[$key];
                             $partRejectionData->reason=$request->reason[$key];
+                            $partRejectionData->inspect_qty=$request->inspect_qty[$key];
+                            $partRejectionData->reject_qty=$request->inspect_qty[$key];
                             $partRejectionData->prepared_by = auth()->user()->id;
                             $partRejectionData->save();
 
@@ -431,6 +436,8 @@ class FinalQcInspectionController extends Controller
                             $partRejectionData->next_process_id=$request->next_process_id[$key];
                             $partRejectionData->next_product_process_id=$request->next_productprocess_id[$key];
                             $partRejectionData->reason=$request->reason[$key];
+                            $partRejectionData->inspect_qty=$request->inspect_qty[$key];
+                            $partRejectionData->reject_qty=$request->inspect_qty[$key];
                             $partRejectionData->prepared_by = auth()->user()->id;
                             $partRejectionData->save();
 
@@ -511,6 +518,8 @@ class FinalQcInspectionController extends Controller
                             $partRejectionData->next_process_id=$request->next_process_id[$key];
                             $partRejectionData->next_product_process_id=$request->next_productprocess_id[$key];
                             $partRejectionData->reason=$request->reason[$key];
+                            $partRejectionData->inspect_qty=$request->inspect_qty[$key];
+                            $partRejectionData->reject_qty=$request->inspect_qty[$key];
                             $partRejectionData->prepared_by = auth()->user()->id;
                             $partRejectionData->save();
 
@@ -539,16 +548,16 @@ class FinalQcInspectionController extends Controller
                      }
                  }
              }
-            //  DB::commit();
-            //  return back()->withSuccess('Your Inspection Data Is Submitted Successfully!');
+             DB::commit();
+             return back()->withSuccess('Your Inspection Data Is Submitted Successfully!');
 
-        //  } catch (\Throwable $th) {
-        //      //throw $th;
-        //  dd($th->getMessage());
+         } catch (\Throwable $th) {
+             //throw $th;
+         dd($th->getMessage());
 
-        //     //  DB::rollback();
-        //      return back()->withErrors($th->getMessage());
-        //  }
+            //  DB::rollback();
+             return back()->withErrors($th->getMessage());
+         }
  }
 
     /**

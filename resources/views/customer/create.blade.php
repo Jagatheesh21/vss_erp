@@ -1,12 +1,23 @@
 @extends('layouts.app')
 @section('content')
 
-<form action="{{route('customer.store')}}" id="supplier_formdata" method="POST">
+<form action="{{route('customer.store')}}" id="cus_formdata" method="POST">
     @csrf
     @method('POST')
 
 <div class="row d-flex justify-content-center">
     <div id="data"></div>
+    <div class="col-12">
+        @if(Session::has('success'))
+        <div class="alert alert-success mt-4">
+        {{ Session::get('success')}}
+        </div>
+    @endif
+    @if(Session::has('error'))
+        <div class="alert alert-danger mt-4">
+        {{ Session::get('error')}}
+        </div>
+    @endif
     <div class="col-12">
         <div class="row col-md-3"id="res"></div>
         <div class="card">
@@ -14,6 +25,7 @@
             </div>
             <div class="card-body">
                 <div class="row">
+                    <input type="hidden" name="prepared_by" id="prepared_by" value="{{$prepared_by}}">
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="cus_code">Code *</label>
@@ -63,7 +75,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="cus_gst_number">Customer GST Number *</label>
-                                    <input type="text" name="cus_gst_number" maxlength="15" minlength="15" id="cus_gst_number" class="form-control @error('cus_gst_number') is-invalid @enderror" >
+                                    <input type="text" name="cus_gst_number"  id="cus_gst_number" class="form-control @error('cus_gst_number') is-invalid @enderror" >
                                     @error('cus_gst_number')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -155,7 +167,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="delivery_cus_gst_number">Delivery Customer GST Number *</label>
-                                    <input type="text" name="delivery_cus_gst_number" maxlength="15" minlength="15" id="delivery_cus_gst_number" class="form-control @error('delivery_cus_gst_number') is-invalid @enderror" >
+                                    <input type="text" name="delivery_cus_gst_number" id="delivery_cus_gst_number" class="form-control @error('delivery_cus_gst_number') is-invalid @enderror" >
                                     @error('delivery_cus_gst_number')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -263,6 +275,8 @@ $(document).ready(function(){
     $("#cus_code").change(function(e){
         e.preventDefault();
         var customer_code=$(this).val();
+        $("#btn").attr('disabled',true);
+        $("#btn").val('Save');
         $.ajax({
             url: "{{ route('customersdata') }}?id=" + $(this).val(),
             method: 'GET',
@@ -290,8 +304,8 @@ $(document).ready(function(){
                     $('#delivery_cus_pincode').val(result.delivery_cus_pincode);
                     $('#supplier_vendor_code').val(result.supplier_vendor_code);
                     $('#supplytype').val(result.supplytype);
-                    $("#submit_btn").attr('disabled',true);
-                    $("#submit_btn").val('Save');
+                    $("#btn").attr('disabled',true);
+                    $("#btn").val('Save');
                     alert('This Customer Code Already Exist!!!')
                     setTimeout(() => {
                         location.reload(true);
@@ -317,7 +331,7 @@ $(document).ready(function(){
                     $('#delivery_cus_pincode').val('');
                     $('#supplier_vendor_code').val('');
                     $('#supplytype').val('');
-                    $("#submit_btn").attr('disabled',false);
+                    $("#btn").attr('disabled',false);
 
                 }
             }
