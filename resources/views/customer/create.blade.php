@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
 
-<form action="{{route('customer.store')}}" id="cus_formdata" method="POST">
+<form action="{{route('customermaster.store')}}" id="cus_formdata" method="POST">
     @csrf
     @method('POST')
 
@@ -18,10 +18,15 @@
         {{ Session::get('error')}}
         </div>
     @endif
+    @if (session()->has('message'))
+        <div class="alert alert-danger mt-4">
+        {{ session()->get('message')}}
+        </div>
+    @endif
     <div class="col-12">
         <div class="row col-md-3"id="res"></div>
         <div class="card">
-            <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Create Customer</b></span><a class="btn btn-sm btn-primary" href="{{route('customer.index')}}">Customer List</a>
+            <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Create Customer</b></span><a class="btn btn-sm btn-primary" href="{{route('customermaster.index')}}">Customer List</a>
             </div>
             <div class="card-body">
                 <div class="row">

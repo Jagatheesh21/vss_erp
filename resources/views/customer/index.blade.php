@@ -4,18 +4,23 @@
 
     <div class="col-12">
         <div class="card">
-        @if(Session::has('success'))
-                <div class="alert alert-success mt-4">
-                {{ Session::get('success')}}
-                </div>
-            @endif
-            @if(Session::has('error'))
-                <div class="alert alert-danger mt-4">
-                {{ Session::get('error')}}
-                </div>
-            @endif
+            @if(Session::has('success'))
+            <div class="alert alert-success mt-4">
+            {{ Session::get('success')}}
+            </div>
+        @endif
+        @if(Session::has('error'))
+            <div class="alert alert-danger mt-4">
+            {{ Session::get('error')}}
+            </div>
+        @endif
+        @if (session()->has('message'))
+            <div class="alert alert-danger mt-4">
+            {{ session()->get('message')}}
+            </div>
+        @endif
             <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Customer List</b> </span>
-                <a class="btn btn-sm btn-primary" href="{{route('customer.create')}}">Add Customer</a>
+                <a class="btn btn-sm btn-primary" href="{{route('customermaster.create')}}">Add Customer</a>
             </div>
             <div class="card-body">
                 <div class="table">
@@ -56,7 +61,7 @@
                                         @else
                                         <span class="btn btn-sm text-white btn-danger">Inactive</span>
                                     @endif</td>
-                                    <td><a href="{{route('customer.edit',$customerData->id)}}" class="btn btn-sm btn-primary">Edit</a></td>
+                                    <td><a href="{{route('customermaster.edit',$customerData->id)}}" class="btn btn-sm btn-primary">Edit</a></td>
                                 </tr>
                                 @empty
                                 <tr>

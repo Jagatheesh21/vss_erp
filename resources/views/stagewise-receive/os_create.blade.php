@@ -3,7 +3,7 @@
 
 @endpush
 @section('content')
-<form action="{{route('sfreceive.store')}}" id="sf_receive_formdata" method="POST">
+<form action="{{route('osreceive.store')}}" id="os_receive_formdata" method="POST">
     @csrf
     @method('POST')
 

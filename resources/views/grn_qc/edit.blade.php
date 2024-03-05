@@ -3,7 +3,7 @@
 
 @endpush
 @section('content')
-<form action="{{route('grn_qc.update',$grnqc_datas[0]->id)}}" id="grn_qc_formdata" method="POST">
+<form action="{{route('grn_qc.update',$grn_data_id)}}" id="grn_qc_formdata" method="POST">
     @csrf
     @method('PUT')
 
@@ -25,7 +25,7 @@
         <div class="card">
             <div class="card-header d-flex" style="justify-content:space-between"><span> <b>GRN Incoming Quality Clearance</b></span><a class="btn btn-sm btn-primary" href="{{route('grn_qc.index')}}">GRN Incoming QC List</a>
             </div>
-            <input type="hidden" name="id" value="{{$grnqc_datas[0]->id}}">
+            <input type="hidden" name="id" value="{{$grn_data_id}}">
             <div class="card-body">
                         <div class="row d-flex justify-content-center">
                             <div class="col-md-3">

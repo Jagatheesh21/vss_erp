@@ -93,11 +93,13 @@ class GRNInwardRegisterController extends Controller
 		$current_rcno=$rc.$current_year;
         $process=ItemProcesmaster::where('operation','=','RM Inward')->where('status','=',1)->first();
         $process_id=$process->id;
+        // dd($process_id);
         $count1=RouteMaster::where('process_id','=',$process_id)->where('rc_id','LIKE','%'.$current_rcno.'%')->orderBy('rc_id', 'DESC')->get()->count();
+        // dd($count1);
         // $count=GRNInwardRegister::where('grnnumber','LIKE','%'.$current_rcno.'%')->orderBy('grnnumber', 'DESC')->get()->count();
         if ($count1 > 0) {
             // $po_data=GRNInwardRegister::where('grnnumber','LIKE','%'.$current_rcno.'%')->orderBy('grnnumber', 'DESC')->first();
-            $po_data=RouteMaster::where('process_id','=',$process_id)->where('rc_id','LIKE','%'.$current_rcno.'%')->first();
+            $po_data=RouteMaster::where('process_id','=',$process_id)->where('rc_id','LIKE','%'.$current_rcno.'%')->orderBy('rc_id', 'DESC')->first();
             $grnnumber=$po_data['rc_id']??NULL;
             $old_grnnumber=str_replace("G","",$grnnumber);
             $old_grnnumber_data=str_pad($old_grnnumber+1,9,0,STR_PAD_LEFT);
@@ -106,7 +108,8 @@ class GRNInwardRegisterController extends Controller
             $str='000001';
             $new_grnnumber=$current_rcno.$str;
         }
-        $po_datas=PODetail::where('status','=',0)->get();
+        // dd($new_grnnumber);
+        $po_datas=PODetail::where('status','=',1)->get();
         // dd($po_datas);
         return view('grn_inward.create',compact('po_datas','new_grnnumber','current_date'));
     }
@@ -488,7 +491,9 @@ class GRNInwardRegisterController extends Controller
             $d13Datas->save();
 
             DB::commit();
-            return back()->withSuccess('RM Issued is Created Successfully!');
+            // return redirect()->route('grn_qc.index')->withSuccess('Your Inspection Data Is Submitted Successfully!');
+
+            return redirect()->route('rmissuance.index')->withSuccess('RM Issued is Created Successfully!');
         } catch (\Throwable $th) {
             //throw $th;
             DB::rollback();

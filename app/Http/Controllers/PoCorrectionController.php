@@ -50,6 +50,7 @@ class PoCorrectionController extends Controller
             $pocorrection_data->request_reason = $request->request_reason;
             $pocorrection_data->prepared_by = auth()->user()->id;
             $pocorrection_data->save();
+
             DB::commit();
             return redirect()->route('po-correction.index')->withSuccess('PO Correction is Requested Successfully!');
         } catch (\Throwable $th) {
@@ -111,6 +112,11 @@ class PoCorrectionController extends Controller
                 $pocorrection_data->approve_reason = $request->approve_reason;
                 $pocorrection_data->updated_by = auth()->user()->id;
                 $pocorrection_data->update();
+
+                $poDatas=PODetail::find($request->po_id);
+                $poDatas->correction_status=$request->status;
+                $poDatas->update();
+
                 DB::commit();
                 return redirect()->route('po-correction.index')->withSuccess('PO Correction is Status Submitted Successfully!');
             }
