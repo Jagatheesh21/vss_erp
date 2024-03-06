@@ -157,7 +157,8 @@ class StagewiseReceiveController extends Controller
             $d12Datas->prepared_by = auth()->user()->id;
             $d12Datas->save();
             DB::commit();
-            return back()->withSuccess('Part Received is Successfully!');
+            return redirect()->route('sfreceive')->withSuccess('Part Received is Successfully!');
+
         } catch (\Throwable $th) {
             //throw $th;
             DB::rollback();
@@ -319,7 +320,9 @@ class StagewiseReceiveController extends Controller
             $d12Datas->prepared_by = auth()->user()->id;
             $d12Datas->save();
             DB::commit();
-            return back()->withSuccess('Part Received is Successfully!');
+            return redirect()->route('osreceive')->withSuccess('Part Received is Successfully!');
+
+            // return back()->withSuccess('Part Received is Successfully!');
         } catch (\Throwable $th) {
             //throw $th;
             DB::rollback();
@@ -473,7 +476,7 @@ class StagewiseReceiveController extends Controller
                 $d12Datas->prepared_by = auth()->user()->id;
                 $d12Datas->save();
                 DB::commit();
-                return back()->withSuccess('Part Received is Successfully!');
+                return redirect()->route('fgreceive')->withSuccess('Part Received is Successfully!');
             }else{
                 $fqcInspectionData=new FinalQcInspection;
                 $fqcInspectionData->offer_date=$request->rc_date;
@@ -493,7 +496,8 @@ class StagewiseReceiveController extends Controller
                 $fqcInspectionData->prepared_by = auth()->user()->id;
                 $fqcInspectionData->save();
                 DB::commit();
-                return back()->withSuccess('Part Received is Successfully And Waiting For Final Quality Inspection!');
+                return redirect()->route('fqc_approval.index')->withSuccess('Part Received is Successfully And Waiting For Final Quality Inspection!');
+
             }
 
         } catch (\Throwable $th) {

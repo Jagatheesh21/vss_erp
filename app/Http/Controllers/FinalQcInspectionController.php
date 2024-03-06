@@ -549,7 +549,8 @@ class FinalQcInspectionController extends Controller
                  }
              }
              DB::commit();
-             return back()->withSuccess('Your Inspection Data Is Submitted Successfully!');
+
+             return redirect()->route('fqc_approval.index')->withSuccess('Your Inspection Data Is Submitted Successfully!');
 
          } catch (\Throwable $th) {
              //throw $th;

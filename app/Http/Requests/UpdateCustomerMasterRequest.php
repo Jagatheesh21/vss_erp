@@ -23,7 +23,7 @@ class UpdateCustomerMasterRequest extends FormRequest
     {
         return [
             //
-            'cus_code' => 'required|unique:customer_masters,cus_code'. $this->customerMaster->id,
+            'cus_code' => 'required',
             'cus_name' => 'required',
             'cus_gst_number' => 'required|digits_between:15,15',
             'cus_address' => 'required',

@@ -206,7 +206,7 @@ class StagewiseIssueController extends Controller
             $d13Datas->save();
             DB::commit();
 
-            return back()->withSuccess('Part Issued is Successfully!');
+            return redirect()->route('sfissue')->withSuccess('Part Issued is Successfully!');
         } catch (\Throwable $th) {
             //throw $th;
             DB::rollback();

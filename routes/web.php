@@ -40,8 +40,9 @@ Auth::routes();
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-    Route::get('/suppliers-data/id', [SupplierController::class,'suppliersdata'])->name('suppliersdata');
     Route::get('/customers-data/id', [CustomerMasterController::class,'customersData'])->name('customersdata');
+    Route::post('customers-edit', [CustomerMasterController::class,'customersEditData'])->name('customerseditdata');
+    Route::get('/suppliers-data/id', [SupplierController::class,'suppliersdata'])->name('suppliersdata');
     Route::get('/rmcategorydata-data/id', [SupplierProductController::class,'rmcategorydata'])->name('rmcategorydata');
     Route::post('add_purchase_item', [PODetailController::class,'addPurchaseItem'])->name('add_purchase_item');
     Route::post('add_grn_item', [GRNInwardRegisterController::class,'addGRNItem'])->name('add_grn_item');
@@ -77,6 +78,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('fg-receive', [StagewiseReceiveController::class,'fgReceiveEntry'])->name('fgreceive.store');
     Route::post('fg-receive/part_no', [StagewiseReceiveController::class,'fgPartFetchEntry'])->name('fgpartfetchdata');
 
+
     Route::resources([
         'roles' => RoleController::class,
         'users' => UserController::class,
@@ -98,7 +100,7 @@ Route::middleware(['auth'])->group(function () {
         'process-master' => ItemProcesmasterController::class,
         'dc_master' => DcMasterController::class,
         'fqc_approval'=>FinalQcInspectionController::class,
-        'customer'=>CustomerMasterController::class,
+        'customermaster'=>CustomerMasterController::class,
         'customer-products'=>CustomerProductMasterController::class,
         'delivery_challan'=>DcTransactionDetailsController::class,
     ]);

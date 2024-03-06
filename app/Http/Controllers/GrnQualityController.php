@@ -209,8 +209,9 @@ class GrnQualityController extends Controller
         ->where('c.id',$id)
         ->where('b.status','!=',1)
         ->get();
+        $grn_data_id=$grnqc_datas[0]->id;
         // dd($grnqc_datas);
-        return view('grn_qc.edit', compact('grnqc_datas'));
+        return view('grn_qc.edit', compact('grnqc_datas','grn_data_id'));
     }
 
 
@@ -391,7 +392,7 @@ class GrnQualityController extends Controller
                     }
                 }
                 DB::commit();
-                return back()->withSuccess('Your Inspection Data Is Submitted Successfully!');
+                return redirect()->route('grn_qc.index')->withSuccess('Your Inspection Data Is Submitted Successfully!');
 
             } catch (\Throwable $th) {
                 //throw $th;

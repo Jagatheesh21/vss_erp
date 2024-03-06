@@ -9,6 +9,7 @@ use App\Models\SupplierProduct;
 use App\Models\Currency;
 use App\Models\POProductDetail;
 use App\Models\PODetail;
+use App\Models\PoCorrection;
 use App\Models\RouteMaster;
 use App\Models\ItemProcesmaster;
 use App\Http\Requests\StorePODetailRequest;
@@ -170,7 +171,7 @@ class PODetailController extends Controller
     public function pocorrection(Request $request){
         $id=$request->id;
         $user_id=auth()->user()->id;
-        $po_datas=PODetail::with(['supplier','rcmaster'])->where('status','!=',1)->where('id','=',$id)->get();
+        $po_datas=PODetail::with(['supplier','rcmaster'])->where('status','!=',0)->where('id','=',$id)->get();
         $total_rate=POProductDetail::where('po_id','=',$id)->sum('rate');
         return view('po_correction.create',compact('po_datas','total_rate'));
     }
@@ -246,9 +247,16 @@ class PODetailController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(PODetail $pODetail)
+    public function edit($id)
     {
-        dd($pODetail);
+        // dd($id);
+        $suppliers = Supplier::where('status','=','1')->get();
+        $podatas=PODetail::with(['supplier','rcmaster'])->find($id);
+        $poProductDatas=POProductDetail::with(['suppliers','product_names'])->where('po_id','=',$id)->get();
+        // dd($podatas);
+        $currency_datas=Currency::where('status','=','1')->get();
+
+        return view('po.edit',compact('podatas','poProductDatas','suppliers','currency_datas'));
     }
 
     /**
