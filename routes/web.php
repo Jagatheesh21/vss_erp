@@ -23,6 +23,7 @@ use App\Http\Controllers\DcMasterController;
 use App\Http\Controllers\CustomerMasterController;
 use App\Http\Controllers\CustomerProductMasterController;
 use App\Http\Controllers\FinalQcInspectionController;
+use App\Http\Controllers\DcTransactionDetailsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -99,6 +100,7 @@ Route::middleware(['auth'])->group(function () {
         'fqc_approval'=>FinalQcInspectionController::class,
         'customer'=>CustomerMasterController::class,
         'customer-products'=>CustomerProductMasterController::class,
+        'delivery_challan'=>DcTransactionDetailsController::class,
     ]);
 });
 

@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\DcTransactionDetails;
+use App\Models\DcMaster;
+Use App\Models\Supplier;
+use App\Models\ItemProcesmaster;
+use App\Models\ProductMaster;
 use App\Http\Requests\StoreDcTransactionDetailsRequest;
 use App\Http\Requests\UpdateDcTransactionDetailsRequest;
 
@@ -21,7 +25,10 @@ class DcTransactionDetailsController extends Controller
      */
     public function create()
     {
-        //
+            $suppliers = Supplier::select('id','supplier_code')->get();
+            $operations = ItemProcesmaster::select('id','operation')->where('id',17)->get();
+            $part_numbers = ProductMaster::all();
+            return view('dc.create',compact('suppliers','operations','part_numbers'));
     }
 
     /**
