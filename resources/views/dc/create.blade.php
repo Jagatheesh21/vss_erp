@@ -4,7 +4,7 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-                <h3>Delivery challan</h3>
+                <h3>Delivery</h3>
             </div>
             <div class="card-body">
                 <form action="">
@@ -13,7 +13,7 @@
                         <div class="col-2">
                             <div class="form-group">
                                 <label for="" class="label-required">DC No.</label>
-                                <input type="text" name="dc_number" class="form-control" placeholder="DC Number" value="{{$new_rcnumber}}">
+                                <input type="text" name="dc_number" class="form-control" placeholder="DC Number" @readonly(true) value="{{$new_rcnumber}}">
                             </div>
                         </div>
 
@@ -45,6 +45,8 @@
                                 </select>
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-2">
                             <div class="form-group">
                                 <label for="">DC Quantity</label>

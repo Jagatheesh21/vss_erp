@@ -62,7 +62,8 @@ class DcTransactionDetailsController extends Controller
         // dd($new_rcnumber);
             $dcmasterDatas=DcMaster::with('supplier')->where('status','=',1)->groupBy('supplier_id')->get();
             // dd($dcmasterDatas);
-            return view('dc.create',compact('dcmasterDatas','new_rcnumber'));
+            return view('dc.create2',compact('dcmasterDatas','new_rcnumber'));
+            // return view('dc.index');
     }
 
     public function dcPartData(Request $request){
@@ -89,22 +90,28 @@ class DcTransactionDetailsController extends Controller
         $supplier_id=$request->supplier_id;
         $dcmasterOperationDatas=DcMaster::with('childpart','procesmaster','supplier')->where('status','=',1)->where('supplier_id','=',$supplier_id)->where('part_id','=',$part_id)->first();
         $operation_id=$dcmasterOperationDatas->operation_id;
+        $operation_name=$dcmasterOperationDatas->procesmaster->operation;
+        $operation='<option value="'.$operation_id.'" selected>'.$operation_name.'</option>';
         $dcmasterDatas=TransDataD11::with('rcmaster')->where('next_process_id','=',$operation_id)->where('part_id','=',$part_id)->select('rc_id',DB::raw('((receive_qty)-(issue_qty)) as avl_qty'))
         ->havingRaw('avl_qty >?', [0])->get();
         $count1=TransDataD11::where('next_process_id','=',$operation_id)->where('part_id','=',$part_id)->select(DB::raw('(SUM(receive_qty)-SUM(issue_qty)) as t_avl_qty'))
         ->havingRaw('t_avl_qty >?', [0])->first();
         $t_avl_qty=$count1->t_avl_qty;
+        // dd($dcmasterDatas);
+        $table="";
         foreach ($dcmasterDatas as $key => $dcmasterData) {
-            $table='<tr>';
-            $table.='<td><select name="route_card_id[]" class="form-control" id="route_card_id"><option value="'.$dcmasterData->rcmaster->id.'">'.$dcmasterData->rcmaster->rc_id.'</option></select></td>';
-            $table.='<td><select name="available_quantity[]"  class="form-control"  id="available_quantity"><option value="'.$dcmasterData->avl_qty.'">'.$dcmasterData->avl_qty.'</option></select></td>';
-            $table.='<td><input type="number" name="issue_quantity[]"  class="form-control"  id="issue_quantity" min="0" max="'.$dcmasterData->avl_qty.'"></td>';
-            $table.='</tr>';
+            $table.='<tr>'.
+            '<td><select name="route_card_id[]" class="form-control route_card_id" id="route_card_id"><option value="'.$dcmasterData->rcmaster->id.'">'.$dcmasterData->rcmaster->rc_id.'</option></select></td>'.
+            '<td><input type="number" name="available_quantity[]"  class="form-control available_quantity"  id="available_quantity" value="'.$dcmasterData->avl_qty.'"></td>'.
+            '<td><input type="number" name="issue_quantity[]"  class="form-control issue_quantity"  id="issue_quantity" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
+            '<td><input type="number" name="balance[]"  class="form-control balance"  id="balance" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
+            '</tr>';
         }
-        return response()->json(['t_avl_qty'=>$t_avl_qty,'table'=>$table]);
+        return response()->json(['t_avl_qty'=>$t_avl_qty,'table'=>$table,'operation'=>$operation]);
 
         // dd($count1);
     }
+
 
 
     /**
