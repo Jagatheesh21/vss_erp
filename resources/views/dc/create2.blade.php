@@ -3,8 +3,9 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card">
-            <div class="card-header">
-                <h3>Delivery challan</h3>
+            <div class="card-header d-flex justify-content-space-around">
+                <div class="col-md-10"><b>Create Delivery challan</b></div>
+                <div class="col-md-12"><a class="btn btn-sm btn-primary" href="{{route('department.index')}}">Delivery challan List</a></div>
             </div>
             <div class="card-body">
                 <form action="">
@@ -18,7 +19,7 @@
                         </div>
                         <div class="col-3">
                             <div class="form-group">
-                                <label for="">To Operation</label>
+                                <label for="">Operation</label>
                                 <select name="to_operation_id" id="to_operation_id" class="form-control">
                                 </select>
                             </div>
@@ -31,7 +32,6 @@
                                     @forelse ($dcmasterDatas as $dcmasterData)
                                     <option value="{{$dcmasterData->supplier->id}}"> {{$dcmasterData->supplier->supplier_code}}</option>
                                 @empty
-
                                 @endforelse
                                 </select>
                             </div>
@@ -69,7 +69,7 @@
                                     <thead>
                                     <tr>
                                         <th>Route Card</th>
-                                        <th>Available Quantity</th>
+                                        <th>Route Card Available Quantity</th>
                                         <th>DC Quantity</th>
                                         <th>Balance</th>
                                     </tr>
@@ -130,9 +130,6 @@
             });
         });
         $("#dc_quantity").change(function(){
-            // if($(this).val() !=''){
-            //     return false;
-            // }
             var dc_quantity = $(this).val();
             var dc_avl_qty = $('#avl_quantity').val();
             if (dc_avl_qty>=dc_quantity) {
@@ -143,38 +140,11 @@
                 if(total>=qty && total>0){
                     total-=qty;
                     $(row).find('.issue_quantity').val(qty);
-                    //$(row).find('.total').val(total);
                     console.log('method 1');
-                    //console.log('method 1 total:'+total);
-                    //console.log('method 1 qty:'+qty);
                 }else if(qty>total){
                 $(row).find('.issue_quantity').val(total);
-
-                    //console.log('method 2');
-                // console.log("qty"+qty);
                     total = 0;
-                    //console.log("total"+total);
-                    // $(row).find('.issue_quantity').val(total);
-                    //$(row).find('.total').val(total);
-                    // console.log(total);
-                    // console.log(qty);
-
                 }
-                // if(total<qty && total>0){
-                //     if(qty>total){
-                //         console.log('test');
-                //         $(row).find('.issue_quantity').val(total);
-                //     }else{
-                //         $(row).find('.issue_quantity').val(total);
-                //     }
-                //      total = qty-total;
-                //      $(row).find('.total').val(total);
-
-                //     console.log('method 2');
-                //     console.log('method 2 total:'+total);
-                //     console.log('method 2 qty:'+qty);
-
-                // }
                 var balance = qty-($(row).find('.issue_quantity').val());
                 $(row).find('.balance').val(balance);
                 });

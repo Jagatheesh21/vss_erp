@@ -134,7 +134,10 @@ class StagewiseReceiveController extends Controller
         // dd($request->all());
         DB::beginTransaction();
         try {
-            $d11Datas=TransDataD11::where('process_id','=',$request->previous_process_id)->where('product_process_id','=',$request->previous_product_process_id)->where('rc_id','=',$request->rc_no)->first();
+            $receive_qty=$request->receive_qty;
+            $avl_qty=$request->avl_qty;
+            if ($receive_qty<=$avl_qty) {
+                $d11Datas=TransDataD11::where('process_id','=',$request->previous_process_id)->where('product_process_id','=',$request->previous_product_process_id)->where('rc_id','=',$request->rc_no)->first();
             if($request->rc_close=="yes"){
                 // dd($request->rc_date);
                 $d11Datas->close_date=$request->rc_date;
@@ -159,6 +162,10 @@ class StagewiseReceiveController extends Controller
             $d12Datas->save();
             DB::commit();
             return redirect()->route('sfreceive')->withSuccess('Part Received is Successfully!');
+            }else {
+                return redirect()->route('sfreceive')->withMessage('Please Check Your Available Quantity & You Enter More Available Quantity!');
+            }
+
 
         } catch (\Throwable $th) {
             //throw $th;

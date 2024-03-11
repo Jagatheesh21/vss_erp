@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class ChildProductMaster extends Model
 {
     use HasFactory;
+
+    public function invoicepart()
+    {
+        return $this->belongsTo(ProductMaster::class,'part_id');
+    }
 }

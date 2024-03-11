@@ -24,5 +24,10 @@ class DcMaster extends Model
         return $this->belongsTo(ChildProductMaster::class,'part_id');
     }
 
+    public function invoicepart()
+    {
+        return $this->belongsTo(ProductMaster::class,'part_id');
+    }
+
 
 }

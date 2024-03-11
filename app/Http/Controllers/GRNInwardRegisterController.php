@@ -310,6 +310,7 @@ class GRNInwardRegisterController extends Controller
         ->select('a.id as grn_id','a.grnnumber','b.id as heat_id','b.heatnumber')
         ->where('b.status','=',1)
         ->where('a.status','=',0)
+        ->groupBy('b.heatnumber')
         ->where('a.id','=',$grn_id)
         ->get();
 
@@ -320,8 +321,11 @@ class GRNInwardRegisterController extends Controller
         ->join('bom_masters as e', 'e.rm_id', '=', 'd.id')
         ->join('child_product_masters as f', 'e.child_part_id', '=', 'f.id')
         ->join('mode_of_units as g', 'c.uom_id', '=', 'g.id')
+        ->join('product_process_masters as l','l.part_id','=','f.id')
         ->select('a.grnnumber','d.id as rm_id','d.name as rm_desc','f.id as part_id','f.child_part_no as part_no','c.uom_id','g.name as uom_name')
         ->where('a.status','=',0)
+        ->where('l.process_master_id','=',3)
+        ->where('f.item_type','=',1)
         ->where('a.id','=',$grn_id)
         ->get();
 

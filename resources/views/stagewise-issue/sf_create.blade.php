@@ -122,7 +122,7 @@
                             </div>
                         </div>
 
-                        <div class="row d-flex justify-content-center mt-3">
+                        {{-- <div class="row d-flex justify-content-center mt-3">
                             <div class="col-md-3">
                                 <p><b>Route Close :</b></p>
                                   <div class="form-check form-check-inline">
@@ -134,7 +134,7 @@
                                     <label class="form-check-label" for="inlineRadio2">No</label>
                                   </div>
                             </div>
-                        </div>
+                        </div> --}}
 
                         <div class="row d-flex justify-content-center ">
                             <div class="col-md-2 mt-4">

@@ -14,6 +14,11 @@
         {{ Session::get('error')}}
         </div>
     @endif
+    @if(Session::has('message'))
+        <div class="alert alert-danger mt-4">
+        {{ Session::get('message')}}
+        </div>
+    @endif
         <div class="card">
             <div class="card-header d-flex" style="justify-content:space-between"><span><b>Semi Finished Store Receive Register List</b>  </span>
                 <a class="btn btn-md btn-primary" href="{{route('sfreceive.create')}}"><b><i class='bx bx-plus bx-flashing' style='color:white;' ></i>&nbsp;&nbsp; New</b></a>

@@ -124,7 +124,7 @@
                         <div class="row d-flex justify-content-center">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="vehicle_no">VEHICLE NO (%) *</label>
+                                    <label for="vehicle_no">VEHICLE NO *</label>
                                     <input type="text" name="vehicle_no" id="vehicle_no" class="form-control @error('vehicle_no') is-invalid @enderror" >
                                     @error('vehicle_no')
                                     <span class="invalid-feedback" role="alert">
@@ -133,6 +133,8 @@
                                     @enderror
                                 </div>
                             </div>
+                            <input type="hidden" name="regular" class="form-control regular" id="regular">
+                            <input type="hidden" name="alter" class="form-control alter" id="alter">
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <button class="btn btn-primary mt-4">Proceed DC</button>
@@ -145,6 +147,8 @@
                             <table class="table table-bordered table-striped table-responsive">
                                 <thead>
                                 <tr>
+                                    <th>Part No</th>
+                                    <th>Order</th>
                                     <th>Route Card</th>
                                     <th>Route Card Available Quantity</th>
                                     <th>DC Quantity</th>
@@ -169,6 +173,7 @@
         $("#supplier_id").select2();
         $("#operation_id").select2();
         $("#part_id").select2();
+        $("#trans_mode").select2();
         $('#supplier_id').change(function (e) {
             e.preventDefault();
             var supplier_id=$(this).val();
@@ -197,11 +202,13 @@
                     url: "{{route('dcitemrc')}}",
                     data: {"supplier_id":supplier_id,"part_id":part_id},
                     success: function (response) {
-                        console.log(response);
+                        // console.log(response);
                         $('#avl_quantity').val(response.t_avl_qty);
-                        $('#to_operation_id').html(response.operation);
+                        $('#operation_id').html(response.operation);
                         $('#dc_quantity'). attr('max',response.t_avl_qty);
                         $('#table_logic').html(response.table);
+                        $('#regular').val(response.regular);
+                        $('#alter').val(response.alter);
                     }
                 });
             });
@@ -212,7 +219,9 @@
             // }
             var dc_quantity = $(this).val();
             var dc_avl_qty = $('#avl_quantity').val();
-            if (dc_avl_qty>=dc_quantity) {
+            var regular=$('#regular').val();
+
+                if (dc_avl_qty>=dc_quantity) {
                 var total = dc_quantity;
                 $('table > tbody  > tr').each(function(index, row) {
                 $(row).find('.issue_quantity').val('');
@@ -259,6 +268,7 @@
                 alert('Sorry This Quantity More Than Available Quantity..');
                 return false;
             }
+
 
         });
     </script>

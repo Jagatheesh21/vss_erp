@@ -28,6 +28,7 @@ class TransDataD11 extends Model
     {
         return $this->belongsTo(ProductProcessMaster::class,'product_process_id');
     }
+
     public function nextprocessmaster()
     {
         return $this->belongsTo(ItemProcesmaster::class,'next_process_id');

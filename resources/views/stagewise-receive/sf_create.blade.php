@@ -289,7 +289,8 @@ $(document).ready(function(){
                 // alert(diff);
                 if(diff < 1){
                     $('#inlineRadio1').show();
-                }else{
+                }
+                else{
                     $('#inlineRadio1').hide();
                 }
             }
