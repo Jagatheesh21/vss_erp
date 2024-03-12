@@ -9,13 +9,16 @@ Use App\Models\RouteMaster;
 Use App\Models\Supplier;
 use App\Models\ItemProcesmaster;
 use App\Models\ProductMaster;
+use App\Models\ProductProcessMaster;
 use App\Models\ChildProductMaster;
+use App\Models\CustomerProductMaster;
 use App\Models\TransDataD11;
 use App\Models\TransDataD12;
 use App\Models\TransDataD13;
 use App\Http\Requests\StoreDcTransactionDetailsRequest;
 use App\Http\Requests\UpdateDcTransactionDetailsRequest;
-use DB;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 use Auth;
 
 class DcTransactionDetailsController extends Controller
@@ -113,12 +116,19 @@ class DcTransactionDetailsController extends Controller
                         $table="";
                         foreach ($dcmasterDatas as $key => $dcmasterData) {
                             $table.='<tr>'.
-                            '<td><select name="route_part_id[]" class="form-control bg-light route_part_id" readonly id="route_part_id"><option value="'.$dcmasterData->partmaster->child_part_no.'">'.$dcmasterData->partmaster->child_part_no.'</option></select></td>'.
-                            '<td><input type="number" name="order_no[]"  class="form-control bg-light order_no" readonly  id="order_no" value="'.$dcmasterData->partmaster->no_item_id.'"></td>'.
-                            '<td><select name="route_card_id[]" class="form-control bg-light route_card_id" readonly id="route_card_id"><option value="'.$dcmasterData->rcmaster->id.'">'.$dcmasterData->rcmaster->rc_id.'</option></select></td>'.
-                            '<td><input type="number" name="available_quantity[]"  class="form-control bg-light available_quantity" readonly  id="available_quantity" value="'.$dcmasterData->avl_qty.'"></td>'.
-                            '<td><input type="number" name="issue_quantity[]"  class="form-control bg-light issue_quantity" readonly id="issue_quantity" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
-                            '<td><input type="number" name="balance[]"  class="form-control bg-light balance" readonly id="balance" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
+                            // '<td><select name="route_part_id[]" class="form-control bg-light route_part_id" readonly id="route_part_id"><option value="'.$dcmasterData->partmaster->child_part_no.'">'.$dcmasterData->partmaster->child_part_no.'</option></select></td>'.
+                            // '<td><input type="number" name="order_no[]"  class="form-control bg-light order_no" readonly  id="order_no" value="'.$dcmasterData->partmaster->no_item_id.'"></td>'.
+                            // '<td><select name="route_card_id[]" class="form-control bg-light route_card_id" readonly id="route_card_id"><option value="'.$dcmasterData->rcmaster->id.'">'.$dcmasterData->rcmaster->rc_id.'</option></select></td>'.
+                            // '<td><input type="number" name="available_quantity[]"  class="form-control bg-light available_quantity" readonly  id="available_quantity" value="'.$dcmasterData->avl_qty.'"></td>'.
+                            // '<td><input type="number" name="issue_quantity[]"  class="form-control bg-light issue_quantity" readonly id="issue_quantity" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
+                            // '<td><input type="number" name="balance[]"  class="form-control bg-light balance" readonly id="balance" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
+                            // '</tr>';
+                            '<td><select name="route_part_id[]" class="form-control bg-light route_part_id" id="route_part_id"><option value="'.$dcmasterData->partmaster->id.'">'.$dcmasterData->partmaster->child_part_no.'</option></select></td>'.
+                            '<td><input type="number" name="order_no[]"  class="form-control bg-light order_no"  id="order_no" value="'.$dcmasterData->partmaster->no_item_id.'"></td>'.
+                            '<td><select name="route_card_id[]" class="form-control bg-light route_card_id" id="route_card_id"><option value="'.$dcmasterData->rcmaster->id.'">'.$dcmasterData->rcmaster->rc_id.'</option></select></td>'.
+                            '<td><input type="number" name="available_quantity[]"  class="form-control bg-light available_quantity"  id="available_quantity" value="'.$dcmasterData->avl_qty.'"></td>'.
+                            '<td><input type="number" name="issue_quantity[]"  class="form-control bg-light issue_quantity" id="issue_quantity" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
+                            '<td><input type="number" name="balance[]"  class="form-control bg-light balance" id="balance" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
                             '</tr>';
                         }
                         return response()->json(['t_avl_qty'=>$t_avl_qty,'table'=>$table,'operation'=>$operation,'regular'=>$check1,'alter'=>$check2]);
@@ -187,12 +197,19 @@ class DcTransactionDetailsController extends Controller
                     $table="";
                         foreach ($dcmasterDatas as $key => $dcmasterData) {
                             $table.='<tr class="order_'.$dcmasterData->no_item_id.'">'.
-                            '<td><select name="route_part_id[]" class="form-control bg-light route_part_id" readonly id="route_part_id"><option value="'.$dcmasterData->partId.'">'.$dcmasterData->child_part_no.'</option></select></td>'.
-                            '<td><input type="number" name="order_no[]"  class="form-control bg-light order_no" readonly  id="order_no" value="'.$dcmasterData->no_item_id.'"></td>'.
-                            '<td><select name="route_card_id[]" class="form-control bg-light route_card_id" readonly id="route_card_id"><option value="'.$dcmasterData->rcId.'">'.$dcmasterData->rc_id.'</option></select></td>'.
-                            '<td><input type="number" name="available_quantity[]"  class="form-control bg-light available_quantity" readonly  id="available_quantity" value="'.$dcmasterData->avl_qty.'"></td>'.
-                            '<td><input type="number" name="issue_quantity[]"  class="form-control bg-light issue_quantity" readonly id="issue_quantity" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
-                            '<td><input type="number" name="balance[]"  class="form-control bg-light balance" readonly id="balance" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
+                            // '<td><select name="route_part_id[]" class="form-control bg-light route_part_id" readonly id="route_part_id"><option value="'.$dcmasterData->partId.'">'.$dcmasterData->child_part_no.'</option></select></td>'.
+                            // '<td><input type="number" name="order_no[]"  class="form-control bg-light order_no" readonly  id="order_no" value="'.$dcmasterData->no_item_id.'"></td>'.
+                            // '<td><select name="route_card_id[]" class="form-control bg-light route_card_id" readonly id="route_card_id"><option value="'.$dcmasterData->rcId.'">'.$dcmasterData->rc_id.'</option></select></td>'.
+                            // '<td><input type="number" name="available_quantity[]"  class="form-control bg-light available_quantity" readonly  id="available_quantity" value="'.$dcmasterData->avl_qty.'"></td>'.
+                            // '<td><input type="number" name="issue_quantity[]"  class="form-control bg-light issue_quantity" readonly id="issue_quantity" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
+                            // '<td><input type="number" name="balance[]"  class="form-control bg-light balance" readonly id="balance" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
+                            // '</tr>';
+                            '<td><select name="route_part_id[]" class="form-control bg-light route_part_id"  id="route_part_id"><option value="'.$dcmasterData->partId.'">'.$dcmasterData->child_part_no.'</option></select></td>'.
+                            '<td><input type="number" name="order_no[]"  class="form-control bg-light order_no"   id="order_no" value="'.$dcmasterData->no_item_id.'"></td>'.
+                            '<td><select name="route_card_id[]" class="form-control bg-light route_card_id"  id="route_card_id"><option value="'.$dcmasterData->rcId.'">'.$dcmasterData->rc_id.'</option></select></td>'.
+                            '<td><input type="number" name="available_quantity[]"  class="form-control bg-light available_quantity"   id="available_quantity" value="'.$dcmasterData->avl_qty.'"></td>'.
+                            '<td><input type="number" name="issue_quantity[]"  class="form-control bg-light issue_quantity"  id="issue_quantity" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
+                            '<td><input type="number" name="balance[]"  class="form-control bg-light balance"  id="balance" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
                             '</tr>';
                         }
                         return response()->json(['t_avl_qty'=>$t_avl_qty,'table'=>$table,'operation'=>$operation,'regular'=>$check1,'alter'=>$check2]);
@@ -208,6 +225,73 @@ class DcTransactionDetailsController extends Controller
     public function store(StoreDcTransactionDetailsRequest $request)
     {
         //
+        dd($request->all());
+        $dc_number=$request->dc_number;
+        $dc_date=$request->dc_date;
+        $supplier_id=$request->supplier_id;
+        $part_id=$request->part_id;
+        $operation_id=$request->operation_id;
+        $dc_avl_quantity=$request->avl_quantity;
+        $dc_quantity=$request->dc_quantity;
+        $trans_mode=$request->trans_mode;
+        $vehicle_no=$request->vehicle_no;
+        $regular=$request->regular;
+        $alter=$request->alter;
+        $route_part_id=$request->route_part_id;
+        $order_no=$request->order_no;
+        $route_card_id=$request->route_card_id;
+        $rc_available_quantity=$request->available_quantity;
+        $rc_issue_quantity=$request->issue_quantity;
+        $dcMasterData=DcMaster::with('procesmaster','supplier')->where('part_id','=',$part_id)->where('operation_id','=',$operation_id)->where('supplier_id','=',$supplier_id)->first();
+        $valuation_rate=$dcMasterData->procesmaster->valuation_rate;
+        $customerProductData=CustomerProductMaster::where('part_id','=',$part_id)->where('status','=',1)->sum('part_rate');
+        $part_rate=$customerProductData->part_rate;
+        $unit_rate=$part_rate*$valuation_rate;
+
+        $rcMaster=new RouteMaster;
+        $rcMaster->create_date=$dc_date;
+        $rcMaster->process_id=$operation_id;
+        $rcMaster->rc_id=$dc_number;
+        $rcMaster->prepared_by=auth()->user()->id;
+        $rcMaster->save();
+
+        $rcMasterData=RouteMaster::where('rc_id','=',$dc_number)->where('process_id','=',$operation_id)->first();
+        $rc_id=$rcMasterData->id;
+
+        if ($regular==1) {
+            foreach ($route_card_id as $key => $card_id) {
+                $previousD11Datas=TransDataD11::where('rc_id','=',$card_id)->where('next_process_id','=',$operation_id)->first();
+                // dd($previousD11Datas);
+                $old_issueqty=$previousD11Datas->issue_qty;
+                $total_issue_qty=$old_issueqty+$request->issue_quantity[$key];
+                $previousD11Datas->issue_qty=$total_issue_qty;
+                $previousD11Datas->updated_by = auth()->user()->id;
+                $previousD11Datas->updated_at = Carbon::now();
+                $previousD11Datas->update();
+
+                $currentProcess=ProductProcessMaster::where('part_id','=',$part_id)->where('process_master_id','=',$operation_id)->first();
+                $current_order=$currentProcess->process_order_id;
+
+                $d11Datas=new TransDataD11;
+                $d11Datas->open_date=$dc_date;
+                $d11Datas->rc_id=$rc_id;
+                $d11Datas->part_id=$request->part_id;
+                $d11Datas->process_id=$request->previous_process_id;
+                $d11Datas->product_process_id=$request->previous_product_process_id;
+                $d11Datas->next_process_id=$request->next_process_id;
+                $d11Datas->next_product_process_id=$request->next_product_process_id;
+                $d11Datas->process_issue_qty=$request->issue_qty;
+                $d11Datas->prepared_by = auth()->user()->id;
+                $d11Datas->save();
+            }
+
+
+        }elseif ($regular>1) {
+            # code...
+        }
+
+
+
     }
 
     /**

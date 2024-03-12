@@ -3,7 +3,7 @@
 
 @endpush
 @section('content')
-<form action="{{route('po.store')}}" id="po_formdata" method="POST">
+<form action="{{route('delivery_challan.store')}}" id="delivery_challan_formdata" method="POST">
     @csrf
     @method('POST')
 
@@ -13,7 +13,7 @@
         <div class="row col-md-3"id="res"></div>
 
         <div class="card">
-            <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Create Delivery challan</b></span><a class="btn btn-sm btn-primary" href="{{route('po.index')}}">Delivery challan List</a>
+            <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Create Delivery challan</b></span><a class="btn btn-sm btn-primary" href="{{route('delivery_challan.index')}}">Delivery challan List</a>
             </div>
             <div class="card-body">
                         <div class="row d-flex justify-content-center">
@@ -125,7 +125,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="vehicle_no">VEHICLE NO *</label>
-                                    <input type="text" name="vehicle_no" id="vehicle_no" class="form-control @error('vehicle_no') is-invalid @enderror" >
+                                    <input type="text" name="vehicle_no" id="vehicle_no" pattern="^[A-Z]{2}-\d{2}-[A-Z]{1}.-\d{4}$" onkeyup="format()" placeholder="TN-99-AA-1111 (OR) TN-99-A--1111" class="form-control @error('vehicle_no') is-invalid @enderror" >
                                     @error('vehicle_no')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -171,7 +171,6 @@
 @push('scripts')
     <script>
         $("#supplier_id").select2();
-        $("#operation_id").select2();
         $("#part_id").select2();
         $("#trans_mode").select2();
         $('#supplier_id').change(function (e) {
@@ -213,62 +212,62 @@
                 });
             });
         });
+        // vehicle number format
+        function format() {
+            var x=$('#vehicle_no').val();
+			x.value=x.value.toUpperCase();
+			if(event.keyCode!=8)
+			{
+				if(x.value.toString().length==2)
+				{
+					x.value=x.value+'-';
+				}
+				if(x.value.toString().length==5)
+				{
+					x.value=x.value+'-';
+				}
+				if(x.value.toString().length==8)
+				{
+					x.value=x.value+'-';
+				}
+			}
+		}
         $("#dc_quantity").change(function(){
-            // if($(this).val() !=''){
-            //     return false;
-            // }
             var dc_quantity = $(this).val();
             var dc_avl_qty = $('#avl_quantity').val();
             var regular=$('#regular').val();
-
-                if (dc_avl_qty>=dc_quantity) {
-                var total = dc_quantity;
-                $('table > tbody  > tr').each(function(index, row) {
-                $(row).find('.issue_quantity').val('');
-                var qty = $(row).find('.available_quantity').val();
-                if(total>=qty && total>0){
-                    total-=qty;
-                    $(row).find('.issue_quantity').val(qty);
-                    //$(row).find('.total').val(total);
-                    console.log('method 1');
-                    //console.log('method 1 total:'+total);
-                    //console.log('method 1 qty:'+qty);
-                }else if(qty>total){
-                $(row).find('.issue_quantity').val(total);
-
-                    //console.log('method 2');
-                // console.log("qty"+qty);
-                    total = 0;
-                    //console.log("total"+total);
-                    // $(row).find('.issue_quantity').val(total);
-                    //$(row).find('.total').val(total);
-                    // console.log(total);
-                    // console.log(qty);
-
+            var diff=dc_avl_qty-dc_quantity;
+            alert(regular);
+            if (regular==1) {
+                // if (dc_avl_qty>=dc_quantity) {
+                if (diff>=0) {
+                    var total = dc_quantity;
+                    $('table > tbody  > tr').each(function(index, row) {
+                    $(row).find('.issue_quantity').val('');
+                    var qty = $(row).find('.available_quantity').val();
+                    if(total>=qty && total>0){
+                        total-=qty;
+                        $(row).find('.issue_quantity').val(qty);
+                        console.log('method 1');
+                    }else if(qty>total){
+                    $(row).find('.issue_quantity').val(total);
+                        total = 0;
+                    }
+                    var balance = qty-($(row).find('.issue_quantity').val());
+                    $(row).find('.balance').val(balance);
+                    });
+                }else{
+                    alert('Sorry This Quantity More Than Available Quantity..');
+                    return false;
                 }
-                // if(total<qty && total>0){
-                //     if(qty>total){
-                //         console.log('test');
-                //         $(row).find('.issue_quantity').val(total);
-                //     }else{
-                //         $(row).find('.issue_quantity').val(total);
-                //     }
-                //      total = qty-total;
-                //      $(row).find('.total').val(total);
+            } else {
+                let i;
+                let x=$('table > tbody  > tr').toArray();
+                for (i= 0; i < x.length; i++) {
+                    alert(x[i].innerHTML);
+                }
 
-                //     console.log('method 2');
-                //     console.log('method 2 total:'+total);
-                //     console.log('method 2 qty:'+qty);
-
-                // }
-                var balance = qty-($(row).find('.issue_quantity').val());
-                $(row).find('.balance').val(balance);
-                });
-            }else{
-                alert('Sorry This Quantity More Than Available Quantity..');
-                return false;
             }
-
 
         });
     </script>
