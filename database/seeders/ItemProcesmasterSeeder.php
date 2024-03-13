@@ -168,7 +168,12 @@ class ItemProcesmasterSeeder extends Seeder
             'prepared_by'=>'1'
         ]);
 
-
+        $processMaster25 = ItemProcesmaster::create([
+            'operation' => 'Dummy',
+            'operation_type' => 'STOCKING POINT',
+            'valuation_rate' => '0',
+            'prepared_by'=>'1'
+        ]);
 
 
 

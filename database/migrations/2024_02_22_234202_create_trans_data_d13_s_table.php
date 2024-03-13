@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('trans_data_d13_s', function (Blueprint $table) {
             $table->id();
-            $table->integer('rc_id')->unique();
+            $table->integer('rc_id');
             $table->integer('previous_rc_id');
             $table->integer('status')->default(1);
             $table->integer('prepared_by');

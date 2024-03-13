@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\DcTransactionDetails;
 use App\Models\DcMaster;
+use App\Models\BomMaster;
 Use App\Models\RouteMaster;
 Use App\Models\Supplier;
 use App\Models\ItemProcesmaster;
@@ -29,6 +30,8 @@ class DcTransactionDetailsController extends Controller
     public function index()
     {
         //
+        $dcDatas=DcTransactionDetails::with('dcmaster','rcmaster','uom')->where('type','=',1)->orderBy('id', 'DESC')->get();
+        return view('dc.index',compact('dcDatas'));
     }
 
     /**
@@ -60,7 +63,7 @@ class DcTransactionDetailsController extends Controller
             $old_rcnumber_data=str_pad($old_rcnumber+1,5,0,STR_PAD_LEFT);
             $new_rcnumber=$current_rcno.$old_rcnumber_data;
         }else{
-            $str='000001';
+            $str='00001';
             $new_rcnumber=$current_rcno.$str;
         }
         // dd($new_rcnumber);
@@ -93,6 +96,8 @@ class DcTransactionDetailsController extends Controller
         // dd($request->all());
         $part_id=$request->part_id;
         $supplier_id=$request->supplier_id;
+        $bomDatas=BomMaster::find($part_id);
+        $bom=$bomDatas->manual_usage;
         $check=ChildProductMaster::where('status','=',1)->where('part_id','=',$part_id)->count();
         $check1=ChildProductMaster::where('status','=',1)->where('part_id','=',$part_id)->where('item_type','=',1)->count();
         $check2=ChildProductMaster::where('status','=',1)->where('part_id','=',$part_id)->where('item_type','=',0)->count();
@@ -131,7 +136,7 @@ class DcTransactionDetailsController extends Controller
                             '<td><input type="number" name="balance[]"  class="form-control bg-light balance" id="balance" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
                             '</tr>';
                         }
-                        return response()->json(['t_avl_qty'=>$t_avl_qty,'table'=>$table,'operation'=>$operation,'regular'=>$check1,'alter'=>$check2]);
+                        return response()->json(['t_avl_qty'=>$t_avl_qty,'table'=>$table,'operation'=>$operation,'regular'=>$check1,'alter'=>$check2,'bom'=>$bom]);
                     }else{
                         $dcmasterOperationDatas=DcMaster::with('childpart','procesmaster','supplier')->where('status','=',1)->where('supplier_id','=',$supplier_id)->where('part_id','=',$manufacturingPart)->first();
                         $operation_id=$dcmasterOperationDatas->operation_id;
@@ -212,12 +217,10 @@ class DcTransactionDetailsController extends Controller
                             '<td><input type="number" name="balance[]"  class="form-control bg-light balance"  id="balance" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
                             '</tr>';
                         }
-                        return response()->json(['t_avl_qty'=>$t_avl_qty,'table'=>$table,'operation'=>$operation,'regular'=>$check1,'alter'=>$check2]);
+                        return response()->json(['t_avl_qty'=>$t_avl_qty,'table'=>$table,'operation'=>$operation,'regular'=>$check1,'alter'=>$check2,'bom'=>$bom]);
                 }
 
     }
-
-
 
     /**
      * Store a newly created resource in storage.
@@ -225,7 +228,7 @@ class DcTransactionDetailsController extends Controller
     public function store(StoreDcTransactionDetailsRequest $request)
     {
         //
-        dd($request->all());
+        // dd($request->all());
         $dc_number=$request->dc_number;
         $dc_date=$request->dc_date;
         $supplier_id=$request->supplier_id;
@@ -242,11 +245,19 @@ class DcTransactionDetailsController extends Controller
         $route_card_id=$request->route_card_id;
         $rc_available_quantity=$request->available_quantity;
         $rc_issue_quantity=$request->issue_quantity;
+        $issue_wt=$request->issue_wt;
+        $remarks=($request->remarks)??NULL;
+
+
         $dcMasterData=DcMaster::with('procesmaster','supplier')->where('part_id','=',$part_id)->where('operation_id','=',$operation_id)->where('supplier_id','=',$supplier_id)->first();
-        $valuation_rate=$dcMasterData->procesmaster->valuation_rate;
+        $valuation_rate=(($dcMasterData->procesmaster->valuation_rate)/100);
+        $dcMaster_id=$dcMasterData->id;
+
         $customerProductData=CustomerProductMaster::where('part_id','=',$part_id)->where('status','=',1)->sum('part_rate');
-        $part_rate=$customerProductData->part_rate;
+        // dd($customerProductData);
+        $part_rate=$customerProductData;
         $unit_rate=$part_rate*$valuation_rate;
+        $basic_value=$unit_rate*$dc_quantity;
 
         $rcMaster=new RouteMaster;
         $rcMaster->create_date=$dc_date;
@@ -258,40 +269,196 @@ class DcTransactionDetailsController extends Controller
         $rcMasterData=RouteMaster::where('rc_id','=',$dc_number)->where('process_id','=',$operation_id)->first();
         $rc_id=$rcMasterData->id;
 
+        $dcTransData=new DcTransactionDetails;
+        $dcTransData->rc_id=$rc_id;
+        $dcTransData->issue_date=$dc_date;
+        $dcTransData->dc_master_id=$dcMaster_id;
+        $dcTransData->issue_qty=$dc_quantity;
+        $dcTransData->unit_rate=$part_rate;
+        $dcTransData->basic_rate=$basic_value;
+        $dcTransData->total_rate=$basic_value;
+        $dcTransData->issue_wt=$issue_wt;
+        $dcTransData->remarks=$remarks;
+        $dcTransData->prepared_by = auth()->user()->id;
+        $dcTransData->save();
+
+        $currentProcess=ProductProcessMaster::where('part_id','=',$part_id)->where('process_master_id','=',$operation_id)->first();
+        $current_order_id=$currentProcess->process_order_id;
+        $current_product_process_id=$currentProcess->id;
+
+        $nextProcess=ProductProcessMaster::where('part_id','=',$part_id)->where('process_order_id','>',$current_order_id)->where('status','=',1)->first();
+        $next_product_order_id=$nextProcess->process_order_id;
+        $next_product_process_id=$nextProcess->id;
+        $next_process_id=$nextProcess->process_master_id;
+
+        $d11Datas=new TransDataD11;
+        $d11Datas->open_date=$dc_date;
+        $d11Datas->rc_id=$rc_id;
+        $d11Datas->part_id=$part_id;
+        $d11Datas->process_id=$operation_id;
+        $d11Datas->product_process_id=$current_product_process_id;
+        $d11Datas->next_process_id=$next_process_id;
+        $d11Datas->next_product_process_id=$next_product_process_id;
+        $d11Datas->process_issue_qty=$dc_quantity;
+        $d11Datas->prepared_by = auth()->user()->id;
+        $d11Datas->save();
+
         if ($regular==1) {
             foreach ($route_card_id as $key => $card_id) {
-                $previousD11Datas=TransDataD11::where('rc_id','=',$card_id)->where('next_process_id','=',$operation_id)->first();
-                // dd($previousD11Datas);
-                $old_issueqty=$previousD11Datas->issue_qty;
-                $total_issue_qty=$old_issueqty+$request->issue_quantity[$key];
-                $previousD11Datas->issue_qty=$total_issue_qty;
-                $previousD11Datas->updated_by = auth()->user()->id;
-                $previousD11Datas->updated_at = Carbon::now();
-                $previousD11Datas->update();
+                if ($rc_issue_quantity[$key]!=0) {
+                    $previousD11Datas=TransDataD11::where('rc_id','=',$card_id)->where('next_process_id','=',$operation_id)->first();
+                    // dd($previousD11Datas);
+                    $old_issueqty=$previousD11Datas->issue_qty;
+                    $total_issue_qty=$old_issueqty+$rc_issue_quantity[$key];
+                    $previousD11Datas->issue_qty=$total_issue_qty;
+                    $previousD11Datas->updated_by = auth()->user()->id;
+                    $previousD11Datas->updated_at = Carbon::now();
+                    $previousD11Datas->update();
 
-                $currentProcess=ProductProcessMaster::where('part_id','=',$part_id)->where('process_master_id','=',$operation_id)->first();
-                $current_order=$currentProcess->process_order_id;
+                    $currentProcess=ProductProcessMaster::where('part_id','=',$part_id)->where('process_master_id','=',$operation_id)->first();
+                    $current_order_id=$currentProcess->process_order_id;
+                    $current_product_process_id=$currentProcess->id;
 
-                $d11Datas=new TransDataD11;
-                $d11Datas->open_date=$dc_date;
-                $d11Datas->rc_id=$rc_id;
-                $d11Datas->part_id=$request->part_id;
-                $d11Datas->process_id=$request->previous_process_id;
-                $d11Datas->product_process_id=$request->previous_product_process_id;
-                $d11Datas->next_process_id=$request->next_process_id;
-                $d11Datas->next_product_process_id=$request->next_product_process_id;
-                $d11Datas->process_issue_qty=$request->issue_qty;
-                $d11Datas->prepared_by = auth()->user()->id;
-                $d11Datas->save();
+                    $nextProcess=ProductProcessMaster::where('part_id','=',$part_id)->where('process_order_id','>',$current_order_id)->where('status','=',1)->first();
+                    $next_product_order_id=$nextProcess->process_order_id;
+                    $next_product_process_id=$nextProcess->id;
+                    $next_process_id=$nextProcess->process_master_id;
+
+                    $d12Datas=new TransDataD12;
+                    $d11Datas->open_date=$dc_date;
+                    $d11Datas->rc_id=$rc_id;
+                    $d12Datas->previous_rc_id=$card_id;
+                    $d12Datas->part_id=$part_id;
+                    $d12Datas->process_id=$operation_id;
+                    $d12Datas->product_process_id=$current_product_process_id;
+                    $d12Datas->issue_qty=$rc_issue_quantity[$key];
+                    $d12Datas->prepared_by = auth()->user()->id;
+                    $d12Datas->save();
+
+                    $d13Datas=new TransDataD13;
+                    $d13Datas->rc_id=$rc_id;
+                    $d13Datas->previous_rc_id=$card_id;
+                    $d13Datas->prepared_by = auth()->user()->id;
+                    $d13Datas->save();
+                    DB::commit();
+                }
             }
-
-
         }elseif ($regular>1) {
-            # code...
+            foreach ($route_card_id as $key => $card_id) {
+                if ($order_no[$key]==1) {
+                    if ($rc_issue_quantity[$key]!=0) {
+                        $previousD11Datas=TransDataD11::where('rc_id','=',$card_id)->where('next_process_id','=',$operation_id)->first();
+                        // dd($previousD11Datas);
+                        $old_issueqty=$previousD11Datas->issue_qty;
+                        $total_issue_qty=$old_issueqty+$rc_issue_quantity[$key];
+                        $previousD11Datas->issue_qty=$total_issue_qty;
+                        $previousD11Datas->updated_by = auth()->user()->id;
+                        $previousD11Datas->updated_at = Carbon::now();
+                        $previousD11Datas->update();
+
+                        $currentProcess=ProductProcessMaster::where('part_id','=',$part_id)->where('process_master_id','=',$operation_id)->first();
+                        $current_order_id=$currentProcess->process_order_id;
+                        $current_product_process_id=$currentProcess->id;
+
+                        $nextProcess=ProductProcessMaster::where('part_id','=',$part_id)->where('process_order_id','>',$current_order_id)->where('status','=',1)->first();
+                        $next_product_order_id=$nextProcess->process_order_id;
+                        $next_product_process_id=$nextProcess->id;
+                        $next_process_id=$nextProcess->process_master_id;
+
+                        $d12Datas=new TransDataD12;
+                        $d11Datas->open_date=$dc_date;
+                        $d11Datas->rc_id=$rc_id;
+                        $d12Datas->previous_rc_id=$card_id;
+                        $d12Datas->part_id=$part_id;
+                        $d12Datas->process_id=$operation_id;
+                        $d12Datas->product_process_id=$current_product_process_id;
+                        $d12Datas->issue_qty=$rc_issue_quantity[$key];
+                        $d12Datas->prepared_by = auth()->user()->id;
+                        $d12Datas->save();
+
+                        $d13Datas=new TransDataD13;
+                        $d13Datas->rc_id=$rc_id;
+                        $d13Datas->previous_rc_id=$card_id;
+                        $d13Datas->prepared_by = auth()->user()->id;
+                        $d13Datas->save();
+                        DB::commit();
+                    }
+
+                } elseif ($order_no[$key]==2) {
+                    if ($rc_issue_quantity[$key]!=0) {
+                        $previousD11Datas=TransDataD11::where('rc_id','=',$card_id)->where('next_process_id','=',$operation_id)->first();
+                        // dd($previousD11Datas);
+                        $old_issueqty=$previousD11Datas->issue_qty;
+                        $total_issue_qty=$old_issueqty+$rc_issue_quantity[$key];
+                        $previousD11Datas->issue_qty=$total_issue_qty;
+                        $previousD11Datas->updated_by = auth()->user()->id;
+                        $previousD11Datas->updated_at = Carbon::now();
+                        $previousD11Datas->update();
+
+                        $currentProcess=ProductProcessMaster::where('part_id','=',$part_id)->where('process_master_id','=',$operation_id)->first();
+                        $current_order_id=$currentProcess->process_order_id;
+                        $current_product_process_id=$currentProcess->id;
+
+                        $nextProcess=ProductProcessMaster::where('part_id','=',$part_id)->where('process_order_id','>',$current_order_id)->where('status','=',1)->first();
+                        $next_product_order_id=$nextProcess->process_order_id;
+                        $next_product_process_id=$nextProcess->id;
+                        $next_process_id=$nextProcess->process_master_id;
+
+                        $d12Datas=new TransDataD12;
+                        $d11Datas->open_date=$dc_date;
+                        $d11Datas->rc_id=$rc_id;
+                        $d12Datas->previous_rc_id=$card_id;
+                        $d12Datas->part_id=$part_id;
+                        $d12Datas->process_id=$operation_id;
+                        $d12Datas->product_process_id=$current_product_process_id;
+                        $d12Datas->issue_qty=$rc_issue_quantity[$key];
+                        $d12Datas->prepared_by = auth()->user()->id;
+                        $d12Datas->save();
+
+                        $d13Datas=new TransDataD13;
+                        $d13Datas->rc_id=$rc_id;
+                        $d13Datas->previous_rc_id=$card_id;
+                        $d13Datas->prepared_by = auth()->user()->id;
+                        $d13Datas->save();
+                        DB::commit();
+
+                        $dummyProcessData=ItemProcesmaster::where('operation','=','Dummy')->where('status','=',1)->first();
+                        $dummy_process_id=$dummyProcessData->id;
+
+                        $dummy_rc='AF'.$dc_number;
+                        $rcMaster=new RouteMaster;
+                        $rcMaster->create_date=$dc_date;
+                        $rcMaster->process_id=$dummy_process_id;
+                        $rcMaster->rc_id=$dummy_rc;
+                        $rcMaster->prepared_by=auth()->user()->id;
+                        $rcMaster->save();
+
+                        $rcMasterData=RouteMaster::where('rc_id','=',$dummy_rc)->where('process_id','=',$dummy_process_id)->first();
+                        $dummy_rc_id=$rcMasterData->id;
+
+                        $d12Datas=new TransDataD12;
+                        $d11Datas->open_date=$dc_date;
+                        $d11Datas->rc_id=$dummy_rc_id;
+                        $d12Datas->previous_rc_id=$rc_id;
+                        $d12Datas->part_id=$part_id;
+                        $d12Datas->process_id=$dummy_process_id;
+                        $d12Datas->product_process_id=$current_product_process_id;
+                        $d12Datas->receive_qty=$rc_issue_quantity[$key];
+                        $d12Datas->issue_qty=$rc_issue_quantity[$key];
+                        $d12Datas->prepared_by = auth()->user()->id;
+                        $d12Datas->save();
+
+                        $d13Datas=new TransDataD13;
+                        $d13Datas->rc_id=$dummy_rc_id;
+                        $d13Datas->previous_rc_id=$rc_id;
+                        $d13Datas->prepared_by = auth()->user()->id;
+                        $d13Datas->save();
+                        DB::commit();
+                    }
+                }
+            }
         }
-
-
-
+        return redirect()->route('delivery_challan.index')->withSuccess('Delivery Challan Created Successfully!');
     }
 
     /**

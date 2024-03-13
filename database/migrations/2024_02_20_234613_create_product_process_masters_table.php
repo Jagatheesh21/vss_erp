@@ -18,7 +18,8 @@ return new class extends Migration
             $table->integer('process_order_id')->default(0);
             $table->float('cycle_time', 8, 2)->default(0);
             $table->float('setting_time', 8, 2)->default(0);
-            $table->integer('foreman_id');
+            $table->integer('foreman_id')->default(1);
+            $table->integer('machine_id')->default(1);
             $table->integer('status')->default(1);
             $table->integer('prepared_by');
             $table->integer('updated_by')->nullable();

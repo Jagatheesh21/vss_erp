@@ -9,9 +9,7 @@
 
 <div class="row d-flex justify-content-center">
     <div id="data"></div>
-    <div class="col-12">
         <div class="row col-md-3"id="res"></div>
-
         <div class="card">
             <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Create Delivery challan</b></span><a class="btn btn-sm btn-primary" href="{{route('delivery_challan.index')}}">Delivery challan List</a>
             </div>
@@ -125,8 +123,30 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="vehicle_no">VEHICLE NO *</label>
-                                    <input type="text" name="vehicle_no" id="vehicle_no" pattern="^[A-Z]{2}-\d{2}-[A-Z]{1}.-\d{4}$" onkeyup="format()" placeholder="TN-99-AA-1111 (OR) TN-99-A--1111" class="form-control @error('vehicle_no') is-invalid @enderror" >
+                                    <input type="text" name="vehicle_no"  id="vehicle_no" pattern="^[A-Z]{2}-\d{2}-[A-Z]{1}.-\d{4}$" onkeyup="format()" placeholder="TN-99-AA-1111 (OR) TN-99-A--1111" class="form-control @error('vehicle_no') is-invalid @enderror" >
                                     @error('vehicle_no')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="issue_wt">ISSUE WEIGHT *</label>
+                                    <input type="number" name="issue_wt" @readonly(true) id="issue_wt" min="0" class="form-control bg-light @error('issue_wt') is-invalid @enderror" >
+                                    @error('issue_wt')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="remarks">REMARKS *</label>
+                                    <textarea name="remarks" id="remarks" class="form-control @error('remarks') is-invalid @enderror" cols="20" rows="3"></textarea>
+                                    @error('remarks')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -135,6 +155,7 @@
                             </div>
                             <input type="hidden" name="regular" class="form-control regular" id="regular">
                             <input type="hidden" name="alter" class="form-control alter" id="alter">
+                            <input type="hidden" name="bom" class="form-control bom" id="bom">
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <button class="btn btn-primary mt-4">Proceed DC</button>
@@ -156,7 +177,6 @@
                                 </tr>
                                 </thead>
                                 <tbody  id="table_logic">
-
                                 </tbody>
                             </table>
                         </div>
@@ -208,6 +228,7 @@
                         $('#table_logic').html(response.table);
                         $('#regular').val(response.regular);
                         $('#alter').val(response.alter);
+                        $('#bom').val(response.bom);
                     }
                 });
             });
@@ -236,8 +257,12 @@
             var dc_quantity = $(this).val();
             var dc_avl_qty = $('#avl_quantity').val();
             var regular=$('#regular').val();
+            var bom=$('#bom').val();
+            var issue_wt=dc_quantity*bom;
+            // alert(issue_wt);
+            $('#issue_wt').val(issue_wt);
             var diff=dc_avl_qty-dc_quantity;
-            alert(regular);
+            // alert(regular);
             if (regular==1) {
                 // if (dc_avl_qty>=dc_quantity) {
                 if (diff>=0) {
