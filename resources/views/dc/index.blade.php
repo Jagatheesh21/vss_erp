@@ -22,7 +22,7 @@
             @endif
             <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Delivery challan List</b> </span>
                 <a class="btn btn-sm btn-primary text-white" href="{{route('delivery_challan.create')}}">New</a>
-                <a class="btn btn-sm btn-info text-white" href="#">Multi DC Print</a>
+                <a class="btn btn-sm btn-info text-white" href="{{route('dcprint.index')}}">Multi DC Print</a>
                 <a class="btn btn-sm btn-primary text-white" href="#">RM DC</a>
             </div>
             <div class="card-body">

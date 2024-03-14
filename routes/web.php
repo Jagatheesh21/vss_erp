@@ -24,6 +24,7 @@ use App\Http\Controllers\CustomerMasterController;
 use App\Http\Controllers\CustomerProductMasterController;
 use App\Http\Controllers\FinalQcInspectionController;
 use App\Http\Controllers\DcTransactionDetailsController;
+use App\Http\Controllers\DcPrintController;
 
 /*
 |--------------------------------------------------------------------------
@@ -105,6 +106,7 @@ Route::middleware(['auth'])->group(function () {
         'customermaster'=>CustomerMasterController::class,
         'customer-products'=>CustomerProductMasterController::class,
         'delivery_challan'=>DcTransactionDetailsController::class,
+        'dcprint'=>DcPrintController::class,
     ]);
 });
 
