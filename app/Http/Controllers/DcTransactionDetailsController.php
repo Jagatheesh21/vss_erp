@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\DcTransactionDetails;
 use App\Models\DcMaster;
+use App\Models\DcPrint;
 use App\Models\BomMaster;
 Use App\Models\RouteMaster;
 Use App\Models\Supplier;
@@ -282,6 +283,16 @@ class DcTransactionDetailsController extends Controller
         $dcTransData->prepared_by = auth()->user()->id;
         $dcTransData->save();
 
+        $dc_id=$dcTransData->id;
+
+        $dcPrintData=new DcPrint;
+        $dcPrintData->s_no=0;
+        $dcPrintData->dc_id=$dc_id;
+        $dcPrintData->from_unit=1;
+        $dcPrintData->print_status=0;
+        $dcPrintData->prepared_by = auth()->user()->id;
+        $dcPrintData->save();
+
         $currentProcess=ProductProcessMaster::where('part_id','=',$part_id)->where('process_master_id','=',$operation_id)->first();
         $current_order_id=$currentProcess->process_order_id;
         $current_product_process_id=$currentProcess->id;
@@ -302,6 +313,8 @@ class DcTransactionDetailsController extends Controller
         $d11Datas->process_issue_qty=$dc_quantity;
         $d11Datas->prepared_by = auth()->user()->id;
         $d11Datas->save();
+
+
 
         if ($regular==1) {
             foreach ($route_card_id as $key => $card_id) {

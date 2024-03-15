@@ -333,7 +333,6 @@ $('.sub_id').change(function (e) {
 
 
     $('.update_all').on('click', function(e) {
-
             var allVals = [];
             $(".sub_id:checked").each(function() {
                 allVals.push($(this).attr('data-id'));
@@ -351,7 +350,7 @@ $('.sub_id').change(function (e) {
                     return false;
                 }
             }
-        });
+    });
 
 
     $("#coil_inward_qty").change(updateGrandTotal);

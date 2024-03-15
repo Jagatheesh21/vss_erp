@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('dc_prints', function (Blueprint $table) {
             $table->id();
             $table->integer('s_no');
-            $table->integer('rc_id');
+            $table->integer('dc_id');
             $table->integer('from_unit')->default(1);
             $table->integer('print_status')->default(1);
             $table->integer('status')->default(1);

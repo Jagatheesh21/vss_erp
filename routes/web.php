@@ -80,6 +80,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('fg-receive/part_no', [StagewiseReceiveController::class,'fgPartFetchEntry'])->name('fgpartfetchdata');
     Route::post('dcfetch-rc', [DcTransactionDetailsController::class,'dcItemRc'])->name('dcitemrc');
     Route::get('/dcpart-data/id', [DcTransactionDetailsController::class,'dcPartData'])->name('dcpartdata');
+    Route::post('dcsupplier-print', [DcPrintController::class,'dcSupplierPrintData'])->name('dcsupplierprintdata');
+    Route::post('dcmulti-print', [DcPrintController::class,'dcMultiPrintData'])->name('dcmultiprintdata');
+    Route::post('dcmulti-pdf', [DcPrintController::class,'dcMultiPdfData'])->name('dcmultipdf');
 
 
     Route::resources([
