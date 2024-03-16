@@ -91,13 +91,15 @@ class DcPrintController extends Controller
         ->join('route_masters as d', 'b.rc_id', '=', 'd.id')
         ->join('mode_of_units as e', 'b.uom_id', '=', 'e.id')
         ->join('product_masters as f', 'c.part_id', '=', 'f.id')
-        ->select('a.id as dc_print_id','b.id as dc_id','d.id as rc_id','d.rc_id as dc_no','b.issue_date','f.id as part_id','f.part_no','b.uom_id','e.name as uom','b.issue_qty','b.unit_rate','b.total_rate')
+        ->join('item_procesmasters as g', 'c.operation_id', '=', 'g.id')
+        ->join('suppliers as h', 'c.supplier_id', '=', 'h.id')
+        ->select('a.id as dc_print_id','h.name as supplier_name','h.address as supplier_address','h.gst_number as supplier_gst_number','a.s_no','b.issue_wt','c.operation_id','g.operation','b.id as dc_id','d.id as rc_id','d.rc_id as dc_no','b.issue_date','f.id as part_id','f.part_no','b.uom_id','e.name as uom','b.issue_qty','b.unit_rate','b.total_rate')
         ->where('a.s_no','=',$s_no)
         ->get();
-        // dd($dc_transactionDatas);
-        $data['dc_transactionDatas']=$dc_transactionDatas;
-        // dd($data);
-        $pdf = Pdf::loadView('dc_print.dcmultipdf', $data);
+        $totalData=DB::table('dc_prints as a')
+        ->join('dc_transaction_details AS b', 'a.dc_id', '=', 'b.id')->where('a.s_no','=',$s_no)->select(DB::raw('(SUM(total_rate)) as sum_rate'),DB::raw('(SUM(issue_qty)) as sum_qty'))->get();
+        $pdf = Pdf::loadView('dc_print.dcmultipdf',compact('dc_transactionDatas','totalData'))->setPaper('a4', 'portrait');
+        // $pdf = Pdf::setOption(['dpi' => 150, 'defaultFont' => 'sans-serif']);
         return $pdf->stream();
         // return view('dc_print.dcmultipdf',compact('dc_transactionDatas'));
     }

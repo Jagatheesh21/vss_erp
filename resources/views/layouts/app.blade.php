@@ -56,7 +56,7 @@
                     <li class="nav-item"><a class="nav-link" href="#">Settings</a></li> -->
                 </ul>
                 <ul class="header-nav ms-auto">
-                    
+
                     <li class="nav-item text-white font-bold">Welcome ! {{ Auth::user()->name }}</li>
                 </ul>
                 <ul class="header-nav ms-auto ">
@@ -64,14 +64,6 @@
                         <svg class="icon icon-lg text-white">
                         <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-bell"></use>
                         </svg></a></li>
-                    <!-- <li class="nav-item"><a class="nav-link" href="#">
-                        <svg class="icon icon-lg text-white">
-                        <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-list-rich"></use>
-                        </svg></a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">
-                        <svg class="icon icon-lg text-white">
-                        <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-envelope-open"></use>
-                        </svg></a></li> -->
                 </ul>
                 <ul class="header-nav ms-3">
                     <li class="nav-item dropdown"><a class="nav-link py-0" data-coreui-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
@@ -103,7 +95,7 @@
                     @yield('content')
             </div>
         </div>
-    </div>    
+    </div>
 </body>
     <script src="{{asset('js/jquery.min.js')}}" ></script>
     <script src="{{asset('vendors/simplebar/js/simplebar.min.js')}}"></script>
