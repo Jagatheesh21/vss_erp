@@ -149,103 +149,72 @@
                                             <td style='font-weight:bold;text-align:right;vertical-align:top' colspan="3">GST Unique ID:</td>
                                             <td colspan="13">{{$dc_transactionDatas[0]->supplier_gst_number}}</td>
                                           </tr>
-                                            <tr>
-                                                <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">S No</td>
-                                                <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">DC Number</td>
-                                                <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">DC Date</td>
-                                                <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">Part No</td>
-                                                <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">HSN Code</td>
-                                                <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">Quantity</td>
-                                                <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">UOM</td>
-                                                <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">Unit Rate</td>
-                                                <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">Total Value</td>
-                                                <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">Weight</td>
-                                                <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="6">Remarks</td>
-                                            </tr>
-                                            @foreach ($dc_transactionDatas as $dc_transactionData)
-                                                <tr>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$loop->iteration}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->dc_no}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_date}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->part_no}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->hsnc}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_qty}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->uom}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->unit_rate}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->total_rate}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_wt}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top" colspan="6">{{$dc_transactionData->total_rate}}</td>
-                                                </tr>
-                                            @endforeach
-                                            @foreach ($dc_transactionDatas as $dc_transactionData)
-                                            <tr>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$loop->iteration}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->dc_no}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_date}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->part_no}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->hsnc}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_qty}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->uom}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->unit_rate}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->total_rate}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_wt}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top" colspan="6">{{$dc_transactionData->total_rate}}</td>
-                                            </tr>
-                                        @endforeach
-                                        @foreach ($dc_transactionDatas as $dc_transactionData)
-                                        <tr>
-                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$loop->iteration}}</td>
-                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->dc_no}}</td>
-                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_date}}</td>
-                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->part_no}}</td>
-                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->hsnc}}</td>
-                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_qty}}</td>
-                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->uom}}</td>
-                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->unit_rate}}</td>
-                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->total_rate}}</td>
-                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_wt}}</td>
-                                            <td class="tg-baqh" style="text-align:center;vertical-align:top" colspan="6">{{$dc_transactionData->total_rate}}</td>
+                                          <tr>
+                                            <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">S No</td>
+                                            <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">DC Number</td>
+                                            <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">DC Date</td>
+                                            <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">Part No</td>
+                                            <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">HSN Code</td>
+                                            <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">Quantity</td>
+                                            <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">UOM</td>
+                                            <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">Unit Rate</td>
+                                            <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">Total Value</td>
+                                            <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">Weight</td>
+                                            <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="6">Remarks</td>
                                         </tr>
-                                    @endforeach
-                                    @foreach ($dc_transactionDatas as $dc_transactionData)
-                                    <tr>
-                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$loop->iteration}}</td>
-                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->dc_no}}</td>
-                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_date}}</td>
-                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->part_no}}</td>
-                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->hsnc}}</td>
-                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_qty}}</td>
-                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->uom}}</td>
-                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->unit_rate}}</td>
-                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->total_rate}}</td>
-                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_wt}}</td>
-                                        <td class="tg-baqh" style="text-align:center;vertical-align:top" colspan="6">{{$dc_transactionData->total_rate}}</td>
-                                    </tr>
-                                @endforeach
-                                @foreach ($dc_transactionDatas as $dc_transactionData)
-                                <tr>
-                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$loop->iteration}}</td>
-                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->dc_no}}</td>
-                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_date}}</td>
-                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->part_no}}</td>
-                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->hsnc}}</td>
-                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_qty}}</td>
-                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->uom}}</td>
-                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->unit_rate}}</td>
-                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->total_rate}}</td>
-                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_wt}}</td>
-                                    <td class="tg-baqh" style="text-align:center;vertical-align:top" colspan="6">{{$dc_transactionData->total_rate}}</td>
-                                </tr>
-                            @endforeach
+                                          <?php
+                                          if ($count<=10) {
+                                              $count1=$count;
+                                              $diff=(10-$count);
+                                              $first=$count-1;
+                                          }else{
+                                              $count1=10;
+                                              $diff=0;
+                                              $first=0;
+                                          }
+                                          ?>
+                                          @for ($i = 0; $i < $count1; $i++)
+                                          <tr>
+                                              <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$i+1}}</td>
+                                              <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$i]->dc_no}}</td>
+                                              <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$i]->issue_date}}</td>
+                                              <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$i]->part_no}}</td>
+                                              <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$i]->hsnc}}</td>
+                                              <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$i]->issue_qty}}</td>
+                                              <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$i]->uom}}</td>
+                                              <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$i]->unit_rate}}</td>
+                                              <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$i]->total_rate}}</td>
+                                              <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$i]->issue_wt}}</td>
+                                              <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top" colspan="6">{{$dc_transactionDatas[$i]->total_rate}}</td>
+                                          </tr>
+                                          @endfor
+                                            @if ($diff>0)
+                                                @for ($x = $first; $x < (($diff)+1); $x++)
+                                                    <tr >
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$x+2}}</td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top" colspan="6"></td>
+                                                    </tr>
+                                                @endfor
+                                                @else
+                                            @endif
                                             <?php
                                             if ($count<=10) {
                                             ?>
                                                     <tr>
-                                                        <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="4">TOTAL</td>
+                                                        <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="5">TOTAL</td>
                                                         <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">{{$totalData[0]->sum_qty}}</td>
                                                         <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="2"></td>
                                                         <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">{{$totalData[0]->sum_rate}}</td>';
-                                                        <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="8"></td>
+                                                        <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="7"></td>
                                                     </tr>
                                                     <tr>
                                                         <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="16">TOTAL VALUE IN WORDS</td>
@@ -368,105 +337,73 @@
                                                         <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">Weight</td>
                                                         <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="6">Remarks</td>
                                                     </tr>
-                                                    @foreach ($dc_transactionDatas as $dc_transactionData)
-                                                        <tr>
-                                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$loop->iteration}}</td>
-                                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->dc_no}}</td>
-                                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_date}}</td>
-                                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->part_no}}</td>
-                                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->hsnc}}</td>
-                                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_qty}}</td>
-                                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->uom}}</td>
-                                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->unit_rate}}</td>
-                                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->total_rate}}</td>
-                                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_wt}}</td>
-                                                            <td class="tg-baqh" style="text-align:center;vertical-align:top" colspan="6">{{$dc_transactionData->total_rate}}</td>
-                                                        </tr>
-                                                    @endforeach
-                                                    @foreach ($dc_transactionDatas as $dc_transactionData)
+                                                    <?php
+                                                    if ($count<=20) {
+                                                        $count2=$count;
+                                                        $diff2=(20-$count);
+                                                        $first2=$count-1;
+                                                    }else{
+                                                        $count1=20;
+                                                        $diff2=0;
+                                                        $first2=0;
+                                                    }
+                                                    ?>
+                                                    @for ($y = 11; $y < $count2; $y++)
                                                     <tr>
-                                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$loop->iteration}}</td>
-                                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->dc_no}}</td>
-                                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_date}}</td>
-                                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->part_no}}</td>
-                                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->hsnc}}</td>
-                                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_qty}}</td>
-                                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->uom}}</td>
-                                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->unit_rate}}</td>
-                                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->total_rate}}</td>
-                                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_wt}}</td>
-                                                        <td class="tg-baqh" style="text-align:center;vertical-align:top" colspan="6">{{$dc_transactionData->total_rate}}</td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$y+1}}</td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$y]->dc_no}}</td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$y]->issue_date}}</td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$y]->part_no}}</td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$y]->hsnc}}</td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$y]->issue_qty}}</td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$y]->uom}}</td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$y]->unit_rate}}</td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$y]->total_rate}}</td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$y]->issue_wt}}</td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top" colspan="6">{{$dc_transactionDatas[$y]->total_rate}}</td>
                                                     </tr>
-                                                @endforeach
-                                                @foreach ($dc_transactionDatas as $dc_transactionData)
-                                                <tr>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$loop->iteration}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->dc_no}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_date}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->part_no}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->hsnc}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_qty}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->uom}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->unit_rate}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->total_rate}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_wt}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top" colspan="6">{{$dc_transactionData->total_rate}}</td>
-                                                </tr>
-                                            @endforeach
-                                            @foreach ($dc_transactionDatas as $dc_transactionData)
-                                            <tr>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$loop->iteration}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->dc_no}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_date}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->part_no}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->hsnc}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_qty}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->uom}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->unit_rate}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->total_rate}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_wt}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top" colspan="6">{{$dc_transactionData->total_rate}}</td>
-                                            </tr>
-                                        @endforeach
-                                        @foreach ($dc_transactionDatas as $dc_transactionData)
-                                        <tr>
-                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$loop->iteration}}</td>
-                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->dc_no}}</td>
-                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_date}}</td>
-                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->part_no}}</td>
-                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->hsnc}}</td>
-                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_qty}}</td>
-                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->uom}}</td>
-                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->unit_rate}}</td>
-                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->total_rate}}</td>
-                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_wt}}</td>
-                                            <td class="tg-baqh" style="text-align:center;vertical-align:top" colspan="6">{{$dc_transactionData->total_rate}}</td>
-                                        </tr>
-                                    @endforeach
-
-                                    <?php
-                                    if ($count<=20) {
-                                    ?>
-                                            <tr>
-                                                <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="4">TOTAL</td>
-                                                <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">{{$totalData[0]->sum_qty}}</td>
-                                                <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="2"></td>
-                                                <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">{{$totalData[0]->sum_rate}}</td>';
-                                                <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="8"></td>
-                                            </tr>
-                                            <tr>
-                                                <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="16">TOTAL VALUE IN WORDS</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="tg-yw4l" style="vertical-align:top;text-align:center;" colspan="16">{{$a}}</td>
-                                            </tr>
-                                    <?php
-                                    }else{
-                                        echo "<tr><td colspan='16'>";
-                                        echo "<br>";
-                                        echo "</td></tr>";
-                                    }
-                                    ?>
+                                                    @endfor
+                                                    @if ($diff2>0)
+                                                        @for ($z = $first2; $z < (($diff2)+1); $z++)
+                                                            <tr>
+                                                                <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$z+2}}</td>
+                                                                <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                                <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                                <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                                <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                                <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                                <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                                <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                                <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                                <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                                <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top" colspan="6"></td>
+                                                            </tr>
+                                                        @endfor
+                                                        @else
+                                                    @endif
+                                                    <?php
+                                                    if ($count<=20) {
+                                                    ?>
+                                                            <tr>
+                                                                <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="5">TOTAL</td>
+                                                                <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">{{$totalData[0]->sum_qty}}</td>
+                                                                <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="2"></td>
+                                                                <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">{{$totalData[0]->sum_rate}}</td>';
+                                                                <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="7"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="16">TOTAL VALUE IN WORDS</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="tg-yw4l" style="vertical-align:top;text-align:center;" colspan="16">{{$a}}</td>
+                                                            </tr>
+                                                    <?php
+                                                    }else{
+                                                        echo "<tr><td colspan='16'>";
+                                                        echo "<br>";
+                                                        echo "</td></tr>";
+                                                    }
+                                                    ?>
 
                                                     <tr>
                                                         <td class="tg-9hbo" style='font-weight:bold;vertical-align:top' colspan="8">
@@ -566,119 +503,86 @@
                                                         <td style='font-weight:bold;text-align:right;vertical-align:top' colspan="3">GST Unique ID:</td>
                                                         <td colspan="13">{{$dc_transactionDatas[0]->supplier_gst_number}}</td>
                                                       </tr>
-                                                        <tr>
-                                                            <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">S No</td>
-                                                            <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">DC Number</td>
-                                                            <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">DC Date</td>
-                                                            <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">Part No</td>
-                                                            <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">HSN Code</td>
-                                                            <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">Quantity</td>
-                                                            <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">UOM</td>
-                                                            <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">Unit Rate</td>
-                                                            <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">Total Value</td>
-                                                            <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">Weight</td>
-                                                            <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="6">Remarks</td>
-                                                        </tr>
-                                                        @foreach ($dc_transactionDatas as $dc_transactionData)
-                                                            <tr>
-                                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$loop->iteration}}</td>
-                                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->dc_no}}</td>
-                                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_date}}</td>
-                                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->part_no}}</td>
-                                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->hsnc}}</td>
-                                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_qty}}</td>
-                                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->uom}}</td>
-                                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->unit_rate}}</td>
-                                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->total_rate}}</td>
-                                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_wt}}</td>
-                                                                <td class="tg-baqh" style="text-align:center;vertical-align:top" colspan="6">{{$dc_transactionData->total_rate}}</td>
-                                                            </tr>
-                                                        @endforeach
-                                                        @foreach ($dc_transactionDatas as $dc_transactionData)
-                                                        <tr>
-                                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$loop->iteration}}</td>
-                                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->dc_no}}</td>
-                                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_date}}</td>
-                                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->part_no}}</td>
-                                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->hsnc}}</td>
-                                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_qty}}</td>
-                                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->uom}}</td>
-                                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->unit_rate}}</td>
-                                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->total_rate}}</td>
-                                                            <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_wt}}</td>
-                                                            <td class="tg-baqh" style="text-align:center;vertical-align:top" colspan="6">{{$dc_transactionData->total_rate}}</td>
-                                                        </tr>
-                                                    @endforeach
-                                                    @foreach ($dc_transactionDatas as $dc_transactionData)
-                                                    <tr>
-                                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$loop->iteration}}</td>
-                                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->dc_no}}</td>
-                                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_date}}</td>
-                                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->part_no}}</td>
-                                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->hsnc}}</td>
-                                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_qty}}</td>
-                                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->uom}}</td>
-                                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->unit_rate}}</td>
-                                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->total_rate}}</td>
-                                                        <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_wt}}</td>
-                                                        <td class="tg-baqh" style="text-align:center;vertical-align:top" colspan="6">{{$dc_transactionData->total_rate}}</td>
+                                                      <tr>
+                                                        <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">S No</td>
+                                                        <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">DC Number</td>
+                                                        <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">DC Date</td>
+                                                        <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">Part No</td>
+                                                        <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">HSN Code</td>
+                                                        <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">Quantity</td>
+                                                        <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">UOM</td>
+                                                        <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">Unit Rate</td>
+                                                        <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">Total Value</td>
+                                                        <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">Weight</td>
+                                                        <td  class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="6">Remarks</td>
                                                     </tr>
-                                                @endforeach
-                                                @foreach ($dc_transactionDatas as $dc_transactionData)
-                                                <tr>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$loop->iteration}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->dc_no}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_date}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->part_no}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->hsnc}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_qty}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->uom}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->unit_rate}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->total_rate}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_wt}}</td>
-                                                    <td class="tg-baqh" style="text-align:center;vertical-align:top" colspan="6">{{$dc_transactionData->total_rate}}</td>
-                                                </tr>
-                                            @endforeach
-                                            @foreach ($dc_transactionDatas as $dc_transactionData)
-                                            <tr>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$loop->iteration}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->dc_no}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_date}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->part_no}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->hsnc}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_qty}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->uom}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->unit_rate}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->total_rate}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top">{{$dc_transactionData->issue_wt}}</td>
-                                                <td class="tg-baqh" style="text-align:center;vertical-align:top" colspan="6">{{$dc_transactionData->total_rate}}</td>
-                                            </tr>
-                                        @endforeach
-
-                                        <?php
-                                        if ($count<=30) {
-                                        ?>
-                                                <tr>
-                                                    <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="4">TOTAL</td>
-                                                    <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">{{$totalData[0]->sum_qty}}</td>
-                                                    <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="2"></td>
-                                                    <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">{{$totalData[0]->sum_rate}}</td>';
-                                                    <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="8"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="16">TOTAL VALUE IN WORDS</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="tg-yw4l" style="vertical-align:top;text-align:center;" colspan="16">{{$a}}</td>
-                                                </tr>
-                                        <?php
-                                        }else{
-                                            echo "<tr><td colspan='16'>";
-                                            echo "<br>";
-                                            echo "</td></tr>";
-                                        }
-                                        ?>
-
+                                                    <?php
+                                                    if ($count<=30) {
+                                                        $count3=$count;
+                                                        $diff3=(30-$count);
+                                                        $first2=$count-1;
+                                                    }else{
+                                                        $count1=30;
+                                                        $diff3=0;
+                                                        $first2=0;
+                                                    }
+                                                    ?>
+                                                    @for ($k = 21; $k < $count3; $k++)
+                                                    <tr style="padding:20px">
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$k+1}}</td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$k]->dc_no}}</td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$k]->issue_date}}</td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$k]->part_no}}</td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$k]->hsnc}}</td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$k]->issue_qty}}</td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$k]->uom}}</td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$k]->unit_rate}}</td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$k]->total_rate}}</td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$dc_transactionDatas[$k]->issue_wt}}</td>
+                                                        <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top" colspan="6">{{$dc_transactionDatas[$k]->total_rate}}</td>
+                                                    </tr>
+                                                    @endfor
+                                                    @if ($diff3>0)
+                                                        @for ($l = $first2; $l < (($diff3)+1); $l++)
+                                                            <tr>
+                                                                <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top">{{$l+2}}</td>
+                                                                <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                                <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                                <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                                <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                                <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                                <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                                <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                                <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                                <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top"></td>
+                                                                <td class="tg-baqh" style="text-align:center;height: 28px;vertical-align:top" colspan="6"></td>
+                                                            </tr>
+                                                        @endfor
+                                                        @else
+                                                    @endif
+                                                    <?php
+                                                    if ($count<=30) {
+                                                    ?>
+                                                            <tr>
+                                                                <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="5">TOTAL</td>
+                                                                <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">{{$totalData[0]->sum_qty}}</td>
+                                                                <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="2"></td>
+                                                                <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top">{{$totalData[0]->sum_rate}}</td>';
+                                                                <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="7"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="tg-amwm" style="font-weight:bold;text-align:center;vertical-align:top" colspan="16">TOTAL VALUE IN WORDS</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="tg-yw4l" style="vertical-align:top;text-align:center;" colspan="16">{{$a}}</td>
+                                                            </tr>
+                                                    <?php
+                                                    }else{
+                                                        echo "<tr><td colspan='16'>";
+                                                        echo "<br>";
+                                                        echo "</td></tr>";
+                                                    }
+                                                    ?>
                                                         <tr>
                                                             <td class="tg-9hbo" style='font-weight:bold;vertical-align:top' colspan="8">
                                                             Terms & Conditions :

@@ -24,6 +24,8 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Auth;
 
+use function Laravel\Prompts\select;
+
 class DcPrintController extends Controller
 {
     /**
@@ -83,10 +85,43 @@ class DcPrintController extends Controller
 
     }
 
+    public function ptsdcMultiReceiveData(Request $request){
+        // dd($request->all());
+        $s_no=$request->s_no;
+        $dc_transactionDatas=DB::table('dc_prints as a')
+        ->join('dc_transaction_details AS b', 'a.dc_id', '=', 'b.id')
+        ->join('dc_masters as c', 'b.dc_master_id', '=', 'c.id')
+        ->join('route_masters as d', 'b.rc_id', '=', 'd.id')
+        ->join('mode_of_units as e', 'b.uom_id', '=', 'e.id')
+        ->join('product_masters as f', 'c.part_id', '=', 'f.id')
+        ->select('a.id as dc_print_id','b.id as dc_id','d.id as rc_id','d.rc_id as dc_no','b.issue_date','f.id as part_id','f.part_no','b.uom_id','e.name as uom','b.issue_qty','b.unit_rate','b.total_rate',DB::raw('((b.issue_qty)-(b.receive_qty)) as avl_qty'))
+        ->where('a.s_no','=',$s_no)
+        ->havingRaw('avl_qty >?', [0])
+        ->get();
+        // dd($dc_transactionDatas);
+
+        $table="";
+        foreach ($dc_transactionDatas as $key => $dc_transactionData) {
+            $table.='<tr class="tr_'.$dc_transactionData->dc_print_id.'">'.
+            '<td><input type="checkbox" class="form-check-input sub_id" name="sub_id[]" data-id="'.$dc_transactionData->dc_print_id.'" value="'.$dc_transactionData->dc_print_id.'"></td>'.
+            '<td><select name="dc_id[]" class="form-control bg-light dc_id" readonly id="dc_id"><option value="'.$dc_transactionData->dc_id.'" selected>'.$dc_transactionData->dc_no.'</option></select></td>'.
+            '<td><input type="date" name="issue_date[]"  class="form-control bg-light issue_date" readonly  id="issue_date" value="'.$dc_transactionData->issue_date.'"></td>'.
+            '<td><select name="part_id[]" class="form-control bg-light part_id" readonly id="part_id"><option value="'.$dc_transactionData->part_id.'" selected>'.$dc_transactionData->part_no.'</option></select></td>'.
+            '<td><input type="number" name="issue_qty[]"  class="form-control bg-light issue_qty" readonly  id="issue_qty" value="'.$dc_transactionData->issue_qty.'"></td>'.
+            '<td><select name="uom_id[]" class="form-control bg-light uom_id"  id="uom_id"><option value="'.$dc_transactionData->uom_id.'" selected>'.$dc_transactionData->uom.'</option></select></td>'.
+            '<td><input type="number" name="receive_qty[]" readonly class="form-control bg-light receive_qty" id="receive_qty" value="'.$dc_transactionData->issue_qty.'" maximum="'.$dc_transactionData->issue_qty.'"></td>'.
+            '<td><select name="status[]" class="form-control status select2" id="status"><option value="0">NOT OK</option><option value="1" selected>OK</option></select></td>'.
+            '<td><textarea name="reason[]" readonly class="form-control bg-light reason" id="reason" cols="15" rows="5"></textarea></td>'.
+            '</tr>';
+        }
+        return response()->json(['table'=>$table]);
+    }
+
     public function dcMultiPdfData(Request $request){
         $s_no=$request->s_no;
-        $count1=DcPrint::where('s_no','=',$s_no)->count();
-        // dd($count);
+        $count=DcPrint::where('s_no','=',$s_no)->count();
+        $page_count=$count/10;
+        // dd($page_count);
         $dc_transactionDatas=DB::table('dc_prints as a')
         ->join('dc_transaction_details AS b', 'a.dc_id', '=', 'b.id')
         ->join('dc_masters as c', 'b.dc_master_id', '=', 'c.id')
@@ -98,12 +133,10 @@ class DcPrintController extends Controller
         ->select('c.operation_desc','c.hsnc','b.vehicle_no','b.trans_mode','a.id as dc_print_id','h.name as supplier_name','h.address as supplier_address','h.address1 as supplier_address1','h.city as supplier_city','h.state as supplier_state','h.pincode as supplier_pincode','h.state_code as supplier_state_code','h.gst_number as supplier_gst_number','a.s_no','b.issue_wt','c.operation_id','g.operation','b.id as dc_id','d.id as rc_id','d.rc_id as dc_no','b.issue_date','f.id as part_id','f.part_no','b.uom_id','e.name as uom','b.issue_qty','b.unit_rate','b.total_rate')
         ->where('a.s_no','=',$s_no)
         ->get();
-        $count=21;
-
         $totalData=DB::table('dc_prints as a')
         ->join('dc_transaction_details AS b', 'a.dc_id', '=', 'b.id')->where('a.s_no','=',$s_no)->select(DB::raw('(SUM(total_rate)) as sum_rate'),DB::raw('(SUM(issue_qty)) as sum_qty'))->get();
-        // dd($totalData);
-        $pdf = Pdf::loadView('dc_print.dcmultipdf',compact('dc_transactionDatas','totalData','count'))->setPaper('a4', 'portrait');
+        // dd($dc_transactionDatas);
+        $pdf = Pdf::loadView('dc_print.dcmultipdf',compact('dc_transactionDatas','totalData','count','page_count'))->setPaper('a4', 'portrait');
         // $pdf = Pdf::setOption(['dpi' => 150, 'defaultFont' => 'sans-serif']);
         return $pdf->stream();
         // return view('dc_print.dcmultipdf',compact('dc_transactionDatas'));
@@ -162,7 +195,8 @@ class DcPrintController extends Controller
     public function multiDCReceive()
     {
         $multiDCDatas=DcPrint::where('from_unit','=',1)->where('s_no','!=',0)->where('print_status','=',1)->where('status','=',1)->groupBy('s_no') ->get();
-        dd($multiDCDatas);
+        // dd($multiDCDatas);
+        return view('dc_print.pts_multidc_receive',compact('multiDCDatas'));
     }
 
     /**
