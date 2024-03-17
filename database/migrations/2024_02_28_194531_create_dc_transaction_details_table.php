@@ -29,6 +29,8 @@ return new class extends Migration
             $table->integer('cover_qty')->default(0);
             $table->string('reason')->nullable();
             $table->string('remarks')->nullable();
+            $table->string('trans_mode');
+            $table->string('vehicle_no');
             $table->integer('from_unit')->default(1);
             $table->integer('rc_status')->default(1);
             $table->integer('status')->default(1);

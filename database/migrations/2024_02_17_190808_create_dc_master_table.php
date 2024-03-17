@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('supplier_id');
             $table->integer('part_id');
             $table->integer('operation_id');
+            $table->string('operation_desc');
             $table->string('hsnc');
             $table->integer('status')->default(1);
             $table->integer('prepared_by');

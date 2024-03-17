@@ -83,6 +83,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('dcsupplier-print', [DcPrintController::class,'dcSupplierPrintData'])->name('dcsupplierprintdata');
     Route::post('dcmulti-print', [DcPrintController::class,'dcMultiPrintData'])->name('dcmultiprintdata');
     Route::post('dcmulti-pdf', [DcPrintController::class,'dcMultiPdfData'])->name('dcmultipdf');
+    Route::get('/dcmulti-receive', [DcPrintController::class,'multiDCReceive'])->name('ptsmultidcreceive');
 
 
     Route::resources([

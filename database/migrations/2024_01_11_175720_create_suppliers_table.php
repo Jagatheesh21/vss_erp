@@ -17,7 +17,12 @@ return new class extends Migration
             $table->string('supplier_type')->default(0);
             $table->string('name');
             $table->string('gst_number');
-            $table->text('address');
+            $table->string('address');
+            $table->string('address1');
+            $table->string('city');
+            $table->string('state');
+            $table->integer('state_code');
+            $table->integer('pincode');
             $table->string('contact_person')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();

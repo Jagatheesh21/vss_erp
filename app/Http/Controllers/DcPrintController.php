@@ -85,6 +85,8 @@ class DcPrintController extends Controller
 
     public function dcMultiPdfData(Request $request){
         $s_no=$request->s_no;
+        $count1=DcPrint::where('s_no','=',$s_no)->count();
+        // dd($count);
         $dc_transactionDatas=DB::table('dc_prints as a')
         ->join('dc_transaction_details AS b', 'a.dc_id', '=', 'b.id')
         ->join('dc_masters as c', 'b.dc_master_id', '=', 'c.id')
@@ -93,12 +95,15 @@ class DcPrintController extends Controller
         ->join('product_masters as f', 'c.part_id', '=', 'f.id')
         ->join('item_procesmasters as g', 'c.operation_id', '=', 'g.id')
         ->join('suppliers as h', 'c.supplier_id', '=', 'h.id')
-        ->select('a.id as dc_print_id','h.name as supplier_name','h.address as supplier_address','h.gst_number as supplier_gst_number','a.s_no','b.issue_wt','c.operation_id','g.operation','b.id as dc_id','d.id as rc_id','d.rc_id as dc_no','b.issue_date','f.id as part_id','f.part_no','b.uom_id','e.name as uom','b.issue_qty','b.unit_rate','b.total_rate')
+        ->select('c.operation_desc','c.hsnc','b.vehicle_no','b.trans_mode','a.id as dc_print_id','h.name as supplier_name','h.address as supplier_address','h.address1 as supplier_address1','h.city as supplier_city','h.state as supplier_state','h.pincode as supplier_pincode','h.state_code as supplier_state_code','h.gst_number as supplier_gst_number','a.s_no','b.issue_wt','c.operation_id','g.operation','b.id as dc_id','d.id as rc_id','d.rc_id as dc_no','b.issue_date','f.id as part_id','f.part_no','b.uom_id','e.name as uom','b.issue_qty','b.unit_rate','b.total_rate')
         ->where('a.s_no','=',$s_no)
         ->get();
+        $count=21;
+
         $totalData=DB::table('dc_prints as a')
         ->join('dc_transaction_details AS b', 'a.dc_id', '=', 'b.id')->where('a.s_no','=',$s_no)->select(DB::raw('(SUM(total_rate)) as sum_rate'),DB::raw('(SUM(issue_qty)) as sum_qty'))->get();
-        $pdf = Pdf::loadView('dc_print.dcmultipdf',compact('dc_transactionDatas','totalData'))->setPaper('a4', 'portrait');
+        // dd($totalData);
+        $pdf = Pdf::loadView('dc_print.dcmultipdf',compact('dc_transactionDatas','totalData','count'))->setPaper('a4', 'portrait');
         // $pdf = Pdf::setOption(['dpi' => 150, 'defaultFont' => 'sans-serif']);
         return $pdf->stream();
         // return view('dc_print.dcmultipdf',compact('dc_transactionDatas'));
@@ -152,6 +157,12 @@ class DcPrintController extends Controller
             DB::commit();
         }
         return redirect()->route('dcprint.index')->withSuccess('Multi Delivery Challan Created Successfully!');
+    }
+
+    public function multiDCReceive()
+    {
+        $multiDCDatas=DcPrint::where('from_unit','=',1)->where('s_no','!=',0)->where('print_status','=',1)->where('status','=',1)->groupBy('s_no') ->get();
+        dd($multiDCDatas);
     }
 
     /**

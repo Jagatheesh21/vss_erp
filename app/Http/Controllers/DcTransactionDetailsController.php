@@ -279,6 +279,8 @@ class DcTransactionDetailsController extends Controller
         $dcTransData->basic_rate=$basic_value;
         $dcTransData->total_rate=$basic_value;
         $dcTransData->issue_wt=$issue_wt;
+        $dcTransData->trans_mode=$trans_mode;
+        $dcTransData->vehicle_no=$vehicle_no;
         $dcTransData->remarks=$remarks;
         $dcTransData->prepared_by = auth()->user()->id;
         $dcTransData->save();
@@ -473,6 +475,8 @@ class DcTransactionDetailsController extends Controller
         }
         return redirect()->route('delivery_challan.index')->withSuccess('Delivery Challan Created Successfully!');
     }
+
+
 
     /**
      * Display the specified resource.
