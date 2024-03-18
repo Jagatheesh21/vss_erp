@@ -99,22 +99,8 @@ class DcPrintController extends Controller
         ->havingRaw('avl_qty >?', [0])
         ->get();
         // dd($dc_transactionDatas);
-
-        $table="";
-        foreach ($dc_transactionDatas as $key => $dc_transactionData) {
-            $table.='<tr class="tr_'.$dc_transactionData->dc_print_id.'">'.
-            '<td><input type="checkbox" class="form-check-input sub_id" name="sub_id[]" data-id="'.$dc_transactionData->dc_print_id.'" value="'.$dc_transactionData->dc_print_id.'"></td>'.
-            '<td><select name="dc_id[]" class="form-control bg-light dc_id" readonly id="dc_id"><option value="'.$dc_transactionData->dc_id.'" selected>'.$dc_transactionData->dc_no.'</option></select></td>'.
-            '<td><input type="date" name="issue_date[]"  class="form-control bg-light issue_date" readonly  id="issue_date" value="'.$dc_transactionData->issue_date.'"></td>'.
-            '<td><select name="part_id[]" class="form-control bg-light part_id" readonly id="part_id"><option value="'.$dc_transactionData->part_id.'" selected>'.$dc_transactionData->part_no.'</option></select></td>'.
-            '<td><input type="number" name="issue_qty[]"  class="form-control bg-light issue_qty" readonly  id="issue_qty" value="'.$dc_transactionData->issue_qty.'"></td>'.
-            '<td><select name="uom_id[]" class="form-control bg-light uom_id"  id="uom_id"><option value="'.$dc_transactionData->uom_id.'" selected>'.$dc_transactionData->uom.'</option></select></td>'.
-            '<td><input type="number" name="receive_qty[]" readonly class="form-control bg-light receive_qty" id="receive_qty" value="'.$dc_transactionData->issue_qty.'" maximum="'.$dc_transactionData->issue_qty.'"></td>'.
-            '<td><select name="status[]" class="form-control status select2" id="status"><option value="0">NOT OK</option><option value="1" selected>OK</option></select></td>'.
-            '<td><textarea name="reason[]" readonly class="form-control bg-light reason" id="reason" cols="15" rows="5"></textarea></td>'.
-            '</tr>';
-        }
-        return response()->json(['table'=>$table]);
+        $html = view('dc_print.add_items',compact('dc_transactionDatas'))->render();
+        return response()->json(['table'=>$html]);
     }
 
     public function dcMultiPdfData(Request $request){
