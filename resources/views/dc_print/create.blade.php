@@ -132,6 +132,6 @@
                     return false;
                 }
             }
-    });
+        });
 </script>
 @endpush

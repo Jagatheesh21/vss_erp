@@ -15,7 +15,10 @@ return new class extends Migration
             $table->id();
             $table->integer('previous_dc_id')->default(0);
             $table->integer('dc_id')->unique();
-
+            $table->integer('rc_status')->default(1);
+            $table->integer('status')->default(1);
+            $table->integer('prepared_by');
+            $table->integer('updated_by')->nullable();
             $table->timestamps();
         });
     }

@@ -160,6 +160,55 @@ class DcPrintController extends Controller
 
     }
 
+    public function ptsMultiDcStore(Request $request){
+        dd($request->all());
+        $s_no=$request->s_no;
+        $dcprint_datas=$request->sub_id;
+        $dc_id=$request->dc_id;
+        $issue_date=$request->issue_date;
+        $part_id=$request->part_id;
+        $issue_qty=$request->issue_qty;
+        $receive_qty=$request->receive_qty;
+        $balance_qty=$request->balance_qty;
+        $receive_qty=$request->receive_qty;
+
+        foreach ($dcprint_datas as $key => $dcprint_data) {
+            if ($dcprint_data!='') {
+                // no mismatch in inward quantity query
+                    if ($balance_qty[$key]==0) {
+                        // update dc print
+                        $dcPrintDatas=DcPrint::find($dcprint_data);
+                        $dcPrintDatas->status=0;
+                        $dcPrintDatas->updated_by = auth()->user()->id;
+                        $dcPrintDatas->update();
+
+                        // update dc transaction
+                        $dcTransactionData=DcTransactionDetails::find($dc_id[$key]);
+                        $dcTransactionData->receive_qty=$receive_qty[$key];
+                        $dcTransactionData->status=0;
+                        $dcTransactionData->rc_status=0;
+                        $dcTransactionData->updated_by = auth()->user()->id;
+                        $dcTransactionData->update();
+
+                        // update dc receive qty
+                        $rc_id=$dcTransactionData->rc_id;
+                        $preTransDataD11Datas=TransDataD11::where('rc_id','=',$rc_id)->first();
+                        $old_receive_qty=$preTransDataD11Datas->receive_qty;
+                        $old_issue_qty=$preTransDataD11Datas->issue_qty;
+                        $total_receive=(($old_receive_qty)+($receive_qty[$key]));
+                        $total_issue=(($old_issue_qty)+($receive_qty[$key]));
+                        // check dc master data
+                        $dc_master_id=$dcTransactionData->dc_master_id;
+                        $dcMasterData=DcMaster::find($dc_master_id);
+                        $operation_id=$dcMasterData->operation_id;
+                        $part_id=$dcMasterData->part_id;
+
+                    }
+            }
+        }
+
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -172,13 +221,14 @@ class DcPrintController extends Controller
             $dcprintDatas=DcPrint::find($sub_data);
             $dcprintDatas->s_no=$request->s_no;
             $dcprintDatas->print_status=1;
+            $dcprintDatas->updated_by = auth()->user()->id;
             $dcprintDatas->update();
             DB::commit();
         }
         return redirect()->route('dcprint.index')->withSuccess('Multi Delivery Challan Created Successfully!');
     }
 
-    public function multiDCReceive()
+    public function ptsMultiDCReceive()
     {
         $multiDCDatas=DcPrint::where('from_unit','=',1)->where('s_no','!=',0)->where('print_status','=',1)->where('status','=',1)->groupBy('s_no') ->get();
         // dd($multiDCDatas);

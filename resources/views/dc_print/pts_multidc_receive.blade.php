@@ -20,7 +20,7 @@
                 {{ session()->get('message')}}
                 </div>
             @endif
-            <form action="#" method="post">
+            <form action="{{route('ptsdcmultidcstore')}}" method="post">
                 @csrf
                 @method('POST')
                 <div class="card-header d-flex" style="justify-content:space-between"><span> <b>PTS Multi Delivery challan Receive Entry</b> </span>
@@ -62,8 +62,9 @@
                                         <th>DC Date</th>
                                         <th>Part No</th>
                                         <th>Issue Quantity</th>
-                                        <th>UOM</th>
                                         <th>Receive Quantity</th>
+                                        <th>Balance</th>
+                                        <th>UOM</th>
                                         <th>Status</th>
                                         <th>Remarks</th>
                                     </tr>
@@ -118,7 +119,25 @@
             $(this).closest("tr").find('td .sub_id').prop('checked', true);
             var status=$(this).val();
             alert(status);
-
+        });
+        $('.downloadpdf').on('click', function(e) {
+            var allVals = [];
+            $(".sub_id:checked").each(function() {
+                allVals.push($(this).attr('data-id'));
+            });
+            if(allVals.length <=0)
+            {
+                alert("Please select row.");
+                return false;
+            }  else {
+                var check = confirm("Are you sure you want to submit inventory data this row?");
+                if(check == true){
+                    var join_selected_values = allVals.join(",");
+                    alert(join_selected_values);
+                }else{
+                    return false;
+                }
+            }
         });
 </script>
 @endpush
