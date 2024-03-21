@@ -161,7 +161,7 @@ class DcPrintController extends Controller
     }
 
     public function ptsMultiDcStore(Request $request){
-        dd($request->all());
+        // dd($request->all());
         $s_no=$request->s_no;
         $dcprint_datas=$request->sub_id;
         $dc_id=$request->dc_id;
@@ -173,83 +173,95 @@ class DcPrintController extends Controller
         $receive_qty=$request->receive_qty;
 
         foreach ($dcprint_datas as $key => $dcprint_data) {
-            if ($dcprint_data!='') {
-                // no mismatch in inward quantity query
-                    if ($balance_qty[$key]==0) {
-                        // update dc print
-                        $dcPrintDatas=DcPrint::find($dcprint_data);
-                        $dcPrintDatas->status=0;
-                        $dcPrintDatas->updated_by = auth()->user()->id;
-                        $dcPrintDatas->update();
+            dump($key);
+            dump($dcprint_data);
 
-                        // update dc transaction
-                        $dcTransactionData=DcTransactionDetails::find($dc_id[$key]);
-                        $dcTransactionData->receive_qty=$receive_qty[$key];
-                        $dcTransactionData->status=0;
-                        $dcTransactionData->rc_status=0;
-                        $dcTransactionData->updated_by = auth()->user()->id;
-                        $dcTransactionData->update();
+            // if ($dcprint_data!='') {
+            //     // no mismatch in inward quantity query
+            //         if ($balance_qty[$key]==0) {
+            //             // update dc print
+            //             $dcPrintDatas=DcPrint::find($dcprint_data);
+            //             $dcPrintDatas->status=0;
+            //             $dcPrintDatas->updated_by = auth()->user()->id;
+            //             $dcPrintDatas->update();
 
-                        // update dc receive qty
-                        $rc_id=$dcTransactionData->rc_id;
-                        $preTransDataD11Datas=TransDataD11::where('rc_id','=',$rc_id)->first();
-                        $old_receive_qty=$preTransDataD11Datas->receive_qty;
-                        $old_issue_qty=$preTransDataD11Datas->issue_qty;
-                        $total_receive=(($old_receive_qty)+($receive_qty[$key]));
-                        $total_issue=(($old_issue_qty)+($receive_qty[$key]));
-                        $current_process_id=$preTransDataD11Datas->next_process_id;
-                        $current_product_process_id=$preTransDataD11Datas->next_product_process_id;
-                        $preTransDataD11Datas->receive_qty=$total_receive;
-                        $preTransDataD11Datas->updated_by = auth()->user()->id;
-                        $preTransDataD11Datas->update();
+            //             // update dc transaction
+            //             $dcTransactionData=DcTransactionDetails::find($dc_id[$key]);
+            //             $old_dcreceive_qty=(($dcTransactionData->receive_qty)+($receive_qty[$key]));
+            //             $dcTransactionData->receive_qty=$old_dcreceive_qty;
+            //             $dcTransactionData->status=0;
+            //             $dcTransactionData->rc_status=0;
+            //             $dcTransactionData->updated_by = auth()->user()->id;
+            //             $dcTransactionData->update();
 
-                        // check dc master data
-                        $dc_master_id=$dcTransactionData->dc_master_id;
-                        $dcMasterData=DcMaster::find($dc_master_id);
-                        $operation_id=$dcMasterData->operation_id;
-                        $part_id=$dcMasterData->part_id;
+            //             // update dc receive qty
+            //             $rc_id=$dcTransactionData->rc_id;
+            //             $preTransDataD11Datas=TransDataD11::where('rc_id','=',$rc_id)->first();
+            //             $old_receive_qty=$preTransDataD11Datas->receive_qty;
+            //             $old_issue_qty=$preTransDataD11Datas->issue_qty;
+            //             $total_receive=(($old_receive_qty)+($receive_qty[$key]));
+            //             $total_issue=(($old_issue_qty)+($receive_qty[$key]));
+            //             $current_process_id=$preTransDataD11Datas->next_process_id;
+            //             $current_product_process_id=$preTransDataD11Datas->next_product_process_id;
+            //             $preTransDataD11Datas->receive_qty=$total_receive;
+            //             $preTransDataD11Datas->updated_by = auth()->user()->id;
+            //             $preTransDataD11Datas->update();
 
-                        $current_processDatas=ProductProcessMaster::where('part_id','=',$part_id)->where('process_master_id','=',$current_process_id)->where('id','=',$current_product_process_id)->first();
-                        $current_process_order_id=$current_processDatas->process_order_id;
+            //             // check dc master data
+            //             $dc_master_id=$dcTransactionData->dc_master_id;
+            //             $dcMasterData=DcMaster::find($dc_master_id);
+            //             $operation_id=$dcMasterData->operation_id;
+            //             $part_id=$dcMasterData->part_id;
 
-                        $next_processDatas=ChildProductMaster::where('part_id','=',$part_id)->where('process_order_id','>',$current_process_order_id)->where('status','=',1)->first();
-                        $next_product_process_id=$next_processDatas->id;
-                        $next_process_id=$next_processDatas->process_master_id;
+            //             $current_processDatas=ProductProcessMaster::where('part_id','=',$part_id)->where('process_master_id','=',$current_process_id)->where('id','=',$current_product_process_id)->first();
+            //             $current_process_order_id=$current_processDatas->process_order_id;
 
-                        date_default_timezone_set('Asia/Kolkata');
-                        $current_date=date('Y-m-d');
-                        $current_year=date('Y');
-                        if ($current_process_id==18) {
-                            $rc="Q";
-                        }elseif ($current_process_id==19) {
-                            $rc="L";
-                        }
-                        $current_rcno=$rc.$current_year;
-                        $count1=RouteMaster::whereIn('process_id',$current_process_id)->where('rc_id','LIKE','%'.$current_rcno.'%')->orderBy('rc_id', 'DESC')->get()->count();
-                        // $count=TransDataD11::where('rc_no','LIKE','%'.$current_rcno.'%')->orderBy('rc_no', 'DESC')->get()->count();
-                        if ($count1 > 0) {
-                            // $rc_data=TransDataD11::where('rc_no','LIKE','%'.$current_rcno.'%')->orderBy('rc_no', 'DESC')->first();
-                            $rc_data=RouteMaster::whereIn('process_id',$current_process_id)->where('rc_id','LIKE','%'.$current_rcno.'%')->orderBy('rc_id', 'DESC')->first();
-                            $rcnumber=$rc_data['rc_id']??NULL;
-                            if ($current_process_id==18) {
-                                $old_rcnumber=str_replace("Q","",$rcnumber);
-                            }elseif ($current_process_id==19) {
-                                $old_rcnumber=str_replace("L","",$rcnumber);
-                            }
-                            $old_rcnumber_data=str_pad($old_rcnumber+1,9,0,STR_PAD_LEFT);
-                            if ($current_process_id==18) {
-                                $new_rcnumber='Q'.$old_rcnumber_data;
-                            }elseif ($current_process_id==19) {
-                                $new_rcnumber='L'.$old_rcnumber_data;
-                            }
-                        }else{
-                            $str='000001';
-                            $new_rcnumber=$current_rcno.$str;
-                        }
-                        dd($new_rcnumber);
+            //             $next_processDatas=ProductProcessMaster::where('part_id','=',$part_id)->where('process_order_id','>',$current_process_order_id)->where('status','=',1)->first();
+            //             $next_product_process_id=$next_processDatas->id;
+            //             $next_process_id=$next_processDatas->process_master_id;
 
-                    }
-            }
+            //             date_default_timezone_set('Asia/Kolkata');
+            //             $current_date=date('Y-m-d');
+            //             $current_year=date('Y');
+            //             if ($current_process_id==18) {
+            //                 $rc="Q";
+            //             }elseif ($current_process_id==19) {
+            //                 $rc="L";
+            //             }
+            //             $current_rcno=$rc.$current_year;
+            //             $count1=RouteMaster::whereIn('process_id',$current_process_id)->where('rc_id','LIKE','%'.$current_rcno.'%')->orderBy('rc_id', 'DESC')->get()->count();
+            //             // $count=TransDataD11::where('rc_no','LIKE','%'.$current_rcno.'%')->orderBy('rc_no', 'DESC')->get()->count();
+            //             if ($count1 > 0) {
+            //                 // $rc_data=TransDataD11::where('rc_no','LIKE','%'.$current_rcno.'%')->orderBy('rc_no', 'DESC')->first();
+            //                 $rc_data=RouteMaster::whereIn('process_id',$current_process_id)->where('rc_id','LIKE','%'.$current_rcno.'%')->orderBy('rc_id', 'DESC')->first();
+            //                 $rcnumber=$rc_data['rc_id']??NULL;
+            //                 if ($current_process_id==18) {
+            //                     $old_rcnumber=str_replace("Q","",$rcnumber);
+            //                 }elseif ($current_process_id==19) {
+            //                     $old_rcnumber=str_replace("L","",$rcnumber);
+            //                 }
+            //                 $old_rcnumber_data=str_pad($old_rcnumber+1,9,0,STR_PAD_LEFT);
+            //                 if ($current_process_id==18) {
+            //                     $new_rcnumber='Q'.$old_rcnumber_data;
+            //                 }elseif ($current_process_id==19) {
+            //                     $new_rcnumber='L'.$old_rcnumber_data;
+            //                 }
+            //             }else{
+            //                 $str='000001';
+            //                 $new_rcnumber=$current_rcno.$str;
+            //             }
+            //             dd($new_rcnumber);
+
+            //             // new route card master
+            //             $rcMaster=new RouteMaster;
+            //             $rcMaster->create_date=$current_date;
+            //             $rcMaster->process_id=$request->previous_process_id;
+            //             $rcMaster->rc_id=$request->rc_no;
+            //             $rcMaster->prepared_by=auth()->user()->id;
+            //             $rcMaster->save();
+
+            //         }
+            // }
         }
 
     }
