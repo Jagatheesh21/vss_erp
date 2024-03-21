@@ -21,6 +21,7 @@
                 </div>
             @endif
             <form action="{{route('ptsdcmultidcstore')}}" method="post">
+                {{-- <form action="#" method="post"> --}}
                 @csrf
                 @method('POST')
                 <div class="card-header d-flex" style="justify-content:space-between"><span> <b>PTS Multi Delivery challan Receive Entry</b> </span>
@@ -120,7 +121,7 @@
             var status=$(this).val();
             alert(status);
         });
-        $('.downloadpdf').on('click', function(e) {
+        $('.downloadpdf1').on('click', function(e) {
             var allVals = [];
             $(".sub_id:checked").each(function() {
                 allVals.push($(this).attr('data-id'));
@@ -134,6 +135,68 @@
                 if(check == true){
                     var join_selected_values = allVals.join(",");
                     alert(join_selected_values);
+                }else{
+                    return false;
+                }
+            }
+        });
+        $('.downloadpdf').on('click', function(e) {
+            var s_no=$('#s_no').val();
+            const sub_id = [];
+            const dc_id = [];
+            const issue_date = [];
+            const part_id = [];
+            const issue_qty = [];
+            const receive_qty = [];
+            const balance_qty = [];
+            const uom_id = [];
+            const status = [];
+            const reason = [];
+            $(".sub_id:checked").each(function() {
+                if ($(this).is(":checked")) {
+                    sub_id.push($(this).val());
+                    dc_id.push($(this).closest("tr").find('td .dc_id').val());
+                    issue_date.push($(this).closest("tr").find('td .issue_date').val());
+                    part_id.push($(this).closest("tr").find('td .part_id').val());
+                    issue_qty.push($(this).closest("tr").find('td .issue_qty').val());
+                    receive_qty.push($(this).closest("tr").find('td .receive_qty').val());
+                    balance_qty.push($(this).closest("tr").find('td .balance_qty').val());
+                    uom_id.push($(this).closest("tr").find('td .uom_id').val());
+                    status.push($(this).closest("tr").find('td .status').val());
+                    reason.push($(this).closest("tr").find('td .reason').val());
+                }
+            });
+            if (sub_id.length <=0) {
+                alert("Please select row.");
+                return false;
+            }else {
+                var check = confirm("Are you sure you want to submit inventory data this row?");
+                if(check == true){
+                    $.ajax({
+                        url: this.action,
+                        type:"POST",
+                        data: {
+                            "_token":"{{csrf_token()}}",
+                            "s_no" :s_no,
+                            "sub_id" :sub_id,
+                            "dc_id" :dc_id,
+                            "issue_date" :issue_date,
+                            "part_id" :part_id,
+                            "issue_qty" :issue_qty,
+                            "receive_qty" :receive_qty,
+                            "balance_qty" :balance_qty,
+                            "uom_id" :uom_id,
+                            "status" :status,
+                            "reason" :reason
+                        },
+                        cache:false,
+                        processData:false,
+                        contentType:false,
+                        success: function (response) {
+                            console.log(response);
+                        }
+                    });
+
                 }else{
                     return false;
                 }
