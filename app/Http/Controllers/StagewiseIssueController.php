@@ -215,4 +215,8 @@ class StagewiseIssueController extends Controller
         }
 
     }
+
+    public function ptsProductionReceiveEntry(Request $request){
+        dd($request->all());
+    }
 }

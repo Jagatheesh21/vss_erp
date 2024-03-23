@@ -84,9 +84,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('dcmulti-print', [DcPrintController::class,'dcMultiPrintData'])->name('dcmultiprintdata');
     Route::post('dcmulti-pdf', [DcPrintController::class,'dcMultiPdfData'])->name('dcmultipdf');
     Route::get('/dcmulti-receive', [DcPrintController::class,'ptsMultiDCReceive'])->name('ptsmultidcreceive');
+    Route::get('/ptsdcmulti-receivelist', [DcPrintController::class,'ptsdcMultiList'])->name('ptsmultidcreceivelist');
+    Route::get('/ptsdcmulti-inwardlist', [DcPrintController::class,'ptsInwardData'])->name('ptsinwarddata');
     Route::post('ptsdcmulti-receive', [DcPrintController::class,'ptsdcMultiReceiveData'])->name('ptsdcmultireceivedata');
     Route::post('ptsdcmulti-store', [DcPrintController::class,'ptsMultiDcStore'])->name('ptsdcmultidcstore');
-
+    Route::get('pts_production_receive/list', [StagewiseReceiveController::class,'ptsProductionReceiveList'])->name('ptsproductionreceive');
+    Route::get('pts_production_receive/create', [StagewiseReceiveController::class,'ptsProductionReceiveCreateForm'])->name('ptsproductionreceive.create');
+    Route::post('pts_production-receive', [StagewiseReceiveController::class,'ptsProductionReceiveEntry'])->name('ptsproductionreceive.store');
+    Route::post('pts_production-receive/part_no', [StagewiseReceiveController::class,'ptsProductionReceivePartFetchEntry'])->name('ptsproductionpartfetchdata');
 
     Route::resources([
         'roles' => RoleController::class,

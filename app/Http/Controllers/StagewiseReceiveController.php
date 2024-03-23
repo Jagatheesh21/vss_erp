@@ -69,8 +69,9 @@ class StagewiseReceiveController extends Controller
 
         $partCheck=ChildProductMaster::find($part_id);
         $part_no=$partCheck->child_part_no;
-        $fifoCheck=TransDataD11::where('process_id','=',3)->where('part_id','=',$part_id)->where('status','=',1)->orderBy('id', 'ASC')->first();
+        $fifoCheck=TransDataD11::with('rcmaster')->where('process_id','=',3)->where('part_id','=',$part_id)->where('status','=',1)->orderBy('id', 'ASC')->first();
         $fifoRcNo=$fifoCheck->rc_id;
+        $fifoRcCard=$fifoCheck->rcmaster->rc_id;
 
         if($rc_no==$fifoRcNo){
             $success = true;
@@ -124,7 +125,7 @@ class StagewiseReceiveController extends Controller
 
         // dd($success);
 
-        return response()->json(['success'=>$success,'fifoRcNo'=>$fifoRcNo,'avl_qty'=>$avl_qty,'part'=>$part,'bom'=>$bom,'avl_kg'=>$avl_kg,'message'=>$message,'process_id'=>$process_id,'product_process_id'=>$product_process_id,'next_process_id'=>$next_process_id,'next_productprocess_id'=>$next_productprocess_id,'process'=>$process]);
+        return response()->json(['success'=>$success,'fifoRcNo'=>$fifoRcNo,'avl_qty'=>$avl_qty,'part'=>$part,'bom'=>$bom,'avl_kg'=>$avl_kg,'message'=>$message,'process_id'=>$process_id,'product_process_id'=>$product_process_id,'next_process_id'=>$next_process_id,'next_productprocess_id'=>$next_productprocess_id,'process'=>$process,'fifoRcCard'=>$fifoRcCard]);
 
         // $avl_qty=(($process_issue_qty)-($receive_qty)-($reject_qty)-($rework_qty));
         // dd($d11Datas->part_id);
@@ -389,8 +390,10 @@ class StagewiseReceiveController extends Controller
 
         $partCheck=ChildProductMaster::find($part_id);
         $part_no=$partCheck->child_part_no;
-        $fifoCheck=TransDataD11::where('process_id','=',$current_process_id)->where('part_id','=',$part_id)->where('status','=',1)->orderBy('id', 'ASC')->first();
+        $fifoCheck=TransDataD11::with('rcmaster')->where('process_id','=',$current_process_id)->where('part_id','=',$part_id)->where('status','=',1)->orderBy('id', 'ASC')->first();
         $fifoRcNo=$fifoCheck->rc_id;
+        $fifoRcCard=$fifoCheck->rcmaster->rc_id;
+
         // dd($fifoRcNo);
         if($rc_no==$fifoRcNo){
             $success = true;
@@ -450,7 +453,7 @@ class StagewiseReceiveController extends Controller
 
         // dd($success);
 
-        return response()->json(['success'=>$success,'fifoRcNo'=>$fifoRcNo,'avl_qty'=>$avl_qty,'part'=>$part,'bom'=>$bom,'avl_kg'=>$avl_kg,'message'=>$message,'process_id'=>$process_id,'product_process_id'=>$product_process_id,'next_process_id'=>$next_process_id,'next_productprocess_id'=>$next_productprocess_id,'process'=>$process,'fqc_count'=>$fqcData]);
+        return response()->json(['success'=>$success,'fifoRcNo'=>$fifoRcNo,'avl_qty'=>$avl_qty,'part'=>$part,'bom'=>$bom,'avl_kg'=>$avl_kg,'message'=>$message,'process_id'=>$process_id,'product_process_id'=>$product_process_id,'next_process_id'=>$next_process_id,'next_productprocess_id'=>$next_productprocess_id,'process'=>$process,'fqc_count'=>$fqcData,'fifoRcCard'=>$fifoRcCard]);
 
         // $avl_qty=(($process_issue_qty)-($receive_qty)-($reject_qty)-($rework_qty));
         // dd($d11Datas->part_id);
@@ -518,4 +521,127 @@ class StagewiseReceiveController extends Controller
             return redirect()->back()->withErrors($th->getMessage());
         }
     }
+    public function ptsProductionReceiveList(){
+        $d12Datas=DB::table('trans_data_d12_s as a')
+        ->join('item_procesmasters AS b', 'a.process_id', '=', 'b.id')
+        ->join('child_product_masters AS c', 'a.part_id', '=', 'c.id')
+        ->join('users AS d', 'a.prepared_by', '=', 'd.id')
+        ->join('route_masters AS e', 'a.rc_id', '=', 'e.id')
+        ->join('route_masters AS f', 'a.previous_rc_id', '=', 'f.id')
+        ->select('b.operation','b.id as process_id','a.open_date','e.rc_id as rc_no','f.rc_id as previous_rc_no','a.receive_qty','c.child_part_no as part_no','a.prepared_by','a.created_at','d.name as user_name')
+        ->whereIn('a.process_id', [18])
+        ->whereRaw('a.rc_id=a.previous_rc_id')
+        ->orderBy('a.id', 'DESC')
+        ->get();
+        // dd($d12Datas);
+        return view('stagewise-receive.pts_production_view',compact('d12Datas'));
+    }
+
+    public function ptsProductionReceiveCreateForm(){
+        date_default_timezone_set('Asia/Kolkata');
+        $current_date=date('Y-m-d');
+        $d11Datas=TransDataD11::whereIn('process_id',[18])->where('status','=',1)->get();
+        return view('stagewise-receive.pts_production_create',compact('d11Datas','current_date'));
+    }
+    public function ptsProductionReceivePartFetchEntry(Request $request){
+        // $request->all();
+        // dd($request->all());
+        $rc_no=$request->rc_no;
+        $d11Datas=TransDataD11::whereIn('next_process_id',[19,20])->where('rc_id','=',$rc_no)->where('status','=',1)->first();
+        // dd($d11Datas);
+        $part_id=$d11Datas->part_id;
+        $fqcData=DcMaster::where('part_id','=',$part_id)->where('supplier_id','=','1')->count();
+        $current_process_id=$d11Datas->process_id;
+        $current_product_process_id=$d11Datas->product_process_id;
+        $next_operation_id=$d11Datas->next_process_id;
+        $next_operation_process_id=$d11Datas->next_product_process_id;
+        $previous_process_issue_qty=$d11Datas->process_issue_qty;
+        $receive_qty=$d11Datas->receive_qty;
+        $reject_qty=$d11Datas->reject_qty;
+        $rework_qty=$d11Datas->rework_qty;
+
+        $bomDatas=BomMaster::where('child_part_id','=',$part_id)->sum('output_usage');
+        if ($current_process_id==3) {
+            $process_issue_qty=floor(($previous_process_issue_qty/$bomDatas));
+        }else{
+            $process_issue_qty=$d11Datas->process_issue_qty;
+        }
+
+        $partCheck=ChildProductMaster::find($part_id);
+        $part_no=$partCheck->child_part_no;
+        $fifoCheck=TransDataD11::with('rcmaster')->where('process_id','=',$current_process_id)->where('part_id','=',$part_id)->where('status','=',1)->orderBy('id', 'ASC')->first();
+        $fifoRcNo=$fifoCheck->rc_id;
+        $fifoRcCard=$fifoCheck->rcmaster->rc_id;
+
+        // dd($fifoRcNo);
+        if($rc_no==$fifoRcNo){
+            $success = true;
+            $avl_qty=(($process_issue_qty)-($receive_qty)-($reject_qty)-($rework_qty));
+            $part='<option value="'.$part_id.'">'.$part_no.'</option>';
+            $fifoRccard=$fifoCheck->rc_no;
+            $bom=$bomDatas;
+            if ($current_process_id==3) {
+                $avl_kg=$avl_qty*$bom;
+            }else{
+                $avl_kg=$avl_qty;
+            }
+        // dd($avl_qty);
+
+            $process_id=$current_process_id;
+            $product_process_id=$current_product_process_id;
+            $process_check1=ProductProcessMaster::whereIn('process_master_id',[18])->where('part_id','=',$part_id)->where('status','=',1)->orderBy('id', 'ASC')->count();
+            // dd($process_check1);
+            if ($process_check1==0) {
+                $process=false;
+                $next_process_id=0;
+                $next_productprocess_id='<option value=""></option>';
+            }else{
+                $process=true;
+                $process_checkData=DB::table('product_process_masters as a')
+                ->join('item_procesmasters AS b', 'a.process_master_id', '=', 'b.id')
+                ->select('b.operation','b.id as next_process_id','a.id as next_productprocess_id')
+                ->where('process_master_id','=' ,$next_operation_id)
+                ->where('part_id','=',$part_id)
+                ->orderBy('a.id', 'DESC')
+                ->first();
+                // dd($process_checkData);
+                $next_process_id=$process_checkData->next_process_id;
+                $next_productprocess_id='<option value="'.$process_checkData->next_productprocess_id.'">'.$process_checkData->operation.'</option>';
+            }
+            $process_check=ProductProcessMaster::where('process_master_id','=',$process_id)->where('id','=',$current_product_process_id)->where('part_id','=',$part_id)->where('status','=',1)->orderBy('id', 'ASC')->count();
+            if($process_check==0){
+                $message=false;
+            }else{
+                $message=true;
+            }
+
+        }else{
+            $success = false;
+            $fifoRcNo=$fifoCheck->rc_id;
+            $fifoRccard=0;
+            $avl_qty=0;
+            $avl_kg=0;
+            $part='<option value=""></option>';
+            $bom=0;
+            $process_id=0;
+            $product_process_id=0;
+            $message=false;
+            $process=false;
+            $next_process_id=0;
+            $next_productprocess_id='<option value=""></option>';
+        }
+
+        // dd($success);
+
+        return response()->json(['success'=>$success,'fifoRcNo'=>$fifoRcNo,'avl_qty'=>$avl_qty,'part'=>$part,'bom'=>$bom,'avl_kg'=>$avl_kg,'message'=>$message,'process_id'=>$process_id,'product_process_id'=>$product_process_id,'next_process_id'=>$next_process_id,'next_productprocess_id'=>$next_productprocess_id,'process'=>$process,'fqc_count'=>$fqcData,'fifoRcCard'=>$fifoRcCard]);
+
+        // $avl_qty=(($process_issue_qty)-($receive_qty)-($reject_qty)-($rework_qty));
+        // dd($d11Datas->part_id);
+    }
+
+    public function ptsProductionReceiveEntry(Request $request){
+        dd($request->all());
+
+    }
+
 }

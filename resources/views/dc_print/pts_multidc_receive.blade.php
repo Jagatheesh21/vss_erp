@@ -140,7 +140,7 @@
                 }
             }
         });
-        $('.downloadpdf').on('click', function(e) {
+        $('.downloadpdf2').on('click', function(e) {
             var s_no=$('#s_no').val();
             const sub_id = [];
             const dc_id = [];

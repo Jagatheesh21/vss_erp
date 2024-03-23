@@ -3,7 +3,7 @@
 
 @endpush
 @section('content')
-<form action="{{route('fgreceive.store')}}" id="sf_receive_formdata" method="POST">
+<form action="{{route('ptsproductionreceive.store')}}" id="pts_receive_formdata" method="POST">
     @csrf
     @method('POST')
 
@@ -23,7 +23,7 @@
         <div class="row col-md-3"id="res"></div>
 
         <div class="card">
-            <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Finished Goods Part Receive Register</b></span><a class="btn btn-sm btn-primary" href="{{route('fgreceive')}}">Finished Goods Part Receive List</a>
+            <div class="card-header d-flex" style="justify-content:space-between"><span> <b>PTS Production Part Receive Register</b></span><a class="btn btn-sm btn-primary" href="{{route('ptsproductionreceive')}}">PTS Production Part Receive List</a>
             </div>
             <div class="card-body">
                         <div class="row d-flex justify-content-center">
@@ -224,7 +224,7 @@ $(document).ready(function(){
         if (rc_no!='') {
             $.ajax({
             type: "POST",
-            url: "{{ route('fgpartfetchdata') }}",
+            url: "{{ route('ptsproductionpartfetchdata') }}",
             data:{
                 "_token": "{{ csrf_token()}}",
                 "rc_no":rc_no,
