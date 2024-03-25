@@ -14,6 +14,7 @@ use App\Models\GrnQuality;
 use App\Models\PODetail;
 use App\Models\POProductDetail;
 use App\Models\ProductProcessMaster;
+use App\Models\PtsphospatingMaster;
 use App\Models\HeatNumber;
 use App\Models\TransDataD11;
 use App\Models\TransDataD12;
@@ -641,6 +642,13 @@ class StagewiseReceiveController extends Controller
 
     public function ptsProductionReceiveEntry(Request $request){
         dd($request->all());
+
+        $count=PtsphospatingMaster::where('part_id','=',$request->part_id)->count();
+        if ($count==1) {
+            # code...
+        }else {
+            # code...
+        }
 
     }
 
