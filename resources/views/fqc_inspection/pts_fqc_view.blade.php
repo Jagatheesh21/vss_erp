@@ -5,8 +5,8 @@
 <div class="row d-flex justify-content-center">
     <div class="col-12">
         <div class="card">
-            <div class="card-header d-flex" style="justify-content:space-between"><span><b>Final Quality Inspection Register List</b>  </span>
-                <a class="btn btn-md btn-primary" href="{{route('fqc_approval.create')}}"><b><i class='bx bx-plus bx-flashing' style='color:white;' ></i>&nbsp;&nbsp; New</b></a>
+            <div class="card-header d-flex" style="justify-content:space-between"><span><b>PTS Final Quality Inspection Register List</b>  </span>
+                <a class="btn btn-md btn-primary" href="{{route('ptsfqccreate')}}"><b><i class='bx bx-plus bx-flashing' style='color:white;' ></i>&nbsp;&nbsp; New</b></a>
             </div>
             <div class="card-body">
                 <div class="table">

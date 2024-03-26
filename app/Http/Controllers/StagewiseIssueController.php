@@ -67,6 +67,7 @@ class StagewiseIssueController extends Controller
         ->where('rc_id', $rc_no)
         ->first();
         // dd($d11Datas);
+        $select_rcno=$d11Datas->rc_id;
         $avl_qty=$d11Datas->avl_qty;
         $part_id=$d11Datas->part_id;
         $partData=ChildProductMaster::find($part_id);
@@ -77,6 +78,16 @@ class StagewiseIssueController extends Controller
         $current_stock_id='<option value="'.$process->id.'">'.$process->operation.'</option>';
         $current_process=ProductProcessMaster::find($current_product_process_id);
         $current_process_order_id=$current_process->process_order_id;
+
+        $fifoCheck=TransDataD11::with('rcmaster')->where('part_id', $part_id)->where('rc_status', 1)->whereIn('next_process_id',[6,7,8])->first();
+        $fifoRcNo=$fifoCheck->rcmaster->rc_id;
+        $fifoRcid=$fifoCheck->rc_id;
+
+        if ($fifoRcid==$rc_no) {
+            $success = true;
+        } else {
+            $success = false;
+        }
 
         $d12Datas=DB::table('trans_data_d12_s as a')
         ->join('bom_masters AS b', 'a.rm_id', '=', 'b.rm_id')
@@ -142,7 +153,7 @@ class StagewiseIssueController extends Controller
         $next_product_process_id=$next_productProcess->id;
         $next_process_id=$next_productProcess->process_id;
         $next_process_order_id=$next_productProcess->process_order_id;
-        return response()->json(['process'=>$current_stock_id,'avl_qty'=>$avl_qty,'part'=>$part,'current_process_id'=>$current_process_id,'current_product_process_id'=>$current_product_process_id,'next_process_id'=>$next_process_id,'next_productprocess_id'=>$next_product_process_id,'bom'=>$bom,'rcno'=>$new_rcnumber]);
+        return response()->json(['process'=>$current_stock_id,'avl_qty'=>$avl_qty,'part'=>$part,'current_process_id'=>$current_process_id,'current_product_process_id'=>$current_product_process_id,'next_process_id'=>$next_process_id,'next_productprocess_id'=>$next_product_process_id,'bom'=>$bom,'rcno'=>$new_rcnumber,'success'=>$success,'fifoRcNo'=>$fifoRcNo]);
 
         // dd($next_process_order_id);
         // dd($next_productProcess);

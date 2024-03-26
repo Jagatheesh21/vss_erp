@@ -202,20 +202,11 @@ $(document).ready(function(){
         $('#' + inputId + '-error').remove();
     });
     $('#inlineRadio1').hide();
-
 });
-
     $("#rc_no").select2({
         placeholder:"Select Route Card Number",
         allowedClear:true
     });
-
-
-    $("#reset").click(function (e) {
-        e.preventDefault();
-        location.reload(true);
-    });
-
     $('#rc_no').change(function (e) {
         e.preventDefault();
         var rc_no=$(this).val();
@@ -225,7 +216,7 @@ $(document).ready(function(){
             type: "POST",
             url: "{{ route('ospartfetchdata') }}",
             data:{
-                "_token": "{{ csrf_token()}}",
+                "_token": "{{ csrf_token() }}",
                 "rc_no":rc_no,
             },
             success: function (response) {
@@ -233,33 +224,41 @@ $(document).ready(function(){
                 if(response.success){
                     if (response.process) {
                         if(response.message){
-                        $('#part_id').html(response.part);
-                        // $('#avl_kg').val(response.avl_kg);
-                        $('#avl_qty').val(response.avl_qty);
-                        $('#receive_qty').attr('max', response.avl_qty);
-                        $('#receive_qty').attr('min', 0);
-                        $('#bom').val(response.bom);
-                        $('#inlineRadio1').hide();
-                        $('#previous_process_id').val(response.process_id);
-                        $('#previous_product_process_id').val(response.product_process_id);
-                        $('#next_process_id').val(response.next_process_id);
-                        $('#next_productprocess_id').html(response.next_productprocess_id);
+                            $('#part_id').html(response.part);
+                            // $('#avl_kg').val(response.avl_kg);
+                            $('#avl_qty').val(response.avl_qty);
+                            $('#receive_qty').attr('max', response.avl_qty);
+                            $('#receive_qty').attr('min', 0);
+                            $('#bom').val(response.bom);
+                            $('#inlineRadio1').hide();
+                            $('#previous_process_id').val(response.process_id);
+                            $('#previous_product_process_id').val(response.product_process_id);
+                            $('#next_process_id').val(response.next_process_id);
+                            $('#next_productprocess_id').html(response.next_productprocess_id);
 
                         }else{
                             alert('This Part Number is Not connected Item Process Master..So Please Contact Mr.PPC/ERP Team');
                         }
                     } else {
-                        alert('This Part Number Process is Not connected Out Store..So Please Contact Mr.PPC/ERP Team');
+                        alert('This Part Number Process is Not connected SemiFinished Store..So Please Contact Mr.PPC/ERP Team');
                     }
                 }else{
                     var msg='Please Follow The FIFO ..Try RC No Is '+response.fifoRcCard;
                     alert(msg);
-                    $('#inlineRadio1').hide();
+                    return false;
+                    location.reload(true);
                 }
             }
         });
         }
     });
+
+    $("#reset").click(function (e) {
+        e.preventDefault();
+        location.reload(true);
+    });
+
+
     $('#input_wt').change(function (e) {
         e.preventDefault();
         var bom_kg=$('#bom').val();

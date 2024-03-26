@@ -221,16 +221,22 @@ $(document).ready(function(){
             },
             success: function (response) {
                  console.log(response);
-                 $('#part_id').html(response.part);
-                 $('#avl_qty').val(response.avl_qty);
-                 $('#previous_process_id').html(response.process);
-                 $('#previous_product_process_id').val(response.current_product_process_id);
-                 $('#next_process_id').val(response.next_process_id);
-                 $('#next_product_process_id').val(response.next_productprocess_id);
-                 $('#bom').val(response.bom);
-                 $('#receive_qty').attr('max', response.avl_qty);
-                 $('#receive_qty').attr('min', 0);
-                 $('#rc_no').val(response.rcno);
+                if(response.success){
+                    $('#part_id').html(response.part);
+                    $('#avl_qty').val(response.avl_qty);
+                    $('#previous_process_id').html(response.process);
+                    $('#previous_product_process_id').val(response.current_product_process_id);
+                    $('#next_process_id').val(response.next_process_id);
+                    $('#next_product_process_id').val(response.next_productprocess_id);
+                    $('#bom').val(response.bom);
+                    $('#receive_qty').attr('max', response.avl_qty);
+                    $('#receive_qty').attr('min', 0);
+                    $('#rc_no').val(response.rcno);
+                }else{
+                    var msg='Please Follow The FIFO ..Try RC No Is '+response.fifoRcNo;
+                    alert(msg);
+                    location.reload(true);
+                }
             }
         });
         }

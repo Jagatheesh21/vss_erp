@@ -60,6 +60,7 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item"><a href="{{route('grn_qc.index')}}">Incoming QA Clearance</a></li>
                         <li class="list-group-item"><a href="{{route('fqc_approval.index')}}">Final QA Clearance</a></li>
+                        <li class="list-group-item"><a href="{{route('ptsfqclist')}}">PTS Final QA Clearance</a></li>
                         <li class="list-group-item">A second item</li>
                         <li class="list-group-item">A third item</li>
                     </ul>

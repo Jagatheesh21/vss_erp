@@ -231,7 +231,7 @@ $('.sub_id').change(function (e) {
     $('#grnnumber').change(function (e) {
         e.preventDefault();
         var grn_id=$(this).val();
-        // alert(grn_id);
+        alert(grn_id);
         if (grn_id!='') {
             $.ajax({
             type: "POST",
@@ -242,10 +242,19 @@ $('.sub_id').change(function (e) {
             },
             success: function (response) {
                 console.log(response);
-                $('#rm_id').html(response.rm);
-                $('#part_id').html(response.part);
-                $('#heatnumber').html(response.heat_no);
-                $('#uom_id').html(response.uom);
+                if(response.success){
+                    $('#rm_id').html(response.rm);
+                    $('#part_id').html(response.part);
+                    $('#heatnumber').html(response.heat_no);
+                    $('#uom_id').html(response.uom);
+                }else{
+                    var msg='Please Follow The FIFO ..Try GRN Number Is '+response.fifoGrn;
+                    alert(msg);
+                    $('#rm_id').html('');
+                    $('#part_id').html('');
+                    $('#heatnumber').html('');
+                    $('#uom_id').html('');
+                }
             }
         });
         }
@@ -267,7 +276,13 @@ $('.sub_id').change(function (e) {
             success: function (response) {
                 console.log(response);
                 if(response.count > 0){
+                    if(response.success){
                     $('#coil_no').html(response.coil_no);
+                    }else{
+                        var msg='Please Follow The FIFO ..Try Heat Number Is '+response.fifoHeatno;
+                        alert(msg);
+                        $('#coil_no').html('');
+                    }
                 }else{
                     alert('There Is No Available Coil in this heat number ,So Please Try Another Heat Number');
                     return false;
@@ -295,12 +310,23 @@ $('.sub_id').change(function (e) {
             success: function (response) {
                 console.log(response);
                 if(response.count > 0){
-                    $('#tc_no').val(response.tc_no);
-                    $('#lot_no').val(response.lot_no);
-                    $('#avl_qty').val(response.avl_qty);
-                    $('#heat_id').val(response.heat_id);
-                    $('#grn_qc_id').val(response.grn_qc_id);
-                    $('#issue_qty').attr('max', response.avl_qty);
+                    if(response.success){
+                        $('#tc_no').val(response.tc_no);
+                        $('#lot_no').val(response.lot_no);
+                        $('#avl_qty').val(response.avl_qty);
+                        $('#heat_id').val(response.heat_id);
+                        $('#grn_qc_id').val(response.grn_qc_id);
+                        $('#issue_qty').attr('max', response.avl_qty);
+                    }else{
+                        var msg='Please Follow The FIFO ..Try GRN Coil Number Is '+response.fifoCoilno;
+                        alert(msg);
+                        $('#tc_no').val('');
+                        $('#lot_no').val('');
+                        $('#avl_qty').val('');
+                        $('#heat_id').val('');
+                        $('#grn_qc_id').val('');
+                        $('#issue_qty').attr('max', 0);
+                    }
                 }else{
                     alert('There Is No Available Coil in this heat number ,So Please Try Another Heat Number');
                     return false;

@@ -641,13 +641,29 @@ class StagewiseReceiveController extends Controller
     }
 
     public function ptsProductionReceiveEntry(Request $request){
-        dd($request->all());
+        // dd($request->all());
 
         $count=PtsphospatingMaster::where('part_id','=',$request->part_id)->count();
         if ($count==1) {
             # code...
         }else {
-            # code...
+            $fqcInspectionData=new FinalQcInspection;
+            $fqcInspectionData->offer_date=$request->rc_date;
+            $fqcInspectionData->rc_id=$request->rc_no;
+            $fqcInspectionData->previous_rc_id=$request->rc_no;
+            $fqcInspectionData->part_id=$request->part_id;
+            $fqcInspectionData->process_id=$request->previous_process_id;
+            $fqcInspectionData->product_process_id=$request->previous_product_process_id;
+            $fqcInspectionData->next_process_id=$request->next_process_id;
+            $fqcInspectionData->next_product_process_id=$request->next_productprocess_id;
+            $fqcInspectionData->offer_qty=$request->receive_qty;
+            if($request->rc_close=="yes"){
+            $fqcInspectionData->rc_status=0;
+            }else{
+            $fqcInspectionData->rc_status=1;
+            }
+            $fqcInspectionData->prepared_by = auth()->user()->id;
+            $fqcInspectionData->save();
         }
 
     }

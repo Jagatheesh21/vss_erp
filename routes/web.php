@@ -92,6 +92,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('pts_production_receive/create', [StagewiseReceiveController::class,'ptsProductionReceiveCreateForm'])->name('ptsproductionreceive.create');
     Route::post('pts_production-receive', [StagewiseReceiveController::class,'ptsProductionReceiveEntry'])->name('ptsproductionreceive.store');
     Route::post('pts_production-receive/part_no', [StagewiseReceiveController::class,'ptsProductionReceivePartFetchEntry'])->name('ptsproductionpartfetchdata');
+    Route::get('pts_fqc/list', [FinalQcInspectionController::class,'ptsFqcList'])->name('ptsfqclist');
+    Route::get('pts_fqc/create', [FinalQcInspectionController::class,'ptsFqcCreate'])->name('ptsfqccreate');
+
 
     Route::resources([
         'roles' => RoleController::class,

@@ -118,7 +118,7 @@ class DcTransactionDetailsController extends Controller
                         $count1=TransDataD11::where('next_process_id','=',$operation_id)->where('part_id','=',$manufacturingPart)->select(DB::raw('(SUM(receive_qty)-SUM(issue_qty)) as t_avl_qty'))
                         ->havingRaw('t_avl_qty >?', [0])->first();
                         $t_avl_qty=$count1->t_avl_qty;
-                        // dd($dcmasterDatas);
+                        // dd($count1);
                         $table="";
                         foreach ($dcmasterDatas as $key => $dcmasterData) {
                             $table.='<tr>'.
@@ -315,8 +315,6 @@ class DcTransactionDetailsController extends Controller
         $d11Datas->process_issue_qty=$dc_quantity;
         $d11Datas->prepared_by = auth()->user()->id;
         $d11Datas->save();
-
-
 
         if ($regular==1) {
             foreach ($route_card_id as $key => $card_id) {

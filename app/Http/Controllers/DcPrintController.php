@@ -341,7 +341,7 @@ class DcPrintController extends Controller
     public function store(StoreDcPrintRequest $request)
     {
         //
-        dd($request->all());
+        // dd($request->all());
         $sub_datas=$request->sub_id;
         foreach ($sub_datas as $key => $sub_data) {
             $dcprintDatas=DcPrint::find($sub_data);

@@ -564,17 +564,21 @@ class FinalQcInspectionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(FinalQcInspection $finalQcInspection)
+    public function ptsFqcList()
     {
         //
+        $fqcDatas=FinalQcInspection::with(['current_rcmaster','previous_rcmaster','partmaster','currentprocessmaster','nextprocessmaster','inspector_usermaster'])->whereIn('process_id',[18,19,20])->orderBy('id', 'DESC')->get();
+        return view('fqc_inspection.pts_fqc_view',compact('fqcDatas'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(FinalQcInspection $finalQcInspection)
+    public function ptsFqcCreate()
     {
         //
+        $fqcDatas=FinalQcInspection::with(['current_rcmaster','previous_rcmaster','partmaster','currentprocessmaster','nextprocessmaster','inspector_usermaster'])->where('status','=',0)->whereIn('process_id',[18,19,20])->orderBy('id', 'ASC')->get();
+        return view('fqc_inspection.pts_fqc_create',compact('fqcDatas'));
     }
 
     /**

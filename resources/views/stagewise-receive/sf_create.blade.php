@@ -254,7 +254,7 @@ $(document).ready(function(){
                 }else{
                     var msg='Please Follow The FIFO ..Try RC No Is '+response.fifoRcCard;
                     alert(msg);
-                    $('#inlineRadio1').hide();
+                    location.reload(true);
                 }
             }
         });
