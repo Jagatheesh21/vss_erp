@@ -27,6 +27,7 @@ use App\Http\Controllers\FinalQcInspectionController;
 use App\Http\Controllers\DcTransactionDetailsController;
 use App\Http\Controllers\DcPrintController;
 use App\Http\Controllers\InvoiceDetailsController;
+// invoice updated
 
 /*
 |--------------------------------------------------------------------------
