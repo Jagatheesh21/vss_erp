@@ -561,6 +561,9 @@ class StagewiseReceiveController extends Controller
         $reject_qty=$d11Datas->reject_qty;
         $rework_qty=$d11Datas->rework_qty;
 
+        $pts_fqc_datas=FinalQcInspection::where('previous_rc_id','=',$rc_no)->where('status','=',0)->sum('offer_qty');
+        // dd($pts_fqc_datas);
+
         $bomDatas=BomMaster::where('child_part_id','=',$part_id)->sum('output_usage');
         if ($current_process_id==3) {
             $process_issue_qty=floor(($previous_process_issue_qty/$bomDatas));
@@ -577,7 +580,7 @@ class StagewiseReceiveController extends Controller
         // dd($fifoRcNo);
         if($rc_no==$fifoRcNo){
             $success = true;
-            $avl_qty=(($process_issue_qty)-($receive_qty)-($reject_qty)-($rework_qty));
+            $avl_qty=(($process_issue_qty)-($receive_qty)-($reject_qty)-($rework_qty)-($pts_fqc_datas));
             $part='<option value="'.$part_id.'">'.$part_no.'</option>';
             $fifoRccard=$fifoCheck->rc_no;
             $bom=$bomDatas;
@@ -659,11 +662,18 @@ class StagewiseReceiveController extends Controller
             $fqcInspectionData->offer_qty=$request->receive_qty;
             if($request->rc_close=="yes"){
             $fqcInspectionData->rc_status=0;
+
+            $TransDataD11Datas=TransDataD11::where('rc_id','=',$request->rc_no)->first();
+            $TransDataD11Datas->status=0;
+            $TransDataD11Datas->updated_by = auth()->user()->id;
+            $TransDataD11Datas->update();
             }else{
             $fqcInspectionData->rc_status=1;
             }
             $fqcInspectionData->prepared_by = auth()->user()->id;
             $fqcInspectionData->save();
+
+            return redirect()->route('ptsfqclist')->withSuccess('Part Received is Successfully And Waiting For PTS Final Quality Inspection!');
         }
 
     }

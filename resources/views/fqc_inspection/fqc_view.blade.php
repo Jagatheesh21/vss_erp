@@ -5,6 +5,21 @@
 <div class="row d-flex justify-content-center">
     <div class="col-12">
         <div class="card">
+            @if(Session::has('success'))
+            <div class="alert alert-success mt-4">
+            {{ Session::get('success')}}
+            </div>
+        @endif
+        @if(Session::has('error'))
+            <div class="alert alert-danger mt-4">
+            {{ Session::get('error')}}
+            </div>
+        @endif
+        @if (session()->has('message'))
+            <div class="alert alert-danger mt-4">
+            {{ session()->get('message')}}
+            </div>
+        @endif
             <div class="card-header d-flex" style="justify-content:space-between"><span><b>Final Quality Inspection Register List</b>  </span>
                 <a class="btn btn-md btn-primary" href="{{route('fqc_approval.create')}}"><b><i class='bx bx-plus bx-flashing' style='color:white;' ></i>&nbsp;&nbsp; New</b></a>
             </div>
@@ -58,7 +73,6 @@
                                     @else
 
                                     @endif</td>
-                                    <td></td>
                                     <td>@if ($fqcData->status==0)
                                         <span class="btn btn-sm btn-info text-white">PENDING</span>
                                         @elseif ($fqcData->status==1)
@@ -68,7 +82,7 @@
                                         @else
                                         <span class="btn btn-sm btn-warning text-white">ON-HOLD</span>
                                     @endif</td>
-                                    <td><a href="{{route('fqc_approval.edit',$fqcData->id)}}" class="btn btn-sm btn-info"><i class='bx bxs-edit' style='color:white;'>&nbsp; Edit</a></td>
+                                    {{-- <td><a href="{{route('fqc_approval.edit',$fqcData->id)}}" class="btn btn-sm btn-info"><i class='bx bxs-edit' style='color:white;'>&nbsp; Edit</a></td> --}}
                                 </tr>
                                 @empty
                                 <tr>

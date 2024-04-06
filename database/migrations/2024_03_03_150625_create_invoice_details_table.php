@@ -45,6 +45,9 @@ return new class extends Migration
             $table->string('ok')->nullable();
             $table->string('type')->nullable();
             $table->string('tcs')->nullable();
+            $table->string('document_type')->nullable();
+            $table->string('reverse_charge')->nullable();
+            $table->string('igst_on_intra')->nullable();
             $table->text('remarks')->nullable();
             $table->text('remarks1')->nullable();
             $table->text('remarks2')->nullable();

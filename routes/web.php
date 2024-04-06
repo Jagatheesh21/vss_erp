@@ -21,10 +21,12 @@ use App\Http\Controllers\StagewiseIssueController;
 use App\Http\Controllers\GrnRejectionController;
 use App\Http\Controllers\DcMasterController;
 use App\Http\Controllers\CustomerMasterController;
+use App\Http\Controllers\CustomerPoMasterController;
 use App\Http\Controllers\CustomerProductMasterController;
 use App\Http\Controllers\FinalQcInspectionController;
 use App\Http\Controllers\DcTransactionDetailsController;
 use App\Http\Controllers\DcPrintController;
+use App\Http\Controllers\InvoiceDetailsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -94,6 +96,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('pts_production-receive/part_no', [StagewiseReceiveController::class,'ptsProductionReceivePartFetchEntry'])->name('ptsproductionpartfetchdata');
     Route::get('pts_fqc/list', [FinalQcInspectionController::class,'ptsFqcList'])->name('ptsfqclist');
     Route::get('pts_fqc/create', [FinalQcInspectionController::class,'ptsFqcCreate'])->name('ptsfqccreate');
+    Route::post('pts_fqc/store', [FinalQcInspectionController::class,'ptsFqcApproval'])->name('pts_fqc_approval.store');
+    Route::get('/invoicepart-data/id', [InvoiceDetailsController::class,'cusPartData'])->name('cuspartdata');
+    Route::post('invoicefetch-rc', [InvoiceDetailsController::class,'invoiceItemRc'])->name('invoiceitemrc');
+
 
 
     Route::resources([
@@ -119,8 +125,10 @@ Route::middleware(['auth'])->group(function () {
         'fqc_approval'=>FinalQcInspectionController::class,
         'customermaster'=>CustomerMasterController::class,
         'customer-products'=>CustomerProductMasterController::class,
+        'customerpomaster'=>CustomerPoMasterController::class,
         'delivery_challan'=>DcTransactionDetailsController::class,
         'dcprint'=>DcPrintController::class,
+        'invoicedetails'=>InvoiceDetailsController::class,
     ]);
 });
 

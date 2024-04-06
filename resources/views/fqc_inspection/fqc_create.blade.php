@@ -48,8 +48,8 @@
                                     <td><select name="previous_rc_id[]"  class="form-control previous_rc_id bg-light" readonly id="previous_rc_id">
                                                     <option value="{{$fqcData->previous_rcmaster->id}}" selected>{{$fqcData->previous_rcmaster->rc_id}}</option></select></td>
 
-                                    <td><input type="number" class="form-control offer_qty" name="offer_qty[]" value="{{$fqcData->offer_qty}}" id="offer_qty"></td>
-                                    <td><input type="number" class="form-control inspect_qty" name="inspect_qty[]" min="0" max="{{$fqcData->offer_qty}}" value="{{$fqcData->inspect_qty}}" id="inspect_qty"></td>
+                                    <td><input type="number" class="form-control offer_qty bg-light" name="offer_qty[]" readonly value="{{$fqcData->offer_qty}}" id="offer_qty"></td>
+                                    <td><input type="number" class="form-control inspect_qty" name="inspect_qty[]" min="0" max="{{$fqcData->offer_qty}}" value="{{$fqcData->offer_qty}}" id="inspect_qty" onpaste="return false;" onCopy="return false" onCut="return false" onDrag="return false" onDrop="return false"></td>
                                     <td>
                                         <select name="status[]" id="status" class="form-control status">
                                             <option value="0" @if($fqcData->status==0) selected @endif >PENDING</option>
@@ -117,6 +117,8 @@ $(document).ready(function(){
     updateGrandTotal();
     // getRow();
 });
+$('.reason').hide();
+
 $(".status").select2({
         placeholder:"Select Status",
         allowedClear:true
@@ -142,35 +144,42 @@ $('.fqc_id').change(function (e) {
         e.preventDefault();
         var allStatus=$(this).val();
         // alert(allStatus);
-        if (allStatus==0) {
+        switch (allStatus) {
+            case '0':
             alert('Please Select Other Status');
-          $('#reason_all').hide();
-          $(".select_all").prop('checked', false);
-          $(".fqc_id").prop('checked', false);
-
-        }
-        if (allStatus==1) {
+            $('#reason_all').hide();
+            $(".select_all").prop('checked', false);
+            $(".fqc_id").prop('checked', false);
+            $('.reason').hide();
+            break;
+            case '1':
             $('#status').html('<option value="1"selected>APPROVED</option>');
-          $('#reason_all').hide();
-          $(".select_all").prop('checked', true);
-          $(".fqc_id").prop('checked', true);
-
-        }
-        if (allStatus==2) {
+            $('#reason_all').hide();
+            $(".select_all").prop('checked', true);
+            $(".fqc_id").prop('checked', true);
+            $('.reason').hide();
+            break;
+            case '2':
             $('#status').html('<option value="2"selected>REJECTED</option>');
-          $('#reason_all').show();
-        $(".select_all").prop('checked', true);
-        $(".fqc_id").prop('checked', true);
-
-        }
-        if (allStatus==3) {
+            $('#reason_all').show();
+            $(".select_all").prop('checked', true);
+            $(".fqc_id").prop('checked', true);
+            $('.reason').hide();
+            break;
+            case '3':
             $('#status').html('<option value="3"selected>ON-HOLD</option>');
-          $('#reason_all').show();
-        $(".select_all").prop('checked', true);
-        $(".fqc_id").prop('checked', true);
+            $('#reason_all').show();
+            $(".select_all").prop('checked', true);
+            $(".fqc_id").prop('checked', true);
+            $('.reason').hide();
+            break;
+            default:
+            $('#reason_all').hide();
+            $(".select_all").prop('checked', false);
+            $(".fqc_id").prop('checked', false);
+            $('.reason').hide();
+            break;
         }
-
-
     });
 
     function getRow(){
@@ -192,13 +201,42 @@ $('.fqc_id').change(function (e) {
         });
     }
 
-
-
-    $('.status').change(function (event) {
-        $(this).closest("tr").find('td .fqc_id').prop('checked', true);
-        // getRow();
+    $('.offer_qty').change(function (e) {
+        e.preventDefault();
+        var inspect_qty=$(this).val();
+        var offer_qty=$('.offer_qty').val();
+        var diff=offer_qty-inspect_qty;
+        if (diff<0) {
+            alert('Please Check The Offer Quantity');
+        }
     });
 
+    $('.status').change(function (event) {
+        var status=$(this).val();
+        // alert(status);
+        switch (status) {
+            case '0':
+            $(this).closest("tr").find('td .fqc_id').prop('checked', false);
+            $(this).closest("tr").find('td .reason').hide();
+            break;
+            case '1':
+            $(this).closest("tr").find('td .fqc_id').prop('checked', true);
+            $(this).closest("tr").find('td .reason').hide();
+            break;
+            case '2':
+            $(this).closest("tr").find('td .fqc_id').prop('checked', true);
+            $(this).closest("tr").find('td .reason').show();
+            break;
+            case '3':
+            $(this).closest("tr").find('td .fqc_id').prop('checked', true);
+            $(this).closest("tr").find('td .reason').show();
+            break;
+            default:
+            $(this).closest("tr").find('td .fqc_id').prop('checked', false);
+            $(this).closest("tr").find('td .reason').hide();
+        }
+        // getRow();
+    });
 
     $('.update_all').on('click', function(e) {
 
