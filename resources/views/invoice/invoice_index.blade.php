@@ -5,6 +5,21 @@
 <div class="row d-flex justify-content-center">
     <div class="col-12">
         <div class="card">
+            @if(Session::has('success'))
+            <div class="alert alert-success mt-4">
+            {{ Session::get('success')}}
+            </div>
+        @endif
+        @if(Session::has('error'))
+            <div class="alert alert-danger mt-4">
+            {{ Session::get('error')}}
+            </div>
+        @endif
+        @if (session()->has('message'))
+            <div class="alert alert-danger mt-4">
+            {{ session()->get('message')}}
+            </div>
+        @endif
             <div class="card-header d-flex" style="justify-content:space-between"><span><b>Invoice List</b>  </span>
                 <a class="btn btn-md btn-primary" href="{{route('invoicedetails.create')}}"><b><i class='bx bx-plus bx-flashing' style='color:white;' ></i>&nbsp;&nbsp; New</b></a>
             </div>

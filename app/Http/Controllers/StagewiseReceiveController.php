@@ -388,7 +388,8 @@ class StagewiseReceiveController extends Controller
         }else{
             $process_issue_qty=$d11Datas->process_issue_qty;
         }
-
+        $fqc_offer_qty=FinalQcInspection::where('status','=',0)->where('next_process_id','=',22)->where('rc_id','=',$rc_no)->sum('offer_qty');
+        // dd($fqc_offer_qty);
         $partCheck=ChildProductMaster::find($part_id);
         $part_no=$partCheck->child_part_no;
         $fifoCheck=TransDataD11::with('rcmaster')->where('process_id','=',$current_process_id)->where('part_id','=',$part_id)->where('status','=',1)->orderBy('id', 'ASC')->first();
@@ -398,7 +399,7 @@ class StagewiseReceiveController extends Controller
         // dd($fifoRcNo);
         if($rc_no==$fifoRcNo){
             $success = true;
-            $avl_qty=(($process_issue_qty)-($receive_qty)-($reject_qty)-($rework_qty));
+            $avl_qty=(($process_issue_qty)-($receive_qty)-($reject_qty)-($rework_qty)-($fqc_offer_qty));
             $part='<option value="'.$part_id.'">'.$part_no.'</option>';
             $fifoRcNo=$fifoCheck->rc_no;
             $bom=$bomDatas;
@@ -460,6 +461,12 @@ class StagewiseReceiveController extends Controller
         // dd($d11Datas->part_id);
     }
 
+    public function fgFqcApproval(){
+        $fqcDatas=FinalQcInspection::with(['current_rcmaster','previous_rcmaster','partmaster','currentprocessmaster','nextprocessmaster','inspector_usermaster'])->where('status','=',0)->whereIn('next_process_id',[22,16])->orderBy('id','DESC')->get();
+        // dd($fqcDatas);
+        return view('fqc_inspection.fg_fqc_view',compact('fqcDatas'));
+    }
+
 
     public function fgReceiveEntry(Request $request){
         // dd($request->all());
@@ -510,8 +517,18 @@ class StagewiseReceiveController extends Controller
                 }
                 $fqcInspectionData->prepared_by = auth()->user()->id;
                 $fqcInspectionData->save();
+
+                $d11Datas=TransDataD11::where('process_id','=',$request->previous_process_id)->where('product_process_id','=',$request->previous_product_process_id)->where('rc_id','=',$request->rc_no)->first();
+                if($request->rc_close=="yes"){
+                    $d11Datas->close_date=$request->rc_date;
+                    $d11Datas->status=0;
+                }
+                $d11Datas->updated_by = auth()->user()->id;
+                $d11Datas->updated_at = Carbon::now();
+                $d11Datas->update();
+
                 DB::commit();
-                return redirect()->route('fqc_approval.index')->withSuccess('Part Received is Successfully And Waiting For Final Quality Inspection!');
+                return redirect()->route('fgfqc')->withSuccess('Part Received is Successfully And Waiting For Final Quality Inspection!');
 
             }
 

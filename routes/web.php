@@ -81,6 +81,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('fg_receive/create', [StagewiseReceiveController::class,'fgReceiveCreateForm'])->name('fgreceive.create');
     Route::post('fg-receive', [StagewiseReceiveController::class,'fgReceiveEntry'])->name('fgreceive.store');
     Route::post('fg-receive/part_no', [StagewiseReceiveController::class,'fgPartFetchEntry'])->name('fgpartfetchdata');
+    Route::get('fg-receive/fqc_approval', [StagewiseReceiveController::class,'fgFqcApproval'])->name('fgfqc');
     Route::post('dcfetch-rc', [DcTransactionDetailsController::class,'dcItemRc'])->name('dcitemrc');
     Route::get('/dcpart-data/id', [DcTransactionDetailsController::class,'dcPartData'])->name('dcpartdata');
     Route::post('dcsupplier-print', [DcPrintController::class,'dcSupplierPrintData'])->name('dcsupplierprintdata');
@@ -100,6 +101,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('pts_fqc/store', [FinalQcInspectionController::class,'ptsFqcApproval'])->name('pts_fqc_approval.store');
     Route::get('/invoicepart-data/id', [InvoiceDetailsController::class,'cusPartData'])->name('cuspartdata');
     Route::post('invoicefetch-rc', [InvoiceDetailsController::class,'invoiceItemRc'])->name('invoiceitemrc');
+
 
 
 

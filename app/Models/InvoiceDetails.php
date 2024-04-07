@@ -19,6 +19,11 @@ class InvoiceDetails extends Model
         return $this->belongsTo(CustomerProductMaster::class,'cus_product_id');
     }
 
+    public function productmaster()
+    {
+        return $this->belongsTo(ProductMaster::class,'part_id');
+    }
+
     public function customerpomaster()
     {
         return $this->belongsTo(CustomerPoMaster::class,'cus_po_id');

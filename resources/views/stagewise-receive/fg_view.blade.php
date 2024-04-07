@@ -16,6 +16,7 @@
     @endif
         <div class="card">
             <div class="card-header d-flex" style="justify-content:space-between"><span><b>Finished Goods Part Receive Register List</b>  </span>
+                <a class="btn btn-md btn-info text-white" href="{{route('fgfqc')}}"><b><i class='bx bx-search-alt bx-flashing' style='color:white;' ></i>&nbsp;&nbsp; FQC Approval</b></a>
                 <a class="btn btn-md btn-primary" href="{{route('fgreceive.create')}}"><b><i class='bx bx-plus bx-flashing' style='color:white;' ></i>&nbsp;&nbsp; New</b></a>
             </div>
             <div class="card-body">

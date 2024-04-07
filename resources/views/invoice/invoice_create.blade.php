@@ -248,7 +248,7 @@
                             <input type="hidden" name="bom" class="form-control bom" id="bom">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <button class="btn btn-primary mt-4">Proceed Invoice</button>
+                                    <button class="btn btn-primary mt-4" id="proceed">Proceed Invoice</button>
                                 </div>
                             </div>
                         </div>
@@ -258,12 +258,12 @@
                             <table class="table table-bordered table-striped table-responsive">
                                 <thead>
                                 <tr>
-                                    <th>Part No</th>
-                                    <th>Order</th>
-                                    <th>Route Card</th>
-                                    <th>Route Card Available Quantity</th>
-                                    <th>Invoice Quantity</th>
-                                    <th>Balance</th>
+                                    <th><b>Part No</b></th>
+                                    <th><b>Order</b></th>
+                                    <th><b>Route Card</b></th>
+                                    <th><b>Route Card Available Quantity</b></th>
+                                    <th><b>Invoice Quantity</b></th>
+                                    <th><b>Balance</b></th>
                                 </tr>
                                 </thead>
                                 <tbody  id="table_logic">
@@ -283,6 +283,9 @@
         $("#cus_id").select2();
         $("#part_id").select2();
         $("#trans_mode").select2();
+        $('#proceed').hide();
+        $('#invoice_quantity').attr('readonly',true);
+        $('#invoice_quantity').addClass('bg-light');
         $('#cus_id').change(function (e) {
             e.preventDefault();
             var cus_id=$(this).val();
@@ -293,7 +296,10 @@
                 data: {"cus_id":cus_id},
                 success: function (response) {
                     console.log(response);
-                    if(response.count > 0){cus_name
+                    $('#invoice_quantity').attr('readonly',true);
+                    $('#table_logic').html('<tr><td colspan="6" class="text-center">No Record Found</td></tr>');
+                    $('#proceed').hide();
+                    if(response.count > 0){
                     $('#part_id').html(response.part_id);
                     $('#cus_name').val(response.cus_name);
                     $('#cus_gst_number').val(response.cus_gst_number);
@@ -306,8 +312,6 @@
                 e.preventDefault();
                 var cus_id=$("#cus_id").val();
                 var part_id=$(this).val();
-            // alert(cus_id);
-            // alert(part_id);
                 $.ajax({
                     type: "POST",
                     url: "{{route('invoiceitemrc')}}",
@@ -315,14 +319,18 @@
                     success: function (response) {
                         // console.log(response);
                         $('#cus_po_id').html(response.cus_po_no);
-                        $('#cus_order_qty').val(response.t_avl_qty);
+                        // $('#cus_order_qty').val(response.t_avl_qty);
+                        $('#cus_order_qty').val(1000);
                         $('#avl_quantity').val(response.t_avl_qty);
                         $('#operation_id').html(response.operation);
                         $('#invoice_quantity'). attr('max',response.t_avl_qty);
+                        $('#invoice_quantity').attr('readonly',false);
+                        $('#invoice_quantity').removeClass('bg-light');
                         $('#table_logic').html(response.table);
                         $('#regular').val(response.regular);
                         $('#alter').val(response.alter);
                         $('#bom').val(response.bom);
+                        $('#proceed').hide();
                     }
                 });
             });
@@ -350,35 +358,46 @@
         $("#invoice_quantity").change(function(){
             var invoice_quantity = $(this).val();
             var invoice_avl_qty = $('#avl_quantity').val();
+            var invoice_order_qty = $('#cus_order_qty').val();
             var regular=$('#regular').val();
             var bom=$('#bom').val();
             var issue_wt=invoice_quantity*bom;
             // alert(issue_wt);
             $('#issue_wt').val(issue_wt);
             var diff=invoice_avl_qty-invoice_quantity;
+            var diff2=invoice_order_qty-invoice_quantity;
             // alert(regular);
             if (regular==1) {
                 // if (invoice_avl_qty>=invoice_quantity) {
-                if (diff>=0) {
-                    var total = invoice_quantity;
-                    $('table > tbody  > tr').each(function(index, row) {
-                    $(row).find('.issue_quantity').val('');
-                    var qty = $(row).find('.available_quantity').val();
-                    if(total>=qty && total>0){
-                        total-=qty;
-                        $(row).find('.issue_quantity').val(qty);
-                        console.log('method 1');
-                    }else if(qty>total){
-                    $(row).find('.issue_quantity').val(total);
-                        total = 0;
+                    if (diff2>=0) {
+                        if (diff>=0) {
+                            var total = invoice_quantity;
+                            $('table > tbody  > tr').each(function(index, row) {
+                            $(row).find('.issue_quantity').val('');
+                            var qty = $(row).find('.available_quantity').val();
+                            if(total>=qty && total>0){
+                                total-=qty;
+                                $(row).find('.issue_quantity').val(qty);
+                                console.log('method 1');
+                            }else if(qty>total){
+                            $(row).find('.issue_quantity').val(total);
+                                total = 0;
+                            }
+                            var balance = qty-($(row).find('.issue_quantity').val());
+                            $(row).find('.balance').val(balance);
+                            });
+                            $('#proceed').show();
+                        }else{
+                            $('#proceed').hide();
+                            alert('Sorry This Quantity More Than Available Quantity..');
+                            return false;
+                        }
+                    } else {
+                        $('#proceed').hide();
+                        alert('Sorry This Quantity More Than Order Quantity..');
+                        return false;
                     }
-                    var balance = qty-($(row).find('.issue_quantity').val());
-                    $(row).find('.balance').val(balance);
-                    });
-                }else{
-                    alert('Sorry This Quantity More Than Available Quantity..');
-                    return false;
-                }
+
             } else {
                 let i;
                 let x=$('table > tbody  > tr').toArray();

@@ -338,8 +338,8 @@ class DcTransactionDetailsController extends Controller
                     $next_process_id=$nextProcess->process_master_id;
 
                     $d12Datas=new TransDataD12;
-                    $d11Datas->open_date=$dc_date;
-                    $d11Datas->rc_id=$rc_id;
+                    $d12Datas->open_date=$dc_date;
+                    $d12Datas->rc_id=$rc_id;
                     $d12Datas->previous_rc_id=$card_id;
                     $d12Datas->part_id=$part_id;
                     $d12Datas->process_id=$operation_id;

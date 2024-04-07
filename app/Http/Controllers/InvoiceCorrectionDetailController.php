@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\InvoiceCorrectionDetail;
 use App\Http\Requests\StoreInvoiceCorrectionDetailRequest;
 use App\Http\Requests\UpdateInvoiceCorrectionDetailRequest;
+use Illuminate\Support\Number;
 
 class InvoiceCorrectionDetailController extends Controller
 {
