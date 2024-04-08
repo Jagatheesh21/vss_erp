@@ -27,6 +27,8 @@ use App\Http\Controllers\FinalQcInspectionController;
 use App\Http\Controllers\DcTransactionDetailsController;
 use App\Http\Controllers\DcPrintController;
 use App\Http\Controllers\InvoiceDetailsController;
+use App\Http\Controllers\InvoiceCorrectionMasterController;
+use App\Http\Controllers\InvoiceCorrectionDetailController;
 // invoice updated
 
 /*
@@ -101,6 +103,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('pts_fqc/store', [FinalQcInspectionController::class,'ptsFqcApproval'])->name('pts_fqc_approval.store');
     Route::get('/invoicepart-data/id', [InvoiceDetailsController::class,'cusPartData'])->name('cuspartdata');
     Route::post('invoicefetch-rc', [InvoiceDetailsController::class,'invoiceItemRc'])->name('invoiceitemrc');
+    Route::get('invoice_correction-request', [InvoiceDetailsController::class,'invoiceCorrectionRequest'])->name('invoice_correction_request');
 
 
 
@@ -132,6 +135,8 @@ Route::middleware(['auth'])->group(function () {
         'delivery_challan'=>DcTransactionDetailsController::class,
         'dcprint'=>DcPrintController::class,
         'invoicedetails'=>InvoiceDetailsController::class,
+        'invoicecorrectionmaster'=>InvoiceCorrectionMasterController::class,
+        'invoicecorrectiondetail'=>InvoiceCorrectionDetailController::class,
     ]);
 });
 

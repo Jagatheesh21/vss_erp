@@ -37,8 +37,8 @@ class InvoiceDetailsController extends Controller
     {
         //
         $invoiceDatas=InvoiceDetails::with(['rcmaster','customerproductmaster','productmaster','customerpomaster','uom_masters','currency_masters'])->get();
-        dd($invoiceDatas);
-        return view('invoice.invoice_index');
+        // dd($invoiceDatas);
+        return view('invoice.invoice_index',compact('invoiceDatas'));
     }
 
     /**
@@ -118,7 +118,6 @@ class InvoiceDetailsController extends Controller
             return response()->json(['count'=>$count]);
         }
     }
-
 
     public function invoiceItemRc(Request $request){
         // dd($request->all());
@@ -359,7 +358,7 @@ class InvoiceDetailsController extends Controller
         $invoiceDatas->qty=$invoice_quantity;
         $invoiceDatas->uom_id=$customer_product_uom;
         $invoiceDatas->part_per=$customer_product_part_per;
-        $invoiceDatas->part_rate=$customer_product_rate;
+        $invoiceDatas->part_rate=$part_rate;
         $invoiceDatas->currency_id=$customer_product_currency_id;
         $invoiceDatas->packing_charge=$customer_product_packing_charges;
         $invoiceDatas->cgst=$customer_product_cgst;
@@ -390,8 +389,8 @@ class InvoiceDetailsController extends Controller
         if ($count>0) {
             foreach ($issue_quantity as $key => $value) {
                 if ($value!=0) {
-                dump($value);
-                    dump($route_card_id[$key]);
+                // dump($value);
+                //     dump($route_card_id[$key]);
                     if ($regular==1) {
                         $previousT11Datas=TransDataD11::where('rc_id','=',$route_card_id[$key])->where('next_process_id','=',$operation_id)->where('part_id','=',$route_part_id[$key])->first();
                         $old_issue_qty=$previousT11Datas->issue_qty;
@@ -434,6 +433,7 @@ class InvoiceDetailsController extends Controller
         return redirect()->route('invoicedetails.index')->withSuccess('Invoice Created Successfully!');
 
     }
+
 
     /**
      * Display the specified resource.
