@@ -252,7 +252,7 @@ $(document).ready(function(){
                         alert('This Part Number Process is Not connected Out Store..So Please Contact Mr.PPC/ERP Team');
                     }
                 }else{
-                    var msg='Please Follow The FIFO ..Try RC No Is '+response.fifoRcNo;
+                    var msg='Please Follow The FIFO ..Try RC No Is '+response.fifoRcCard;
                     alert(msg);
                     $('#inlineRadio1').hide();
                 }

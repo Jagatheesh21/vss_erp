@@ -18,4 +18,11 @@ class DcMaster extends Model
     {
         return $this->belongsTo(Supplier::class,'supplier_id');
     }
+
+    public function childpart()
+    {
+        return $this->belongsTo(ChildProductMaster::class,'part_id');
+    }
+
+
 }

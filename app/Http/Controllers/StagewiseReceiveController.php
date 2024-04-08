@@ -134,13 +134,14 @@ class StagewiseReceiveController extends Controller
         // dd($request->all());
         DB::beginTransaction();
         try {
-            $d11Datas=TransDataD11::where('process_id','=',$request->previous_process_id)->where('product_process_id','=',$request->previous_product_process_id)->first();
+            $d11Datas=TransDataD11::where('process_id','=',$request->previous_process_id)->where('product_process_id','=',$request->previous_product_process_id)->where('rc_id','=',$request->rc_no)->first();
             if($request->rc_close=="yes"){
                 // dd($request->rc_date);
                 $d11Datas->close_date=$request->rc_date;
                 $d11Datas->status=0;
             }
-            $d11Datas->receive_qty=$request->receive_qty;
+            $total_receive_qty=($d11Datas->receive_qty+$request->receive_qty);
+            $d11Datas->receive_qty=$total_receive_qty;
             $d11Datas->updated_by = auth()->user()->id;
             $d11Datas->updated_at = Carbon::now();
             $d11Datas->update();
@@ -226,8 +227,9 @@ class StagewiseReceiveController extends Controller
 
         $partCheck=ChildProductMaster::find($part_id);
         $part_no=$partCheck->child_part_no;
-        $fifoCheck=TransDataD11::where('process_id','=',$current_process_id)->where('part_id','=',$part_id)->where('status','=',1)->orderBy('id', 'ASC')->first();
+        $fifoCheck=TransDataD11::with('rcmaster')->where('process_id','=',$current_process_id)->where('part_id','=',$part_id)->where('status','=',1)->orderBy('id', 'ASC')->first();
         $fifoRcNo=$fifoCheck->rc_id;
+        $fifoRcCard=$fifoCheck->rcmaster->rc_id;
         // dd($fifoRcNo);
         if($rc_no==$fifoRcNo){
             $success = true;
@@ -287,7 +289,7 @@ class StagewiseReceiveController extends Controller
 
         // dd($success);
 
-        return response()->json(['success'=>$success,'fifoRcNo'=>$fifoRcNo,'avl_qty'=>$avl_qty,'part'=>$part,'bom'=>$bom,'avl_kg'=>$avl_kg,'message'=>$message,'process_id'=>$process_id,'product_process_id'=>$product_process_id,'next_process_id'=>$next_process_id,'next_productprocess_id'=>$next_productprocess_id,'process'=>$process]);
+        return response()->json(['success'=>$success,'fifoRcNo'=>$fifoRcNo,'avl_qty'=>$avl_qty,'part'=>$part,'bom'=>$bom,'avl_kg'=>$avl_kg,'message'=>$message,'process_id'=>$process_id,'product_process_id'=>$product_process_id,'next_process_id'=>$next_process_id,'next_productprocess_id'=>$next_productprocess_id,'process'=>$process,'fifoRcCard'=>$fifoRcCard]);
 
         // $avl_qty=(($process_issue_qty)-($receive_qty)-($reject_qty)-($rework_qty));
         // dd($d11Datas->part_id);
@@ -297,13 +299,14 @@ class StagewiseReceiveController extends Controller
         // dd($request->all());
         DB::beginTransaction();
         try {
-            $d11Datas=TransDataD11::where('process_id','=',$request->previous_process_id)->where('product_process_id','=',$request->previous_product_process_id)->first();
+            $d11Datas=TransDataD11::where('process_id','=',$request->previous_process_id)->where('product_process_id','=',$request->previous_product_process_id)->where('rc_id','=',$request->rc_no)->first();
+            $total_receive_qty=($d11Datas->receive_qty+$request->receive_qty);
             if($request->rc_close=="yes"){
                 // dd($request->rc_date);
                 $d11Datas->close_date=$request->rc_date;
                 $d11Datas->status=0;
             }
-            $d11Datas->receive_qty=$request->receive_qty;
+            $d11Datas->receive_qty=$total_receive_qty;
             $d11Datas->updated_by = auth()->user()->id;
             $d11Datas->updated_at = Carbon::now();
             $d11Datas->update();
@@ -453,13 +456,14 @@ class StagewiseReceiveController extends Controller
         try {
             $count=$request->fqc_count;
             if($count!=0){
-                $d11Datas=TransDataD11::where('process_id','=',$request->previous_process_id)->where('product_process_id','=',$request->previous_product_process_id)->first();
+                $d11Datas=TransDataD11::where('process_id','=',$request->previous_process_id)->where('product_process_id','=',$request->previous_product_process_id)->where('rc_id','=',$request->rc_no)->first();
+            $total_receive_qty=($d11Datas->receive_qty+$request->receive_qty);
                 if($request->rc_close=="yes"){
                     // dd($request->rc_date);
                     $d11Datas->close_date=$request->rc_date;
                     $d11Datas->status=0;
                 }
-                $d11Datas->receive_qty=$request->receive_qty;
+                $d11Datas->receive_qty=$total_receive_qty;
                 $d11Datas->updated_by = auth()->user()->id;
                 $d11Datas->updated_at = Carbon::now();
                 $d11Datas->update();

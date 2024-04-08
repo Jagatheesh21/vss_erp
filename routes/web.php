@@ -77,6 +77,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('fg_receive/create', [StagewiseReceiveController::class,'fgReceiveCreateForm'])->name('fgreceive.create');
     Route::post('fg-receive', [StagewiseReceiveController::class,'fgReceiveEntry'])->name('fgreceive.store');
     Route::post('fg-receive/part_no', [StagewiseReceiveController::class,'fgPartFetchEntry'])->name('fgpartfetchdata');
+    Route::post('dcfetch-rc', [DcTransactionDetailsController::class,'dcItemRc'])->name('dcitemrc');
+    Route::get('/dcpart-data/id', [DcTransactionDetailsController::class,'dcPartData'])->name('dcpartdata');
 
 
     Route::resources([
