@@ -106,6 +106,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('invoice_correction-request', [InvoiceDetailsController::class,'invoiceCorrectionRequest'])->name('invoice_correction_request');
     Route::get('invoicefetch-request', [InvoiceDetailsController::class,'invoiceFetchData'])->name('invoicefetchdata');
     Route::get('/invoice_correction-form/id', [InvoiceDetailsController::class,'invoiceCorrectionForm'])->name('invoicecorrectionform');
+    Route::get('/invoice_print-form/id', [InvoiceDetailsController::class,'invoicePrint'])->name('invoiceprint');
 
 
 

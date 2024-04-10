@@ -643,6 +643,14 @@ class InvoiceDetailsController extends Controller
         return redirect()->route('invoicedetails.index')->withSuccess('Invoice Updated Successfully!');
     }
 
+    public function invoicePrint(){
+        date_default_timezone_set('Asia/Kolkata');
+        $current_date=date('Y-m-d');
+        $current_year=date('Y');
+        $invoiceCorrectionDatas=InvoiceDetails::with('rcmaster')->where('status','=',1)->orderBy('id','ASC')->first();
+        dd($invoiceCorrectionDatas);
+    }
+
     /**
      * Remove the specified resource from storage.
      */
