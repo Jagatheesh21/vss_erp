@@ -435,6 +435,20 @@ class InvoiceDetailsController extends Controller
     }
 
 
+    public function invoiceFetchData(Request $request){
+        // dd($request->all());
+        $invoice_id=$request->invoice_id;
+        $invoiceDatas=InvoiceDetails::with(['rcmaster','customerproductmaster','productmaster','customerpomaster','uom_masters','currency_masters'])->find($invoice_id);
+        // dd($invoiceDatas);
+        $invoice_date=$invoiceDatas->invoice_date;
+        $invoice_status=$invoiceDatas->status;
+        $invoice_qty=$invoiceDatas->qty;
+        $cus_id='<option value="'.$invoiceDatas->customerproductmaster->customermaster->id.'" selected>'.$invoiceDatas->customerproductmaster->customermaster->cus_name.'</option>';
+        $part_id='<option value="'.$invoiceDatas->productmaster->id.'" selected>'.$invoiceDatas->productmaster->part_no.'</option>';
+        return response()->json(['invoice_date'=>$invoice_date,'invoice_status'=>$invoice_status,'cus_id'=>$cus_id,'part_id'=>$part_id,'invoice_qty'=>$invoice_qty]);
+
+    }
+
     /**
      * Display the specified resource.
      */
