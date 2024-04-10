@@ -284,6 +284,8 @@ class InvoiceDetailsController extends Controller
         $invoice_quantity=$request->invoice_quantity;
         $trans_mode=$request->trans_mode;
         $document_type=$request->document_type;
+        $igst_on_intra=$request->igst_on_intra;
+        $reverse_charge=$request->reverse_charge;
         $vehicle_no=$request->vehicle_no;
         $issue_wt=$request->issue_wt;
         $remarks=$request->remarks;
@@ -374,6 +376,9 @@ class InvoiceDetailsController extends Controller
         $invoiceDatas->invtotal=$invtotal;
         $invoiceDatas->cori=$cori;
         $invoiceDatas->trans_mode=$customer_product_trans_mode;
+        $invoiceDatas->document_type=$document_type;
+        $invoiceDatas->igst_on_intra=$igst_on_intra;
+        $invoiceDatas->reverse_charge=$reverse_charge;
         $invoiceDatas->vehicle_no=$vehicle_no;
         $invoiceDatas->ok='F';
         $invoiceDatas->remarks=$remarks;
@@ -460,9 +465,16 @@ class InvoiceDetailsController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(InvoiceDetails $invoiceDetails)
+    public function invoiceCorrectionForm()
     {
         //
+        date_default_timezone_set('Asia/Kolkata');
+        $current_date=date('Y-m-d');
+        $current_year=date('Y');
+        $invoiceCorrectionDatas=InvoiceDetails::with('rcmaster')->where('status','=',3)->orderBy('updated_at','ASC')->first();
+        $customer_masterdatas=CustomerMaster::where('status','=',1)->get();
+        // dd($invoiceCorrectionDatas);
+        return view('invoice.invoice_edit',compact('invoiceCorrectionDatas','customer_masterdatas','current_date'));
     }
 
     /**
@@ -471,6 +483,164 @@ class InvoiceDetailsController extends Controller
     public function update(UpdateInvoiceDetailsRequest $request, InvoiceDetails $invoiceDetails)
     {
         //
+        // dd($request->all());
+        date_default_timezone_set("Asia/Kolkata");
+        $current_time=date("H:i");
+        $invoice_id=$request->id;
+        $rc_id=$request->invoice_number;
+        $invoice_date=$request->invoice_date;
+        $cus_id=$request->cus_id;
+        $part_id=$request->part_id;
+        $cus_name=$request->cus_name;
+        $cus_gst_number=$request->cus_gst_number;
+        $cus_po_id=$request->cus_po_id;
+        $cus_order_qty=$request->cus_order_qty;
+        $operation_id=$request->operation_id;
+        $avl_quantity=$request->avl_quantity;
+        $invoice_quantity=$request->invoice_quantity;
+        $trans_mode=$request->trans_mode;
+        $document_type=$request->document_type;
+        $igst_on_intra=$request->igst_on_intra;
+        $reverse_charge=$request->reverse_charge;
+        $vehicle_no=$request->vehicle_no;
+        $issue_wt=$request->issue_wt;
+        $remarks=$request->remarks;
+        $regular=$request->regular;
+        $alter=$request->alter;
+        $bom=$request->bom;
+        $route_part_id=$request->route_part_id;
+        $order_no=$request->order_no;
+        $route_card_id=$request->route_card_id;
+        $available_quantity=$request->available_quantity;
+        $balance_qty=$request->balance;
+        $issue_quantity=$request->issue_quantity;
+
+
+
+        // find customer product details
+        $customer_product_datas=CustomerProductMaster::where('part_id','=',$part_id)->where('cus_id','=',$cus_id)->where('status','=',1)->first();
+        $customer_product_id=$customer_product_datas->id;
+        $customer_product_hsnc=$customer_product_datas->part_hsnc;
+        $customer_product_uom=$customer_product_datas->uom_id;
+        $customer_product_rate=$customer_product_datas->part_rate;
+        $customer_product_part_per=$customer_product_datas->part_per;
+        $customer_product_currency_id=$customer_product_datas->currency_id;
+        $customer_product_packing_charges=$customer_product_datas->packing_charges;
+        $customer_product_cgst=$customer_product_datas->cgst;
+        $customer_product_sgst=$customer_product_datas->sgst;
+        $customer_product_igst=$customer_product_datas->igst;
+        $customer_product_trans_mode=$customer_product_datas->trans_mode;
+        $customer_product_pan_no=$customer_product_datas->pan_no;
+
+        if ($customer_product_igst!=0) {
+            $cori='IGST';
+        }else {
+            $cori='CGST';
+        }
+        $part_rate=round((($customer_product_datas->part_rate)/($customer_product_datas->part_per)),2);
+        $cus_cgst=(($customer_product_cgst*0.01));
+        $cus_sgst=(($customer_product_sgst*0.01));
+        $cus_igst=(($customer_product_igst*0.01));
+        $cus_packing_charge=(($customer_product_packing_charges*0.01));
+
+        $basic_value=round((($part_rate)*($invoice_quantity)),2);
+        $totalcgst_amt=round((($basic_value)*($cus_cgst)),2);
+        $totalsgst_amt=round((($basic_value)*($cus_sgst)),2);
+        $totaligst_amt=round((($basic_value)*($cus_igst)),2);
+        $totalpacking_charge=round((($basic_value)*($cus_packing_charge)),2);
+        // dd($basic_value);
+        // dd($totalcgst_amt);
+        // dd($totalsgst_amt);
+        // dd($totaligst_amt);
+        // dd($totalpacking_charge);
+        $invtotal=(($basic_value)+($totalcgst_amt)+($totalsgst_amt)+($totaligst_amt)+($totalpacking_charge));
+        // dd($invtotal);
+        // // create invoice details
+        $invoiceDatas=InvoiceDetails::find($invoice_id);
+        $invoiceDatas->invoice_no=$rc_id;
+        $invoiceDatas->invoice_date=$invoice_date;
+        $invoiceDatas->invoice_time=$current_time;
+        $invoiceDatas->cus_product_id=$customer_product_id;
+        $invoiceDatas->part_id=$part_id;
+        $invoiceDatas->part_hsnc=$customer_product_hsnc;
+        $invoiceDatas->cus_po_id=$cus_po_id;
+        $invoiceDatas->qty=$invoice_quantity;
+        $invoiceDatas->uom_id=$customer_product_uom;
+        $invoiceDatas->part_per=$customer_product_part_per;
+        $invoiceDatas->part_rate=$part_rate;
+        $invoiceDatas->currency_id=$customer_product_currency_id;
+        $invoiceDatas->packing_charge=$customer_product_packing_charges;
+        $invoiceDatas->cgst=$customer_product_cgst;
+        $invoiceDatas->sgst=$customer_product_sgst;
+        $invoiceDatas->igst=$customer_product_igst;
+        // $invoiceDatas->tcs=$customer_product_uom;
+        $invoiceDatas->basic_value=$basic_value;
+        $invoiceDatas->packing_charge_amt=$totalpacking_charge;
+        $invoiceDatas->cgstamt=$totalcgst_amt;
+        $invoiceDatas->sgstamt=$totalsgst_amt;
+        $invoiceDatas->igstamt=$totaligst_amt;
+        // $invoiceDatas->tcsamt=$customer_product_uom;
+        $invoiceDatas->invtotal=$invtotal;
+        $invoiceDatas->cori=$cori;
+        $invoiceDatas->trans_mode=$customer_product_trans_mode;
+        $invoiceDatas->document_type=$document_type;
+        $invoiceDatas->igst_on_intra=$igst_on_intra;
+        $invoiceDatas->reverse_charge=$reverse_charge;
+        $invoiceDatas->vehicle_no=$vehicle_no;
+        $invoiceDatas->ok='F';
+        $invoiceDatas->remarks=$remarks;
+        $invoiceDatas->prepared_by=auth()->user()->id;
+        $invoiceDatas->updated_by = auth()->user()->id;
+        $invoiceDatas->updated_at = Carbon::now();
+        $invoiceDatas->update();
+
+
+        $count=ChildProductMaster::where('stocking_point','=',$operation_id)->where('part_id','=',$part_id)->count();
+        if ($count>0) {
+            foreach ($issue_quantity as $key => $value) {
+                if ($value!=0) {
+                // dump($value);
+                //     dump($route_card_id[$key]);
+                    if ($regular==1) {
+                        $previousT11Datas=TransDataD11::where('rc_id','=',$route_card_id[$key])->where('next_process_id','=',$operation_id)->where('part_id','=',$route_part_id[$key])->first();
+                        $old_issue_qty=$previousT11Datas->issue_qty;
+                        $total_issue_qty=(($old_issue_qty)+$value);
+                        $previousT11Datas->issue_qty=$total_issue_qty;
+                        $previousT11Datas->updated_by = auth()->user()->id;
+                        $previousT11Datas->updated_at = Carbon::now();
+                        $previousT11Datas->update();
+
+                        $currentProcess=ProductProcessMaster::where('part_id','=',$route_part_id[$key])->where('process_master_id','=',$operation_id)->first();
+                        $current_order_id=$currentProcess->process_order_id;
+                        $current_product_process_id=$currentProcess->id;
+
+                        $d12Datas=new TransDataD12;
+                        $d12Datas->open_date=$invoice_date;
+                        $d12Datas->rc_id=$rc_id;
+                        $d12Datas->previous_rc_id=$route_card_id[$key];
+                        $d12Datas->part_id=$route_part_id[$key];
+                        $d12Datas->process_id=$operation_id;
+                        $d12Datas->product_process_id=$current_product_process_id;
+                        $d12Datas->issue_qty=$value;
+                        $d12Datas->prepared_by = auth()->user()->id;
+                        $d12Datas->save();
+
+                        $d13Datas=new TransDataD13;
+                        $d13Datas->rc_id=$rc_id;
+                        $d13Datas->previous_rc_id=$route_card_id[$key];
+                        $d13Datas->prepared_by = auth()->user()->id;
+                        $d13Datas->save();
+                    }elseif ($regular>1) {
+                        # code...
+                    }
+                    elseif ($alter==1) {
+                        # code...
+                    }
+                }
+            }
+        }
+
+        return redirect()->route('invoicedetails.index')->withSuccess('Invoice Updated Successfully!');
     }
 
     /**

@@ -1,25 +1,24 @@
 @extends('layouts.app')
 @section('content')
 <div class="row d-flex justify-content-center">
-
+    @if(Session::has('success'))
+    <div class="alert alert-success mt-4">
+    {{ Session::get('success')}}
+    </div>
+@endif
+@if(Session::has('error'))
+    <div class="alert alert-danger mt-4">
+    {{ Session::get('error')}}
+    </div>
+@endif
+@if (session()->has('message'))
+    <div class="alert alert-danger mt-4">
+    {{ session()->get('message')}}
+    </div>
+@endif
     <div class="col-12">
         <div class="card">
             <div class="col-12">
-                @if(Session::has('success'))
-                <div class="alert alert-success mt-4">
-                {{ Session::get('success')}}
-                </div>
-            @endif
-            @if(Session::has('error'))
-                <div class="alert alert-danger mt-4">
-                {{ Session::get('error')}}
-                </div>
-            @endif
-            @if (session()->has('message'))
-                <div class="alert alert-danger mt-4">
-                {{ session()->get('message')}}
-                </div>
-            @endif
             <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Invoice Correction List</b> </span>
                 <a class="btn btn-sm btn-info text-white" href="{{route('invoicedetails.index')}}">Invoice List</a>
             </div>
@@ -60,7 +59,7 @@
                                     <td>{{($correctionMasterData->approved_date)}}</td>
                                     <td>@if ($correctionMasterData->status==2)
                                         <span class="btn btn-sm text-white btn-danger">REJECTED</span>
-                                        @elseif ($correctionMasterData->status==1)
+                                        @elseif ($correctionMasterData->status==3)
                                         <span class="btn btn-sm text-white btn-success">APPROVED</span>
                                         @else
                                         <span class="btn btn-sm text-white btn-info">PENDING</span>

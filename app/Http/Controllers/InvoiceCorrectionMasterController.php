@@ -92,7 +92,7 @@ class InvoiceCorrectionMasterController extends Controller
      */
     public function edit($id)
     {
-        //
+        // EDIT
         // dd($id);
         $invoicecorrectionmasterDatas=InvoiceCorrectionMaster::with('invoicedetails','preparedusers','approvedusers')->find($id);
         // dd($invoicecorrectionmasterDatas);
@@ -105,26 +105,30 @@ class InvoiceCorrectionMasterController extends Controller
     public function update(UpdateInvoiceCorrectionMasterRequest $request, InvoiceCorrectionMaster $invoicecorrectionmaster)
     {
         //
-        dd($invoicecorrectionmaster);
-        dd($request->all());
+        // dd($invoicecorrectionmaster);
+        // dd($request->all());
         date_default_timezone_set("Asia/Kolkata");
         $current_date=date('Y-m-d');
-        // dd($current_date);
-        $invoicecorrectionmaster->approved_by=auth()->user()->id;
-        $invoicecorrectionmaster->approved_date=$current_date;
-        $invoicecorrectionmaster->status=$request->status;
-        $invoicecorrectionmaster->approved_reason=$request->approved_reason;
-        $invoicecorrectionmaster->updated_by=auth()->user()->id;
-        $invoicecorrectionmaster->updated_at= Carbon::now();
-        $invoicecorrectionmaster->update();
 
-        $invoice_id=$invoicecorrectionmaster->invoice_id;
+        if ($request->status==0) {
+            return redirect()->route('invoicecorrectionmaster.index')->withMessage('Sorry..Please Try Another Status..!');
+        }else {
+                    // dd($current_date);
+            $invoicecorrectionmaster->approved_by=auth()->user()->id;
+            $invoicecorrectionmaster->approved_date=$current_date;
+            $invoicecorrectionmaster->status=$request->status;
+            $invoicecorrectionmaster->approved_reason=$request->approved_reason;
+            $invoicecorrectionmaster->updated_by=auth()->user()->id;
+            $invoicecorrectionmaster->updated_at= Carbon::now();
+            $invoicecorrectionmaster->update();
 
-        $invoiceDetails=InvoiceDetails::find($invoice_id);
-        $invoiceDetails->status=$request->status;
-        $invoiceDetails->updated_by=auth()->user()->id;
-        $invoiceDetails->updated_at= Carbon::now();
-        $invoiceDetails->update();
+            $invoice_id=$invoicecorrectionmaster->invoice_id;
+
+            $invoiceDetails=InvoiceDetails::find($invoice_id);
+            $invoiceDetails->status=$request->status;
+            $invoiceDetails->updated_by=auth()->user()->id;
+            $invoiceDetails->updated_at= Carbon::now();
+            $invoiceDetails->update();
 
         if ($request->status==3) {
             $invoicecorrectionData=new InvoiceCorrectionDetail;
@@ -172,9 +176,34 @@ class InvoiceCorrectionMasterController extends Controller
             $invoicecorrectionData->updated_by=$invoiceDetails->updated_by;
             $invoicecorrectionData->save();
 
-            $t11Datas=
-        }
+            $invoicePrint=InvoicePrint::find($invoiceDetails->invoice_no);
+            $invoicePrint->status=$request->status;
+            $invoicePrint->prepared_by=auth()->user()->id;
+            $invoicePrint->save();
 
+            $t12Datas=TransDataD12::where('rc_id','=',$invoiceDetails->invoice_no)->where('process_id','=',22)->select('previous_rc_id','issue_qty')->get();
+            // dd($t12Datas);
+            foreach ($t12Datas as $t12Data) {
+                $previous_rc_id=$t12Data->previous_rc_id;
+                $issue_qty=$t12Data->issue_qty;
+
+                $t11Datas=TransDataD11::where('rc_id','=',$previous_rc_id)->where('next_process_id','=',22)->first();
+                $old_issue_qty=$t11Datas->issue_qty;
+                $current_issue_qty=(($old_issue_qty)-($issue_qty));
+                $t11Datas->issue_qty=$current_issue_qty;
+                $t11Datas->updated_by=auth()->user()->id;
+                $t11Datas->updated_at= Carbon::now();
+                $t11Datas->update();
+
+                $oldt12Datas=TransDataD12::where('rc_id','=',$invoiceDetails->invoice_no)->where('previous_rc_id','=',$previous_rc_id)->where('process_id','=',22)->select('previous_rc_id','issue_qty')->first();
+                $oldt12Datas->delete();
+
+                $oldt13Datas=TransDataD13::where('rc_id','=',$invoiceDetails->invoice_no)->where('previous_rc_id','=',$previous_rc_id)->first();
+                $oldt13Datas->delete();
+            }
+        }
+        return redirect()->route('invoicecorrectionmaster.index')->withSuccess('Your Data is Submitted Successfully!');
+        }
     }
 
     /**

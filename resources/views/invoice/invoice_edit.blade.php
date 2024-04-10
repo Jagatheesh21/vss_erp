@@ -3,22 +3,25 @@
 
 @endpush
 @section('content')
-<form action="{{route('invoicedetails.store')}}" id="delivery_challan_formdata" method="POST">
+<form action="{{route('invoicedetails.update',$invoiceCorrectionDatas->id)}}" id="delivery_challan_formdata" method="POST">
     @csrf
-    @method('POST')
+    @method('PUT')
 
 <div class="row d-flex justify-content-center">
     <div id="data"></div>
         <div class="row col-md-3"id="res"></div>
         <div class="card">
-            <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Create Invoice</b></span><a class="btn btn-sm btn-primary" href="{{route('invoicedetails.index')}}">Invoice List</a>
+            <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Invoice Correction</b></span><a class="btn btn-sm btn-primary" href="{{route('invoicedetails.index')}}">Invoice List</a>
             </div>
             <div class="card-body">
                         <div class="row d-flex justify-content-center">
+                            <input type="hidden" name="id" value="{{$invoiceCorrectionDatas->id}}">
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="invoice_number">Invoice No. *</label>
-                                    <input type="text" name="invoice_number" id="invoice_number" value="{{$new_rcnumber}}" readonly class="form-control bg-light @error('invoice_number') is-invalid @enderror" >
+                                    <select name="invoice_number" id="invoice_number" class="form-control invoice_number  @error('invoice_number') is-invalid @enderror">
+                                        <option value="{{($invoiceCorrectionDatas->rcmaster->id)}}" selected>{{($invoiceCorrectionDatas->rcmaster->rc_id)}}</option>
+                                    </select>
                                     @error('invoice_number')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>

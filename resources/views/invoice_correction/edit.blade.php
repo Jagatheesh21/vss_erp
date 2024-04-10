@@ -105,7 +105,7 @@
                                     <label for="status">STATUS *</label>
                                     <select name="status" id="status" class="form-control">
                                         <option value="0" @if($invoicecorrectionmasterDatas->status==0) selected @endif>Pending</option>
-                                        <option value="1" @if($invoicecorrectionmasterDatas->status==3) selected @endif >Approve</option>
+                                        <option value="3" @if($invoicecorrectionmasterDatas->status==3) selected @endif >Approve</option>
                                         <option value="2" @if($invoicecorrectionmasterDatas->status==2) selected @endif>Reject</option>
                                     </select>
                                     @error('status')
