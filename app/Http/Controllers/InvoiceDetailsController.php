@@ -21,10 +21,12 @@ use App\Models\TransDataD12;
 use App\Models\TransDataD13;
 use App\Models\InvoiceDetails;
 use App\Models\InvoicePrint;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Http\Requests\StoreInvoiceDetailsRequest;
 use App\Http\Requests\UpdateInvoiceDetailsRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Auth;
 
@@ -350,7 +352,7 @@ class InvoiceDetailsController extends Controller
         // dd($invtotal);
         // // create invoice details
         $invoiceDatas=new InvoiceDetails;
-        $invoiceDatas->invoice_no=$rc_id;
+        $invoiceDatas->part_id=$rc_id;
         $invoiceDatas->invoice_date=$invoice_date;
         $invoiceDatas->invoice_time=$current_time;
         $invoiceDatas->cus_product_id=$customer_product_id;
@@ -644,11 +646,28 @@ class InvoiceDetailsController extends Controller
     }
 
     public function invoicePrint(){
-        date_default_timezone_set('Asia/Kolkata');
-        $current_date=date('Y-m-d');
-        $current_year=date('Y');
-        $invoiceCorrectionDatas=InvoiceDetails::with('rcmaster')->where('status','=',1)->orderBy('id','ASC')->first();
-        dd($invoiceCorrectionDatas);
+        $invoiceDatas=InvoiceDetails::with(['rcmaster','customerproductmaster','productmaster','customerpomaster','uom_masters','currency_masters'])->where('status','=',1)->orderBy('id','ASC')->first();
+        return view('invoice.invoice_print',compact('invoiceDatas'));
+    }
+
+    public function invoicePrintPdf(Request $request){
+        // return QrCode::size(150)->style('round')->generate(
+        //     $request->id
+        // );
+        // dd($request->all());
+        $invoice_id=$request->id;
+        $invoice_no=$request->invoice_number;
+        $cus_id=$request->cus_id;
+        $part_id=$request->part_id;
+        $count=InvoicePrint::where('invoice_no','=',$invoice_no)->count();
+        $page_count=$count*4;
+        $qrCodes=QrCode::size(100)->style('round')->generate($invoice_no);
+        // dd($qrCodes);
+        // dd($page_count);
+        $invoiceDatas=InvoiceDetails::with(['rcmaster','customerproductmaster','productmaster','customerpomaster','uom_masters','currency_masters'])->where('status','=',1)->where('invoice_no','=',$invoice_no)->first();
+        // dd($invoiceDatas);
+        $pdf = Pdf::loadView('invoice.invoice_pdf',compact('invoiceDatas','count','page_count','qrCodes'))->setPaper('a4', 'portrait');
+        return $pdf->stream();
     }
 
     /**
