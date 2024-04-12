@@ -29,6 +29,9 @@ use Illuminate\Support\Number;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Auth;
+use Illuminate\Http\Response;
+use Spatie\Browsershot\Browsershot;
+
 
 class InvoiceDetailsController extends Controller
 {
@@ -666,8 +669,22 @@ class InvoiceDetailsController extends Controller
         // dd($page_count);
         $invoiceDatas=InvoiceDetails::with(['rcmaster','customerproductmaster','productmaster','customerpomaster','uom_masters','currency_masters'])->where('status','=',1)->where('invoice_no','=',$invoice_no)->first();
         // dd($invoiceDatas);
-        $pdf = Pdf::loadView('invoice.invoice_pdf',compact('invoiceDatas','count','page_count','qrCodes'))->setPaper('a4', 'portrait');
-        return $pdf->stream();
+        // $pdf = Pdf::loadView('invoice.invoice_pdf',compact('invoiceDatas','count','page_count','qrCodes'))->setPaper('a4', 'portrait');
+        // $pdf = Pdf::loadView('invoice.new1')->setPaper('a4', 'portrait');
+        // return view('invoice.new1');
+        // return $pdf->stream();
+        // an image will be saved
+        // $html = view('grn_inward.add_items',compact('uom_data','racks'))->render();
+        $html = view('invoice.invoice_pdf2',compact('invoiceDatas','count','page_count','qrCodes'))->render();
+        // Browsershot::url('https://example.com')->save('example.pdf');
+        $pdf=Browsershot::html($html)->setIncludePath(config('services.browsershot.include_path'))->format('A4')->pdf();
+        // $pdf=Browsershot::html($html)->setIncludePath(config('services.browsershot.include_path'))->savepdf('a5.pdf');
+        // $pdf=Browsershot::html($html)->setIncludePath("C:\Programs\\nodejs\\node.exe")->save('a1.pdf');
+
+            return new Response($pdf,200,[
+            'Content-Type'=>'application/pdf',
+            'Content-Disposition'=>'inline;filename="invoice.pdf"'
+        ]);
     }
 
     /**

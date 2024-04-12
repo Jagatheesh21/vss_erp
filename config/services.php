@@ -21,6 +21,10 @@ return [
         'scheme' => 'https',
     ],
 
+    'browsershot'=> [
+        'include_path'=>'$PATH:'.env('BROWSERSHOT_INCLUDE_PATH'),
+    ],
+
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
     ],
