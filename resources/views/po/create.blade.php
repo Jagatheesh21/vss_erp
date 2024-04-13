@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @push('styles')
-    
+
 @endpush
 @section('content')
 <form action="{{route('po.store')}}" id="po_formdata" method="POST">
@@ -322,7 +322,7 @@
                                 <tr>
                                     <td><select name="raw_material_category_id[]"  class="form-control raw_material_category_id"></select></td>
                                     <td><select name="supplier_product_id[]" id="" class="form-control supplier_product_id"></select></td>
-                                    <td><input type="text" class="form-control products_hsnc"  name="products_hsnc[]"></td>
+                                    <td><input type="text" class="form-control bg-light products_hsnc" readonly  name="products_hsnc[]"></td>
                                     <td><input type="date" class="form-control duedate" id="duedate" name="duedate[]"></td>
                                     <td><select name="uom_id[]"  class="form-control bg-white uom_id"></td>
                                     <td><input type="number"  class="form-control products_rate" name="products_rate[]" readonly></td>
@@ -372,13 +372,13 @@ $(document).ready(function(){
         var inputId = $(this).attr('id');
         $('#' + inputId + '-error').remove();
     });
-    
+
 });
     $("#supplier_id").select2({
         placeholder:"Select Supplier",
         allowedClear:true
     });
-    
+
     $(".raw_material_category_id").select2({
         placeholder:"Select Material Category",
         allowedClear:true
@@ -387,7 +387,7 @@ $(document).ready(function(){
         placeholder:"Select Material",
         allowedClear:true
     });
-    
+
     $("#supplier_id").change(function(e){
         e.preventDefault();
         var supplier_id=$(this).val();
@@ -455,7 +455,7 @@ $(document).ready(function(){
                 closestTr.find('.supplier_product_id').html(result);
             }
         });
-        
+
     }
     $(".raw_material_category_id").change(function(e){
         e.preventDefault();
@@ -474,7 +474,7 @@ $(document).ready(function(){
             success : function(result){
                 $(".raw_material_category_id").select2();
                 closestTr.find('.supplier_product_id').html(result);
-                
+
             }
         });
 	});
@@ -536,7 +536,7 @@ $(document).ready(function(){
             url:"{{route('add_purchase_item')}}",
             type:"POST",
             data:{"supplier_id":supplier_id},
-            success:function(response){ 
+            success:function(response){
 
                 $("#tab_logic").append(response.category);
                 $(".raw_material_category_id").select2({
@@ -615,7 +615,7 @@ $(document).ready(function(){
                             $('#' + key).closest('.form-control').addClass('is-invalid');
                             $('#' + key).after('<div class="text-danger" id="' + key + '-error">' + value[0] + '</div>');
                         }
-                       
+
                     });
                 }
             }
@@ -624,8 +624,8 @@ $(document).ready(function(){
     //     $('#' + inputId + '-error').remove();
     // });
             });
-            
-            
+
+
         // updated code
 
 
@@ -699,7 +699,7 @@ $(document).ready(function(){
     function calculate()
     {
         var grand_total = 0;
-        $('table > tbody  > tr').each(function(index, row) { 
+        $('table > tbody  > tr').each(function(index, row) {
             var rate = $(row).find('.products_rate').val();
             var qty = $(row).find('.qty').val();
             var total = rate * qty;

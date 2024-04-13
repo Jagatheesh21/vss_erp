@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('invoice_prints', function (Blueprint $table) {
             $table->id();
-            $table->string('popt')->nullable();
-            $table->string('pname')->nullable();
-            $table->string('fip')->nullable();
+            $table->integer('invoice_no');
+            $table->integer('popt')->default(1);
+            $table->string('pname')->default('LPT3');
+            $table->string('fip')->default('LPT2');
+            $table->integer('print_status')->default(0);
             $table->integer('status')->default(1);
             $table->integer('prepared_by');
             $table->integer('updated_by')->nullable();

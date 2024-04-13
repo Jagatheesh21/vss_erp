@@ -80,7 +80,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="cus_gst_number">Customer GST Number *</label>
-                                    <input type="text" name="cus_gst_number"  id="cus_gst_number" class="form-control @error('cus_gst_number') is-invalid @enderror" >
+                                    <input type="text" name="cus_gst_number"  id="cus_gst_number" minlength="15" maxlength="15" class="form-control @error('cus_gst_number') is-invalid @enderror" >
                                     @error('cus_gst_number')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -172,7 +172,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="delivery_cus_gst_number">Delivery Customer GST Number *</label>
-                                    <input type="text" name="delivery_cus_gst_number" id="delivery_cus_gst_number" class="form-control @error('delivery_cus_gst_number') is-invalid @enderror" >
+                                    <input type="text" name="delivery_cus_gst_number" minlength="15" maxlength="15" id="delivery_cus_gst_number" class="form-control @error('delivery_cus_gst_number') is-invalid @enderror" >
                                     @error('delivery_cus_gst_number')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>

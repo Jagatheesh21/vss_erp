@@ -6,7 +6,7 @@
         @endforeach
     </select></td>
     <td><select name="supplier_product_id[]" id="" class="form-control supplier_product_id"></select></td>
-    <td><input type="text" class="form-control products_hsnc"  name="products_hsnc[]"></td>
+    <td><input type="text" class="form-control bg-light products_hsnc" readonly name="products_hsnc[]"></td>
     <td><input type="date" class="form-control duedate" id="duedate" name="duedate[]"></td>
     <td><select name="uom_id[]"  class="form-control bg-white uom_id"></td>
     <td><input type="number"  class="form-control products_rate" name="products_rate[]" readonly></td>

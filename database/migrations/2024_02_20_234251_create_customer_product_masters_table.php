@@ -29,9 +29,6 @@ return new class extends Migration
             $table->float('sgst', 8, 2)->default(0);
             $table->float('igst', 8, 2)->default(0);
             $table->text('remarks')->nullable();
-            $table->string('document_type')->nullable();
-            $table->string('reverse_charge')->nullable();
-            $table->string('igst_on_intra')->nullable();
             $table->integer('status')->default(1);
             $table->integer('prepared_by');
             $table->integer('updated_by')->nullable();

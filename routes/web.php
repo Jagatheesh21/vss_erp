@@ -21,10 +21,15 @@ use App\Http\Controllers\StagewiseIssueController;
 use App\Http\Controllers\GrnRejectionController;
 use App\Http\Controllers\DcMasterController;
 use App\Http\Controllers\CustomerMasterController;
+use App\Http\Controllers\CustomerPoMasterController;
 use App\Http\Controllers\CustomerProductMasterController;
 use App\Http\Controllers\FinalQcInspectionController;
 use App\Http\Controllers\DcTransactionDetailsController;
 use App\Http\Controllers\DcPrintController;
+use App\Http\Controllers\InvoiceDetailsController;
+use App\Http\Controllers\InvoiceCorrectionMasterController;
+use App\Http\Controllers\InvoiceCorrectionDetailController;
+// invoice updated
 use App\Http\Controllers\PermissionController;
 
 /*
@@ -79,6 +84,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('fg_receive/create', [StagewiseReceiveController::class,'fgReceiveCreateForm'])->name('fgreceive.create');
     Route::post('fg-receive', [StagewiseReceiveController::class,'fgReceiveEntry'])->name('fgreceive.store');
     Route::post('fg-receive/part_no', [StagewiseReceiveController::class,'fgPartFetchEntry'])->name('fgpartfetchdata');
+    Route::get('fg-receive/fqc_approval', [StagewiseReceiveController::class,'fgFqcApproval'])->name('fgfqc');
     Route::post('dcfetch-rc', [DcTransactionDetailsController::class,'dcItemRc'])->name('dcitemrc');
     Route::get('/dcpart-data/id', [DcTransactionDetailsController::class,'dcPartData'])->name('dcpartdata');
     Route::post('dcsupplier-print', [DcPrintController::class,'dcSupplierPrintData'])->name('dcsupplierprintdata');
@@ -95,7 +101,16 @@ Route::middleware(['auth'])->group(function () {
     Route::post('pts_production-receive/part_no', [StagewiseReceiveController::class,'ptsProductionReceivePartFetchEntry'])->name('ptsproductionpartfetchdata');
     Route::get('pts_fqc/list', [FinalQcInspectionController::class,'ptsFqcList'])->name('ptsfqclist');
     Route::get('pts_fqc/create', [FinalQcInspectionController::class,'ptsFqcCreate'])->name('ptsfqccreate');
-    Route::get('department/getDepartments', [DepartmentController::class,'getDepartments'])->name('getDepartments');
+    Route::post('pts_fqc/store', [FinalQcInspectionController::class,'ptsFqcApproval'])->name('pts_fqc_approval.store');
+    Route::get('/invoicepart-data/id', [InvoiceDetailsController::class,'cusPartData'])->name('cuspartdata');
+    Route::post('invoicefetch-rc', [InvoiceDetailsController::class,'invoiceItemRc'])->name('invoiceitemrc');
+    Route::get('invoice_correction-request', [InvoiceDetailsController::class,'invoiceCorrectionRequest'])->name('invoice_correction_request');
+    Route::get('invoicefetch-request', [InvoiceDetailsController::class,'invoiceFetchData'])->name('invoicefetchdata');
+    Route::get('/invoice_correction-form/id', [InvoiceDetailsController::class,'invoiceCorrectionForm'])->name('invoicecorrectionform');
+    Route::get('/invoice_print-form/id', [InvoiceDetailsController::class,'invoicePrint'])->name('invoiceprint');
+    Route::post('invoice_print-pdf', [InvoiceDetailsController::class,'invoicePrintPdf'])->name('invoiceprintpdf');
+
+
 
 
     Route::resources([
@@ -122,8 +137,12 @@ Route::middleware(['auth'])->group(function () {
         'fqc_approval'=>FinalQcInspectionController::class,
         'customermaster'=>CustomerMasterController::class,
         'customer-products'=>CustomerProductMasterController::class,
+        'customerpomaster'=>CustomerPoMasterController::class,
         'delivery_challan'=>DcTransactionDetailsController::class,
         'dcprint'=>DcPrintController::class,
+        'invoicedetails'=>InvoiceDetailsController::class,
+        'invoicecorrectionmaster'=>InvoiceCorrectionMasterController::class,
+        'invoicecorrectiondetail'=>InvoiceCorrectionDetailController::class,
     ]);
 });
 

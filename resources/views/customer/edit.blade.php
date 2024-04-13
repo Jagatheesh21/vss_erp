@@ -81,7 +81,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="cus_gst_number">Customer GST Number *</label>
-                                    <input type="text" name="cus_gst_number"  id="cus_gst_number" value="{{$customermaster->cus_gst_number}}" class="form-control @error('cus_gst_number') is-invalid @enderror" >
+                                    <input type="text" name="cus_gst_number"  id="cus_gst_number"  minlength="15" maxlength="15" value="{{$customermaster->cus_gst_number}}" class="form-control @error('cus_gst_number') is-invalid @enderror" >
                                     @error('cus_gst_number')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -173,7 +173,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="delivery_cus_gst_number">Delivery Customer GST Number *</label>
-                                    <input type="text" name="delivery_cus_gst_number" value="{{$customermaster->delivery_cus_gst_number}}" id="delivery_cus_gst_number" class="form-control @error('delivery_cus_gst_number') is-invalid @enderror" >
+                                    <input type="text" name="delivery_cus_gst_number" minlength="15" maxlength="15" value="{{$customermaster->delivery_cus_gst_number}}" id="delivery_cus_gst_number" class="form-control @error('delivery_cus_gst_number') is-invalid @enderror" >
                                     @error('delivery_cus_gst_number')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -253,7 +253,7 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>Status *</label>
+                                    <label for="status">Status *</label>
                                     <select name="status" class="form-control">
                                         <option value="1" @if($customermaster->status==1) selected @endif >Active</option>
                                         <option value="0" @if($customermaster->status==0) selected @endif>Inactive</option>

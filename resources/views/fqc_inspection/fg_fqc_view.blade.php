@@ -21,8 +21,8 @@
             </div>
         @endif
             <div class="card-header d-flex" style="justify-content:space-between"><span><b>Final Quality Inspection Register List</b>  </span>
-                <a class="btn btn-md btn-primary" href="{{route('fqc_approval.create')}}"><b><i class='bx bx-plus bx-flashing' style='color:white;' ></i>&nbsp;&nbsp; New</b></a>
-            </div>
+                <a class="btn btn-md btn-info text-white" href="{{route('fgreceive')}}"><b><i class='bx bar-chart-alt-2 bx-flashing' style='color:white;' ></i>&nbsp;&nbsp; FG Receive</b></a>
+                <a class="btn btn-md btn-primary" href="{{route('fgreceive.create')}}"><b><i class='bx bx-plus bx-flashing' style='color:white;' ></i>&nbsp;&nbsp; New</b></a>            </div>
             <div class="card-body">
                 <div class="table">
                     <div class="table-responsive">

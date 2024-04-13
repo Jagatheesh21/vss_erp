@@ -14,9 +14,12 @@ return new class extends Migration
         Schema::create('invoice_correction_masters', function (Blueprint $table) {
             $table->id();
             $table->date('correction_request_date');
-            $table->string('invoice_id')->unique();
-            $table->text('reason')->unique();
+            $table->string('invoice_id');
+            $table->integer('qty');
+            $table->text('request_reason');
             $table->integer('approved_by');
+            $table->date('approved_date');
+            $table->text('approved_reason')->nullable();
             $table->integer('status')->default(0);
             $table->integer('prepared_by');
             $table->integer('updated_by')->nullable();

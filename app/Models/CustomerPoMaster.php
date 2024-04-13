@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class CustomerPoMaster extends Model
 {
     use HasFactory;
+
+    public function customermaster()
+    {
+        return $this->belongsTo(CustomerMaster::class,'cus_id');
+    }
 }

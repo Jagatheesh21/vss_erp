@@ -1,14 +1,14 @@
 @extends('layouts.app')
 @section('content')
 <link  rel="stylesheet" href="{{asset('node_modules/boxicons/css/boxicons.min.css')}}" />
-<form action="{{route('fqc_approval.store')}}" id="fqc_formdata" method="POST">
+<form action="{{route('pts_fqc_approval.store')}}" id="fqc_formdata" method="POST">
     @csrf
     @method('POST')
     <div class="row d-flex justify-content-center">
     <div class="col-12">
         <div class="card">
-            <div class="card-header d-flex" style="justify-content:space-between"><span><b>New Final Quality Inspection Register </b>  </span>
-                <a class="btn btn-md btn-primary" href="{{route('ptsfqclist')}}"><b>&nbsp;&nbsp;Final Quality Inspection List</b></a>
+            <div class="card-header d-flex" style="justify-content:space-between"><span><b>New PTS Final Quality Inspection Register </b>  </span>
+                <a class="btn btn-md btn-primary" href="{{route('ptsfqclist')}}"><b>&nbsp;&nbsp;PTS Final Quality Inspection List</b></a>
             </div>
             <div class="card-body">
                 <div class="table">
@@ -32,26 +32,26 @@
                             <tbody>
                                 @forelse ($fqcDatas as $fqcData)
                                 <tr id="tr_{{$fqcData->id}}">
-                                    <input type="hidden"  class="form-control previous_product_process_id bg-light" readonly value="{{$fqcData->product_process_id}}" name="previous_product_process_id[]" id="previous_product_process_id">
-                                    <input type="hidden"  class="form-control next_productprocess_id bg-light" readonly value="{{$fqcData->next_product_process_id}}" name="next_productprocess_id[]" id="next_productprocess_id">
-                                    <input type="hidden"  class="form-control rc_status bg-light" readonly value="{{$fqcData->rc_status}}" name="rc_status[]" id="rc_status">
+                                    <input type="hidden"  class="form-control previous_product_process_id bg-light" readonly value="{{$fqcData->product_process_id}}" name="previous_product_process_id[{{$fqcData->id}}]" id="previous_product_process_id">
+                                    <input type="hidden"  class="form-control next_productprocess_id bg-light" readonly value="{{$fqcData->next_product_process_id}}" name="next_productprocess_id[{{$fqcData->id}}]" id="next_productprocess_id">
+                                    <input type="hidden"  class="form-control rc_status bg-light" readonly value="{{$fqcData->rc_status}}" name="rc_status[{{$fqcData->id}}]" id="rc_status">
                                     <td><input type="checkbox" class="form-check-input fqc_id" name="fqc_id[]" data-id="{{$fqcData->id}}" value="{{$fqcData->id}}"></td>
                                     <td>{{$fqcData->offer_date}}</td>
-                                    <td><select name="previous_process_id[]"  class="form-control previous_process_id bg-light" readonly id="previous_process_id">
+                                    <td><select name="previous_process_id[{{$fqcData->id}}]"  class="form-control previous_process_id bg-light" readonly id="previous_process_id">
                                         <option value="{{$fqcData->currentprocessmaster->id}}" selected>{{$fqcData->currentprocessmaster->operation}}</option></select></td>
-                                    <td><select name="next_process_id[]"  class="form-control next_process_id bg-light" readonly id="next_process_id">
+                                    <td><select name="next_process_id[{{$fqcData->id}}]"  class="form-control next_process_id bg-light" readonly id="next_process_id">
                                             <option value="{{$fqcData->nextprocessmaster->id}}" selected>{{$fqcData->nextprocessmaster->operation}}</option></select></td>
-                                    <td><select name="part_id[]"  class="form-control part_id bg-light" readonly id="part_id">
+                                    <td><select name="part_id[{{$fqcData->id}}]"  class="form-control part_id bg-light" readonly id="part_id">
                                             <option value="{{$fqcData->partmaster->id}}" selected>{{$fqcData->partmaster->child_part_no}}</option></select></td>
-                                    <td><select name="rc_id[]"  class="form-control rc_id bg-light" readonly id="rc_id">
+                                    <td><select name="rc_id[{{$fqcData->id}}]"  class="form-control rc_id bg-light" readonly id="rc_id">
                                                 <option value="{{$fqcData->current_rcmaster->id}}" selected>{{$fqcData->current_rcmaster->rc_id}}</option></select></td>
-                                    <td><select name="previous_rc_id[]"  class="form-control previous_rc_id bg-light" readonly id="previous_rc_id">
+                                    <td><select name="previous_rc_id[{{$fqcData->id}}]"  class="form-control previous_rc_id bg-light" readonly id="previous_rc_id">
                                                     <option value="{{$fqcData->previous_rcmaster->id}}" selected>{{$fqcData->previous_rcmaster->rc_id}}</option></select></td>
 
-                                    <td><input type="number" class="form-control offer_qty" name="offer_qty[]" value="{{$fqcData->offer_qty}}" id="offer_qty"></td>
-                                    <td><input type="number" class="form-control inspect_qty" name="inspect_qty[]" min="0" max="{{$fqcData->offer_qty}}" value="{{$fqcData->inspect_qty}}" id="inspect_qty"></td>
+                                    <td><input type="number" class="form-control offer_qty bg-light" readonly name="offer_qty[{{$fqcData->id}}]" value="{{$fqcData->offer_qty}}" id="offer_qty"></td>
+                                    <td><input type="number" class="form-control inspect_qty" name="inspect_qty[{{$fqcData->id}}]" min="0" max="{{$fqcData->offer_qty}}" value="{{$fqcData->inspect_qty}}" id="inspect_qty"></td>
                                     <td>
-                                        <select name="status[]" id="status" class="form-control status">
+                                        <select name="status[{{$fqcData->id}}]" id="status" class="form-control status">
                                             <option value="0" @if($fqcData->status==0) selected @endif >PENDING</option>
                                             <option value="1" @if($fqcData->status==1) selected @endif>APPROVED</option>
                                             <option value="2" @if($fqcData->status==2) selected @endif>REJECTED</option>
@@ -59,7 +59,7 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <textarea name="reason[]" id="reason" class="form-control reason" cols="30" rows="5"></textarea>
+                                        <textarea name="reason[{{$fqcData->id}}]" id="reason" class="form-control reason" cols="30" rows="5"></textarea>
                                     </td>
                                 </tr>
                                 @empty
@@ -114,9 +114,10 @@ $(document).ready(function(){
         var inputId = $(this).attr('id');
         $('#' + inputId + '-error').remove();
     });
-    updateGrandTotal();
     // getRow();
 });
+$('.reason').hide();
+
 $(".status").select2({
         placeholder:"Select Status",
         allowedClear:true
@@ -142,60 +143,79 @@ $('.fqc_id').change(function (e) {
         e.preventDefault();
         var allStatus=$(this).val();
         // alert(allStatus);
-        if (allStatus==0) {
+        switch (allStatus) {
+            case '0':
             alert('Please Select Other Status');
-          $('#reason_all').hide();
-          $(".select_all").prop('checked', false);
-          $(".fqc_id").prop('checked', false);
-
-        }
-        if (allStatus==1) {
+            $('#reason_all').hide();
+            $(".select_all").prop('checked', false);
+            $(".fqc_id").prop('checked', false);
+            $('.reason').hide();
+            break;
+            case '1':
             $('#status').html('<option value="1"selected>APPROVED</option>');
-          $('#reason_all').hide();
-          $(".select_all").prop('checked', true);
-          $(".fqc_id").prop('checked', true);
-
-        }
-        if (allStatus==2) {
+            $('#reason_all').hide();
+            $(".select_all").prop('checked', true);
+            $(".fqc_id").prop('checked', true);
+            $('.reason').hide();
+            break;
+            case '2':
             $('#status').html('<option value="2"selected>REJECTED</option>');
-          $('#reason_all').show();
-        $(".select_all").prop('checked', true);
-        $(".fqc_id").prop('checked', true);
-
-        }
-        if (allStatus==3) {
+            $('#reason_all').show();
+            $(".select_all").prop('checked', true);
+            $(".fqc_id").prop('checked', true);
+            $('.reason').hide();
+            break;
+            case '3':
             $('#status').html('<option value="3"selected>ON-HOLD</option>');
-          $('#reason_all').show();
-        $(".select_all").prop('checked', true);
-        $(".fqc_id").prop('checked', true);
+            $('#reason_all').show();
+            $(".select_all").prop('checked', true);
+            $(".fqc_id").prop('checked', true);
+            $('.reason').hide();
+            break;
+            default:
+            $('#reason_all').hide();
+            $(".select_all").prop('checked', false);
+            $(".fqc_id").prop('checked', false);
+            $('.reason').hide();
+            break;
         }
-
-
     });
 
     function getRow(){
-        // $('table > tbody  > tr > td.fqc_id').each(function(index, row) {
-        //     if($(".fqc_id").is(':checked',true))
-        //   {
-        //       $(".select_all").prop('checked', true);
-        //   } else {
-        //       $(".select_all").prop('checked',false);
-        //   }
-        // });
         $("table > tbody  > tr").each(function () {
             var isChecked = $(".fqc_id input:checkbox").checked;
-            // $(this).find('td .fqc_id').each(function () {
                 if(isChecked){
                     $(".select_all").prop('checked', true);
                 }
-            // });
         });
     }
 
 
 
     $('.status').change(function (event) {
-        $(this).closest("tr").find('td .fqc_id').prop('checked', true);
+        var status=$(this).val();
+        // alert(status);
+        switch (status) {
+            case '0':
+            $(this).closest("tr").find('td .fqc_id').prop('checked', false);
+            $(this).closest("tr").find('td .reason').hide();
+            break;
+            case '1':
+            $(this).closest("tr").find('td .fqc_id').prop('checked', true);
+            $(this).closest("tr").find('td .reason').hide();
+            break;
+            case '2':
+            $(this).closest("tr").find('td .fqc_id').prop('checked', true);
+            $(this).closest("tr").find('td .reason').show();
+            break;
+            case '3':
+            $(this).closest("tr").find('td .fqc_id').prop('checked', true);
+            $(this).closest("tr").find('td .reason').show();
+            break;
+            default:
+            $(this).closest("tr").find('td .fqc_id').prop('checked', false);
+            $(this).closest("tr").find('td .reason').hide();
+        }
         // getRow();
     });
 
