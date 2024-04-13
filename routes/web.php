@@ -25,6 +25,7 @@ use App\Http\Controllers\CustomerProductMasterController;
 use App\Http\Controllers\FinalQcInspectionController;
 use App\Http\Controllers\DcTransactionDetailsController;
 use App\Http\Controllers\DcPrintController;
+use App\Http\Controllers\PermissionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -94,10 +95,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('pts_production-receive/part_no', [StagewiseReceiveController::class,'ptsProductionReceivePartFetchEntry'])->name('ptsproductionpartfetchdata');
     Route::get('pts_fqc/list', [FinalQcInspectionController::class,'ptsFqcList'])->name('ptsfqclist');
     Route::get('pts_fqc/create', [FinalQcInspectionController::class,'ptsFqcCreate'])->name('ptsfqccreate');
+    Route::get('department/getDepartments', [DepartmentController::class,'getDepartments'])->name('getDepartments');
 
 
     Route::resources([
         'roles' => RoleController::class,
+        'permissions' => PermissionController::class,
         'users' => UserController::class,
         'products' => ProductController::class,
         'department' => DepartmentController::class,
