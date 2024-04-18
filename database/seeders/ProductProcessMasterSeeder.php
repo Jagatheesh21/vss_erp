@@ -280,19 +280,6 @@ class ProductProcessMasterSeeder extends Seeder
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster39 = ProductProcessMaster::create([
-            'part_id' =>5,
-            'process_master_id' => 9,
-            'process_order_id' =>7,
-            'foreman_id' => 1,
-            'prepared_by'=>'1'
-        ]);
-        $productProcessMaster40 = ProductProcessMaster::create([
-            'part_id' =>5,
-            'process_master_id' => 17,
-            'process_order_id' =>8,
-            'foreman_id' => 1,
-            'prepared_by'=>'1'
-        ]);
+
     }
 }

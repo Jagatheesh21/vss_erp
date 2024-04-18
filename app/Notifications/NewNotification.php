@@ -26,7 +26,7 @@ class NewNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database','mail'];
     }
 
     /**
@@ -48,7 +48,7 @@ class NewNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'test message'
+            'test db message'
         ];
     }
 }

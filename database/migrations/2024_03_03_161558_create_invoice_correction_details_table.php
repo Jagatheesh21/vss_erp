@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('invoice_no');
             $table->date('invoice_date');
+            $table->time('invoice_time');
             $table->integer('cus_product_id');
             $table->integer('part_id');
             $table->string('part_hsnc');

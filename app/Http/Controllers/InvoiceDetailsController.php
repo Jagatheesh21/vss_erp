@@ -148,6 +148,7 @@ class InvoiceDetailsController extends Controller
                         $manufacturingPart=$manufacturingPartData->id;
                         $itemType=$manufacturingPartData->item_type;
                     }
+                    // dd($itemType);
                     if ($itemType==1) {
                         $invoicemasterOperationDatas=CustomerProductMaster::with('customermaster','customerpomaster','uom_masters','currency_masters','productmasters')->where('status','=',1)->where('cus_id','=',$cus_id)->where('part_id','=',$part_id)->first();
                         $operation_id=22;
