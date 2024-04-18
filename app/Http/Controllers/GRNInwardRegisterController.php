@@ -452,7 +452,8 @@ class GRNInwardRegisterController extends Controller
 
             // stock add in grn quality table
             $grnqcDatas=GrnQuality::find($request->grn_qc_id);
-            $grnqcDatas->issue_qty=$request->issue_qty;
+            $total_issue_qty=(($grnqcDatas->issue_qty)+($request->issue_qty));
+            $grnqcDatas->issue_qty=$total_issue_qty;
             $grnqcDatas->updated_by = auth()->user()->id;
             $grnqcDatas->update();
 

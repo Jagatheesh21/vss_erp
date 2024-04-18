@@ -20,11 +20,10 @@
                 {{ session()->get('message')}}
                 </div>
             @endif
-            <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Invoice List</b> </span>
-                <a class="btn btn-sm btn-warning text-white" href="{{route('invoicecorrectionmaster.create')}}">Correction Request</a>
-                <a class="btn btn-sm btn-success text-white" href="{{route('invoiceprint')}}">Print</a>
-                <a class="btn btn-sm btn-warning text-white" href="{{route('invoicereprint')}}">Re-Print</a>
-                <a class="btn btn-sm btn-primary text-white" href="{{route('invoicedetails.create')}}">New</a>
+            <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Supplymentary Invoice List</b> </span>
+                <a class="btn btn-sm btn-success text-white" href="{{route('supplymentaryinvoiceprint')}}">Print</a>
+                <a class="btn btn-sm btn-warning text-white" href="{{route('supplymentaryreinvoiceprint')}}">Re-Print</a>
+                <a class="btn btn-sm btn-primary text-white" href="{{route('supplymentaryinvoice.create')}}">New</a>
             </div>
             <div class="card-body">
                 <div class="table">

@@ -266,6 +266,19 @@ class InvoiceDetailsController extends Controller
         // $cus_order_datas;
 
     }
+
+    public function supplymentaryinvoiceItemPo(Request $request){
+        $cus_id=$request->cus_id;
+        $part_id=$request->part_id;
+        $customer_po_datas=CustomerPoMaster::where('part_id','=',$part_id)->where('cus_id','=',$cus_id)->where('status','=',1)->first();
+        $cus_po_no='<option value="'.$customer_po_datas->id.'" selected>'.$customer_po_datas->cus_po_no.'</option>';
+        $invoicemasterOperationDatas=CustomerProductMaster::where('status','=',1)->where('cus_id','=',$cus_id)->where('part_id','=',$part_id)->first();
+        $operation_id=22;
+        $operation_name='FG For Invoicing';
+        $operation='<option value="'.$operation_id.'" selected>'.$operation_name.'</option>';
+        return response()->json(['cus_po_no'=>$cus_po_no,'operation'=>$operation]);
+
+    }
     /**
      * Store a newly created resource in storage.
      */
@@ -315,6 +328,7 @@ class InvoiceDetailsController extends Controller
         $rcMasterData=RouteMaster::where('rc_id','=',$invoice_number)->where('process_id','=',$operation_id)->first();
         $rc_id=$rcMasterData->id;
 
+        // dd($rc_id);
         // find customer product details
         $customer_product_datas=CustomerProductMaster::where('part_id','=',$part_id)->where('cus_id','=',$cus_id)->where('status','=',1)->first();
         $customer_product_id=$customer_product_datas->id;
@@ -355,7 +369,7 @@ class InvoiceDetailsController extends Controller
         // dd($invtotal);
         // // create invoice details
         $invoiceDatas=new InvoiceDetails;
-        $invoiceDatas->part_id=$rc_id;
+        $invoiceDatas->invoice_no=$rc_id;
         $invoiceDatas->invoice_date=$invoice_date;
         $invoiceDatas->invoice_time=$current_time;
         $invoiceDatas->cus_product_id=$customer_product_id;
@@ -649,25 +663,83 @@ class InvoiceDetailsController extends Controller
     }
 
     public function invoicePrint(){
-        $invoiceDatas=InvoiceDetails::with(['rcmaster','customerproductmaster','productmaster','customerpomaster','uom_masters','currency_masters'])->where('status','=',1)->orderBy('id','ASC')->first();
-        return view('invoice.invoice_print',compact('invoiceDatas'));
+        $invoiceDatas=InvoiceDetails::with(['rcmaster','customerproductmaster','productmaster','customerpomaster','uom_masters','currency_masters'])->where('status','=',1)->where('sup','!=',1)->orderBy('id','ASC')->first();
+        $count=InvoiceDetails::with(['rcmaster','customerproductmaster','productmaster','customerpomaster','uom_masters','currency_masters'])->where('status','=',1)->where('sup','!=',1)->orderBy('id','ASC')->count();
+        if ($count > 0) {
+            return view('invoice.invoice_print',compact('invoiceDatas'));
+        } else {
+            return redirect()->route('invoicedetails.index')->withMessage('Sorry...New Invoice Is Not Available...');
+        }
     }
 
+    public function invoiceRePrint(){
+        $invoiceDatas=InvoiceDetails::with(['rcmaster'])->where('status','=',0)->where('sup','!=',1)->orderBy('id','ASC')->get();
+        $count=InvoiceDetails::with(['rcmaster'])->where('status','=',0)->orderBy('id','ASC')->count();
+        if ($count > 0) {
+            return view('invoice.invoice_reprint',compact('invoiceDatas'));
+        } else {
+            return redirect()->route('invoicedetails.index')->withMessage('Invoice Reprint Only...');
+        }
+    }
+
+    public function invoiceReprintFetchDatas(Request $request){
+        $invoice_no=$request->invoice_number;
+        $invoiceDatas=InvoiceDetails::with(['customerproductmaster','productmaster','customerpomaster','uom_masters','currency_masters'])->where('invoice_no','=',$invoice_no)->first();
+        $invoice_date=$invoiceDatas->invoice_date;
+        $invoice_id=$invoiceDatas->invoice_id;
+        $invoice_status=$invoiceDatas->status;
+        $invoice_qty=$invoiceDatas->qty;
+        $cus_id='<option value="'.$invoiceDatas->customerproductmaster->customermaster->id.'" selected>'.$invoiceDatas->customerproductmaster->customermaster->cus_name.'</option>';
+        $part_id='<option value="'.$invoiceDatas->productmaster->id.'" selected>'.$invoiceDatas->productmaster->part_no.'</option>';
+        return response()->json(['invoice_date'=>$invoice_date,'invoice_status'=>$invoice_status,'cus_id'=>$cus_id,'part_id'=>$part_id,'invoice_qty'=>$invoice_qty,'invoice_id'=>$invoice_id]);
+    }
+
+    public function supplymentaryInvoicePrint(){
+        $invoiceDatas=InvoiceDetails::with(['rcmaster','customerproductmaster','productmaster','customerpomaster','uom_masters','currency_masters'])->where('status','=',1)->where('sup','=',1)->orderBy('id','ASC')->first();
+        $count=InvoiceDetails::with(['rcmaster','customerproductmaster','productmaster','customerpomaster','uom_masters','currency_masters'])->where('status','=',1)->where('sup','=',1)->orderBy('id','ASC')->count();
+        if ($count > 0) {
+            return view('invoice.invoice_print',compact('invoiceDatas'));
+        } else {
+            return redirect()->route('supplymentaryinvoice')->withMessage('Sorry...New Supplymentary Invoice Is Not Available...');
+        }
+    }
+
+    public function supplymentaryReInvoicePrint(){
+        $invoiceDatas=InvoiceDetails::with(['rcmaster'])->where('status','=',0)->where('sup','=',1)->orderBy('id','ASC')->get();
+        $count=InvoiceDetails::with(['rcmaster'])->where('status','=',0)->where('sup','=',1)->orderBy('id','ASC')->count();
+        if ($count > 0) {
+            return view('invoice.invoice_reprint',compact('invoiceDatas'));
+        } else {
+            return redirect()->route('supplymentaryinvoice')->withMessage('Supplymentary Invoice Reprint Only...');
+        }
+    }
+
+
     public function invoicePrintPdf(Request $request){
-        // return QrCode::size(150)->style('round')->generate(
-        //     $request->id
-        // );
-        // dd($request->all());
         $invoice_id=$request->id;
         $invoice_no=$request->invoice_number;
         $cus_id=$request->cus_id;
         $part_id=$request->part_id;
+
         $count=InvoicePrint::where('invoice_no','=',$invoice_no)->count();
+        $invoicePrint=InvoicePrint::where('invoice_no','=',$invoice_no)->first();
+        $invoicePrint->print_status=1;
+        $invoicePrint->status=0;
+        $invoicePrint->updated_by = auth()->user()->id;
+        $invoicePrint->updated_at = Carbon::now();
+        $invoicePrint->update();
+
+        // dd($invoicePrint);
         $page_count=$count*4;
-        $qrCodes=QrCode::size(100)->style('round')->generate($invoice_no);
+        $qrCodes=QrCode::size(95)->style('round')->generate($invoice_no);
         // dd($qrCodes);
         // dd($page_count);
         $invoiceDatas=InvoiceDetails::with(['rcmaster','customerproductmaster','productmaster','customerpomaster','uom_masters','currency_masters'])->where('status','=',1)->where('invoice_no','=',$invoice_no)->first();
+        $invoiceDatas->status=0;
+        $invoiceDatas->updated_by = auth()->user()->id;
+        $invoiceDatas->updated_at = Carbon::now();
+        $invoiceDatas->update();
+
         // dd($invoiceDatas);
         // $pdf = Pdf::loadView('invoice.invoice_pdf',compact('invoiceDatas','count','page_count','qrCodes'))->setPaper('a4', 'portrait');
         // $pdf = Pdf::loadView('invoice.new1')->setPaper('a4', 'portrait');
@@ -676,17 +748,195 @@ class InvoiceDetailsController extends Controller
         // an image will be saved
         // $html = view('grn_inward.add_items',compact('uom_data','racks'))->render();
         $html = view('invoice.invoice_pdf2',compact('invoiceDatas','count','page_count','qrCodes'))->render();
-        // Browsershot::url('https://example.com')->save('example.pdf');
         $pdf=Browsershot::html($html)->setIncludePath(config('services.browsershot.include_path'))->format('A4')->pdf();
-        // $pdf=Browsershot::html($html)->setIncludePath(config('services.browsershot.include_path'))->savepdf('a5.pdf');
-        // $pdf=Browsershot::html($html)->setIncludePath("C:\Programs\\nodejs\\node.exe")->save('a1.pdf');
-
-            return new Response($pdf,200,[
+        return new Response($pdf,200,[
             'Content-Type'=>'application/pdf',
             'Content-Disposition'=>'inline;filename="invoice.pdf"'
         ]);
     }
 
+
+    public function invoiceRePrintPdf(Request $request){
+        $invoice_id=$request->id;
+        $invoice_no=$request->invoice_number;
+        $cus_id=$request->cus_id;
+        $part_id=$request->part_id;
+
+        $count=InvoicePrint::where('invoice_no','=',$invoice_no)->count();
+        $page_count=$count*4;
+        $qrCodes=QrCode::size(95)->style('round')->generate($invoice_no);
+        $invoiceDatas=InvoiceDetails::with(['rcmaster','customerproductmaster','productmaster','customerpomaster','uom_masters','currency_masters'])->where('invoice_no','=',$invoice_no)->first();
+        $html = view('invoice.invoice_pdf2',compact('invoiceDatas','count','page_count','qrCodes'))->render();
+        $pdf=Browsershot::html($html)->setIncludePath(config('services.browsershot.include_path'))->format('A4')->pdf();
+        return new Response($pdf,200,[
+            'Content-Type'=>'application/pdf',
+            'Content-Disposition'=>'inline;filename="invoice.pdf"'
+        ]);
+    }
+
+    public function supplymentaryInvoice(){
+        $invoiceDatas=InvoiceDetails::with(['rcmaster','customerproductmaster','productmaster','customerpomaster','uom_masters','currency_masters'])->where('sup','=',1)->get();
+        // dd($invoiceDatas);
+        return view('invoice.supplymentary_index',compact('invoiceDatas'));
+    }
+
+    public function supplymentaryInvoiceCreateForm(){
+        date_default_timezone_set('Asia/Kolkata');
+        $current_date=date('Y-m-d');
+        $current_year=date('Y');
+        if ( date('m') > 3 ) {
+            $year = date('y');
+            $next_year=date('y')+1;
+            $finacial_year=$year.$next_year;
+        }
+        else {
+            $year = date('y') - 1;
+            $next_year=date('y');
+            $finacial_year=$year.$next_year;
+        }
+        // dd($finacial_year);
+            $rc="U1";
+		$current_rcno=$rc.$finacial_year;
+		$current_rcno1=$rc.$finacial_year.'-';
+        $count1=RouteMaster::where('process_id',22)->where('rc_id','LIKE','%'.$current_rcno.'%')->orderBy('rc_id', 'DESC')->get()->count();
+        if ($count1 > 0) {
+            $rc_data=RouteMaster::where('process_id',22)->where('rc_id','LIKE','%'.$current_rcno.'%')->orderBy('rc_id', 'DESC')->first();
+            $rcnumber=$rc_data['rc_id']??NULL;
+            // dd($rcnumber);
+
+            $old_rcnumber=str_replace($current_rcno1,"",$rcnumber);
+            // dd($old_rcnumber);
+            $old_rcnumber_data=str_pad($old_rcnumber+1,5,0,STR_PAD_LEFT);
+            // dd($old_rcnumber_data);
+            $new_rcnumber=$current_rcno1.$old_rcnumber_data;
+        }else{
+            $str='00001';
+            $new_rcnumber=$current_rcno."-".$str;
+        }
+        // dd($new_rcnumber);
+        // $customer_product_masterdatas=CustomerProductMaster::with('customermaster','customerpomaster','uom_masters','currency_masters','productmasters')->where('status','=',1)->get();
+        $customer_masterdatas=CustomerMaster::where('status','=',1)->get();
+        // dd($customer_masterdatas);
+        return view('invoice.supplymentary_invoice_create',compact('new_rcnumber','current_date','customer_masterdatas'));
+
+    }
+
+    public function supplymentaryInvoiceStore(Request $request){
+        // dd($request->all());
+        date_default_timezone_set("Asia/Kolkata");
+        $current_time=date("H:i");
+        $invoice_number=$request->invoice_number;
+        $invoice_date=$request->invoice_date;
+        $cus_id=$request->cus_id;
+        $part_id=$request->part_id;
+        $cus_name=$request->cus_name;
+        $cus_gst_number=$request->cus_gst_number;
+        $cus_po_id=$request->cus_po_id;
+        $operation_id=$request->operation_id;
+        $invoice_rate=$request->invoice_rate;
+        $invoice_quantity=$request->invoice_quantity;
+        $trans_mode=$request->trans_mode;
+        $document_type=$request->document_type;
+        $igst_on_intra=$request->igst_on_intra;
+        $reverse_charge=$request->reverse_charge;
+        $vehicle_no=$request->vehicle_no;
+        $remarks=$request->remarks;
+
+        $rcMaster=new RouteMaster;
+        $rcMaster->create_date=$invoice_date;
+        $rcMaster->process_id=$operation_id;
+        $rcMaster->rc_id=$invoice_number;
+        $rcMaster->prepared_by=auth()->user()->id;
+        $rcMaster->save();
+
+        $rcMasterData=RouteMaster::where('rc_id','=',$invoice_number)->where('process_id','=',$operation_id)->first();
+        $rc_id=$rcMasterData->id;
+
+                // dd($rc_id);
+        // find customer product details
+        $customer_product_datas=CustomerProductMaster::where('part_id','=',$part_id)->where('cus_id','=',$cus_id)->where('status','=',1)->first();
+        $customer_product_id=$customer_product_datas->id;
+        $customer_product_hsnc=$customer_product_datas->part_hsnc;
+        $customer_product_uom=$customer_product_datas->uom_id;
+        $customer_product_rate=$customer_product_datas->part_rate;
+        $customer_product_part_per=$customer_product_datas->part_per;
+        $customer_product_currency_id=$customer_product_datas->currency_id;
+        $customer_product_packing_charges=$customer_product_datas->packing_charges;
+        $customer_product_cgst=$customer_product_datas->cgst;
+        $customer_product_sgst=$customer_product_datas->sgst;
+        $customer_product_igst=$customer_product_datas->igst;
+        $customer_product_trans_mode=$customer_product_datas->trans_mode;
+        $customer_product_pan_no=$customer_product_datas->pan_no;
+
+        if ($customer_product_igst!=0) {
+            $cori='IGST';
+        }else {
+            $cori='CGST';
+        }
+        $part_rate=round((($invoice_rate)/($customer_product_datas->part_per)),2);
+        $cus_cgst=(($customer_product_cgst*0.01));
+        $cus_sgst=(($customer_product_sgst*0.01));
+        $cus_igst=(($customer_product_igst*0.01));
+        $cus_packing_charge=(($customer_product_packing_charges*0.01));
+
+        $basic_value=round((($part_rate)*($invoice_quantity)),2);
+        $totalcgst_amt=round((($basic_value)*($cus_cgst)),2);
+        $totalsgst_amt=round((($basic_value)*($cus_sgst)),2);
+        $totaligst_amt=round((($basic_value)*($cus_igst)),2);
+        $totalpacking_charge=round((($basic_value)*($cus_packing_charge)),2);
+        // dd($basic_value);
+        // dd($totalcgst_amt);
+        // dd($totalsgst_amt);
+        // dd($totaligst_amt);
+        // dd($totalpacking_charge);
+        $invtotal=(($basic_value)+($totalcgst_amt)+($totalsgst_amt)+($totaligst_amt)+($totalpacking_charge));
+        // dd($invtotal);
+        // // create invoice details
+        $invoiceDatas=new InvoiceDetails;
+        $invoiceDatas->invoice_no=$rc_id;
+        $invoiceDatas->invoice_date=$invoice_date;
+        $invoiceDatas->invoice_time=$current_time;
+        $invoiceDatas->cus_product_id=$customer_product_id;
+        $invoiceDatas->part_id=$part_id;
+        $invoiceDatas->part_hsnc=$customer_product_hsnc;
+        $invoiceDatas->cus_po_id=$cus_po_id;
+        $invoiceDatas->qty=$invoice_quantity;
+        $invoiceDatas->uom_id=$customer_product_uom;
+        $invoiceDatas->part_per=$customer_product_part_per;
+        $invoiceDatas->part_rate=$part_rate;
+        $invoiceDatas->currency_id=$customer_product_currency_id;
+        $invoiceDatas->packing_charge=$customer_product_packing_charges;
+        $invoiceDatas->cgst=$customer_product_cgst;
+        $invoiceDatas->sgst=$customer_product_sgst;
+        $invoiceDatas->igst=$customer_product_igst;
+        // $invoiceDatas->tcs=$customer_product_uom;
+        $invoiceDatas->basic_value=$basic_value;
+        $invoiceDatas->packing_charge_amt=$totalpacking_charge;
+        $invoiceDatas->cgstamt=$totalcgst_amt;
+        $invoiceDatas->sgstamt=$totalsgst_amt;
+        $invoiceDatas->igstamt=$totaligst_amt;
+        // $invoiceDatas->tcsamt=$customer_product_uom;
+        $invoiceDatas->invtotal=$invtotal;
+        $invoiceDatas->cori=$cori;
+        $invoiceDatas->trans_mode=$customer_product_trans_mode;
+        $invoiceDatas->document_type=$document_type;
+        $invoiceDatas->igst_on_intra=$igst_on_intra;
+        $invoiceDatas->reverse_charge=$reverse_charge;
+        $invoiceDatas->vehicle_no=$vehicle_no;
+        $invoiceDatas->ok='F';
+        $invoiceDatas->sup=1;
+        $invoiceDatas->remarks=$remarks;
+        $invoiceDatas->prepared_by=auth()->user()->id;
+        $invoiceDatas->save();
+
+        $invoicePrint=new InvoicePrint;
+        $invoicePrint->invoice_no=$rc_id;
+        $invoicePrint->prepared_by=auth()->user()->id;
+        $invoicePrint->save();
+
+        return redirect()->route('supplymentaryinvoice')->withSuccess('Supplymentary Invoice Created Successfully!');
+
+    }
     /**
      * Remove the specified resource from storage.
      */

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->date('correction_request_date');
             $table->string('invoice_id');
-            $table->integer('qty');
+            $table->integer('qty')->default(0);
             $table->text('request_reason');
             $table->integer('approved_by');
             $table->date('approved_date');

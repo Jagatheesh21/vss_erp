@@ -126,7 +126,6 @@
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
         width: 150px;
-
     }
     .item1 { grid-area: header; }
 .item2 { grid-area: menu; }

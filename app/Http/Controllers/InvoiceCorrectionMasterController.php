@@ -176,10 +176,12 @@ class InvoiceCorrectionMasterController extends Controller
             $invoicecorrectionData->updated_by=$invoiceDetails->updated_by;
             $invoicecorrectionData->save();
 
-            $invoicePrint=InvoicePrint::find($invoiceDetails->invoice_no);
+            // dd($request->status);
+            $invoicePrint=InvoicePrint::where('invoice_no',$invoiceDetails->invoice_no)->first();
             $invoicePrint->status=$request->status;
             $invoicePrint->updated_at= Carbon::now();
             $invoicePrint->update();
+
 
             $t12Datas=TransDataD12::where('rc_id','=',$invoiceDetails->invoice_no)->where('process_id','=',22)->select('previous_rc_id','issue_qty')->get();
             // dd($t12Datas);

@@ -39,9 +39,9 @@ return new class extends Migration
             $table->string('cori')->nullable();
             $table->string('trans_mode');
             $table->string('vehicle_no')->nullable();
-            $table->integer('sup')->default(1);
+            $table->integer('sup')->default(0);
             $table->string('ok')->nullable();
-            $table->integer('type')->default(1);
+            $table->integer('type')->default(2);
             $table->string('document_type')->nullable();
             $table->string('reverse_charge')->nullable();
             $table->string('igst_on_intra')->nullable();

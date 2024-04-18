@@ -50,6 +50,7 @@
                         <li class="list-group-item"><a href="{{route('invoicedetails.index')}}">Invoice Details</a></li>
                         <li class="list-group-item"><a href="{{route('invoicecorrectionmaster.index')}}">Invoice Correction Approval</a></li>
                         <li class="list-group-item"><a href="{{route('invoicecorrectionform')}}">Invoice Correction</a></li>
+                        <li class="list-group-item"><a href="{{route('supplymentaryinvoice')}}">Supplymentary Invoice</a></li>
                         <li class="list-group-item">A third item</li>
                     </ul>
                 </div>

@@ -119,175 +119,175 @@ class ProductProcessMasterSeeder extends Seeder
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster15 = ProductProcessMaster::create([
+        $productProcessMaster16 = ProductProcessMaster::create([
             'part_id' => 2,
             'process_master_id' => 8,
             'process_order_id' => 4,
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster16 = ProductProcessMaster::create([
+        $productProcessMaster17 = ProductProcessMaster::create([
             'part_id' => 2,
             'process_master_id' => 14,
             'process_order_id' => 5,
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster17 = ProductProcessMaster::create([
+        $productProcessMaster18 = ProductProcessMaster::create([
             'part_id' => 2,
             'process_master_id' => 22,
             'process_order_id' =>6,
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster18 = ProductProcessMaster::create([
+        $productProcessMaster19 = ProductProcessMaster::create([
             'part_id' => 3,
             'process_master_id' => 17,
             'process_order_id' =>1,
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster19 = ProductProcessMaster::create([
+        $productProcessMaster20 = ProductProcessMaster::create([
             'part_id' =>3,
             'process_master_id' => 18,
             'process_order_id' =>2,
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster20 = ProductProcessMaster::create([
+        $productProcessMaster21 = ProductProcessMaster::create([
             'part_id' =>3,
             'process_master_id' => 19,
             'process_order_id' =>3,
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster21 = ProductProcessMaster::create([
+        $productProcessMaster22 = ProductProcessMaster::create([
             'part_id' =>3,
             'process_master_id' => 20,
             'process_order_id' =>4,
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster21 = ProductProcessMaster::create([
+        $productProcessMaster23 = ProductProcessMaster::create([
             'part_id' =>3,
             'process_master_id' => 21,
             'process_order_id' =>5,
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster22 = ProductProcessMaster::create([
+        $productProcessMaster24 = ProductProcessMaster::create([
             'part_id' =>3,
             'process_master_id' => 22,
             'process_order_id' =>6,
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster23 = ProductProcessMaster::create([
+        $productProcessMaster25 = ProductProcessMaster::create([
             'part_id' => 4,
             'process_master_id' => 1,
             'process_order_id' =>1,
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster24 = ProductProcessMaster::create([
+        $productProcessMaster26 = ProductProcessMaster::create([
             'part_id' =>4,
             'process_master_id' => 2,
             'process_order_id' =>2,
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster25 = ProductProcessMaster::create([
+        $productProcessMaster27= ProductProcessMaster::create([
             'part_id' =>4,
             'process_master_id' =>3,
             'process_order_id' =>3,
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster26 = ProductProcessMaster::create([
+        $productProcessMaster28 = ProductProcessMaster::create([
             'part_id' =>4,
             'process_master_id' => 4,
             'process_order_id' =>4,
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster27 = ProductProcessMaster::create([
+        $productProcessMaster29 = ProductProcessMaster::create([
             'part_id' =>4,
             'process_master_id' =>6,
             'process_order_id' =>5,
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster28 = ProductProcessMaster::create([
+        $productProcessMaster30 = ProductProcessMaster::create([
             'part_id' =>4,
             'process_master_id' => 9,
             'process_order_id' =>6,
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster29 = ProductProcessMaster::create([
+        $productProcessMaster31 = ProductProcessMaster::create([
             'part_id' =>4,
             'process_master_id' => 15,
             'process_order_id' =>7,
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster29 = ProductProcessMaster::create([
+        $productProcessMaster32 = ProductProcessMaster::create([
             'part_id' =>4,
             'process_master_id' => 17,
             'process_order_id' =>8,
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster30 = ProductProcessMaster::create([
+        $productProcessMaster33 = ProductProcessMaster::create([
             'part_id' =>5,
             'process_master_id' => 1,
             'process_order_id' =>1,
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster31 = ProductProcessMaster::create([
+        $productProcessMaster34 = ProductProcessMaster::create([
             'part_id' =>5,
             'process_master_id' => 2,
             'process_order_id' =>2,
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster32 = ProductProcessMaster::create([
+        $productProcessMaster35 = ProductProcessMaster::create([
             'part_id' =>5,
             'process_master_id' => 3,
             'process_order_id' =>3,
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster33 = ProductProcessMaster::create([
+        $productProcessMaster36 = ProductProcessMaster::create([
             'part_id' =>5,
             'process_master_id' => 15,
             'process_order_id' =>4,
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster34 = ProductProcessMaster::create([
+        $productProcessMaster37 = ProductProcessMaster::create([
             'part_id' =>5,
             'process_master_id' => 17,
             'process_order_id' =>5,
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster35 = ProductProcessMaster::create([
+        $productProcessMaster38 = ProductProcessMaster::create([
             'part_id' =>5,
             'process_master_id' => 21,
             'process_order_id' =>6,
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster36 = ProductProcessMaster::create([
+        $productProcessMaster39 = ProductProcessMaster::create([
             'part_id' =>5,
             'process_master_id' => 9,
             'process_order_id' =>7,
             'foreman_id' => 1,
             'prepared_by'=>'1'
         ]);
-        $productProcessMaster37 = ProductProcessMaster::create([
+        $productProcessMaster40 = ProductProcessMaster::create([
             'part_id' =>5,
             'process_master_id' => 17,
             'process_order_id' =>8,

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('cus_type')->default(1);
             $table->string('cus_name');
             $table->string('cus_gst_number');
+            $table->string('cus_pan_no');
             $table->text('cus_address');
             $table->text('cus_address1')->nullable();
             $table->text('cus_city');
@@ -25,6 +26,7 @@ return new class extends Migration
             $table->text('cus_pincode');
             $table->string('delivery_cus_name');
             $table->string('delivery_cus_gst_number');
+            $table->string('delivery_cus_pan_no');
             $table->text('delivery_cus_address');
             $table->text('delivery_cus_address1')->nullable();
             $table->text('delivery_cus_city');
@@ -33,6 +35,7 @@ return new class extends Migration
             $table->text('delivery_cus_pincode');
             $table->string('supplier_vendor_code');
             $table->string('supplytype');
+            $table->float('distance', 8, 2)->default(0);
             $table->integer('status')->default(1);
             $table->integer('prepared_by');
             $table->integer('updated_by')->nullable();

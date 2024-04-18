@@ -17,7 +17,6 @@ return new class extends Migration
             $table->integer('part_id');
             $table->integer('part_type');
             $table->string('part_hsnc');
-            $table->string('pan_no')->nullable();
             $table->integer('cus_po_id');
             $table->float('packing_charges', 8, 2)->default(0);
             $table->string('trans_mode');

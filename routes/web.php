@@ -108,6 +108,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/invoice_correction-form/id', [InvoiceDetailsController::class,'invoiceCorrectionForm'])->name('invoicecorrectionform');
     Route::get('/invoice_print-form/id', [InvoiceDetailsController::class,'invoicePrint'])->name('invoiceprint');
     Route::post('invoice_print-pdf', [InvoiceDetailsController::class,'invoicePrintPdf'])->name('invoiceprintpdf');
+    Route::get('/invoice_reprint-form/id', [InvoiceDetailsController::class,'invoiceRePrint'])->name('invoicereprint');
+    Route::get('invoicereprintfetch-request', [InvoiceDetailsController::class,'invoiceReprintFetchDatas'])->name('invoicereprintfetchdata');
+    Route::post('invoice_reprint-pdf', [InvoiceDetailsController::class,'invoiceRePrintPdf'])->name('invoicereprintpdf');
+    Route::get('/supplymentaryinvoice/list', [InvoiceDetailsController::class,'supplymentaryInvoice'])->name('supplymentaryinvoice');
+    Route::get('supplymentaryinvoice_receive/create', [InvoiceDetailsController::class,'supplymentaryInvoiceCreateForm'])->name('supplymentaryinvoice.create');
+    Route::post('supplymentaryinvoice_receive/store', [InvoiceDetailsController::class,'supplymentaryInvoiceStore'])->name('supplymentaryinvoice.store');
+    Route::get('/supplymentaryinvoice_print-form/id', [InvoiceDetailsController::class,'supplymentaryInvoicePrint'])->name('supplymentaryinvoiceprint');
+    Route::get('/supplymentaryinvoice_reprint-form/id', [InvoiceDetailsController::class,'supplymentaryReInvoicePrint'])->name('supplymentaryreinvoiceprint');
+    Route::post('supplymentaryinvoicefetch-po', [InvoiceDetailsController::class,'supplymentaryinvoiceItemPo'])->name('supplymentaryinvoiceitempo');
+
 
 
 
