@@ -30,6 +30,7 @@ use App\Http\Controllers\InvoiceDetailsController;
 use App\Http\Controllers\InvoiceCorrectionMasterController;
 use App\Http\Controllers\InvoiceCorrectionDetailController;
 // invoice updated
+use App\Http\Controllers\PermissionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -100,6 +101,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('pts_production-receive/part_no', [StagewiseReceiveController::class,'ptsProductionReceivePartFetchEntry'])->name('ptsproductionpartfetchdata');
     Route::get('pts_fqc/list', [FinalQcInspectionController::class,'ptsFqcList'])->name('ptsfqclist');
     Route::get('pts_fqc/create', [FinalQcInspectionController::class,'ptsFqcCreate'])->name('ptsfqccreate');
+    Route::get('department/getDepartments', [DepartmentController::class,'getDepartments'])->name('getDepartments');
     Route::post('pts_fqc/store', [FinalQcInspectionController::class,'ptsFqcApproval'])->name('pts_fqc_approval.store');
     Route::get('/invoicepart-data/id', [InvoiceDetailsController::class,'cusPartData'])->name('cuspartdata');
     Route::post('invoicefetch-rc', [InvoiceDetailsController::class,'invoiceItemRc'])->name('invoiceitemrc');
@@ -119,11 +121,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('supplymentaryinvoicefetch-po', [InvoiceDetailsController::class,'supplymentaryinvoiceItemPo'])->name('supplymentaryinvoiceitempo');
 
 
-
-
-
     Route::resources([
         'roles' => RoleController::class,
+        'permissions' => PermissionController::class,
         'users' => UserController::class,
         'products' => ProductController::class,
         'department' => DepartmentController::class,
@@ -145,12 +145,8 @@ Route::middleware(['auth'])->group(function () {
         'fqc_approval'=>FinalQcInspectionController::class,
         'customermaster'=>CustomerMasterController::class,
         'customer-products'=>CustomerProductMasterController::class,
-        'customerpomaster'=>CustomerPoMasterController::class,
         'delivery_challan'=>DcTransactionDetailsController::class,
         'dcprint'=>DcPrintController::class,
-        'invoicedetails'=>InvoiceDetailsController::class,
-        'invoicecorrectionmaster'=>InvoiceCorrectionMasterController::class,
-        'invoicecorrectiondetail'=>InvoiceCorrectionDetailController::class,
     ]);
 });
 

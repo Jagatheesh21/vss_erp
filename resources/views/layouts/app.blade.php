@@ -28,6 +28,8 @@
     <link href="{{asset('css/examples.css')}}" rel="stylesheet">
     <link rel="stylesheet" href="{{asset('css/sweetalert2.min.css')}}">
     <link rel="stylesheet" href="{{asset('css/toaster.min.css')}}" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.1/css/buttons.dataTables.css" />
     <style>
         a{
             text-decoration:none !important;
@@ -104,6 +106,9 @@
     <script src="{{asset('js/sweetalert2.all.min.js')}}"></script>
     <script src="{{asset('js/boxicons.js')}}"></script>
     <script src="{{asset('js/toaster.min.js')}}" ></script>
+    <script src="https://cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.0.1/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.0.1/js/buttons.dataTables.js"></script>
     <script>
     setTimeout(() => {
     $('.alert').alert('close');

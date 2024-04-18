@@ -8,18 +8,41 @@ use App\Http\Requests\UpdateDepartmentRequest;
 use DB;
 use Auth;
 use Illuminate\Http\Request;
-
+use DataTables;
+use App\Notifications\NewNotification;
+use App\Jobs\SendNotificationJob;
 
 class DepartmentController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $departments = Department::get();
-        // dd($departments);
-        return view('department.index',compact('departments'));
+        $user = Auth::user();
+        dispatch(new SendNotificationJob($user));
+        if ($request->ajax()) {
+            $data = Department::latest()->get();
+            return Datatables::of($data)
+                    ->addIndexColumn()
+                    ->editColumn('status', function($data) {
+                        // $status = '<button class="btn btn-sm btn-success">Active</button>';
+                        // return $status;
+                        return $data->status=1?'Active':'Inactive';
+                    })
+                    ->addColumn('action', function($row){
+   
+                           $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Edit" class="edit btn btn-primary btn-sm text-white editDepartment">Edit</a>';
+   
+                           $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Delete" class="btn btn-danger btn-sm text-white deleteDepartment">Delete</a>';
+    
+                            return $btn;
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
+        }
+        
+        return view('department.index');
     }
 
     /**
@@ -94,5 +117,68 @@ class DepartmentController extends Controller
     public function destroy(Department $department)
     {
         //
+    }
+    public function getDepartments(Request $request)
+    {        
+        $query = Department::whereNotNull('id');
+        $totalFilteredRecord = $totalDataRecord = $draw_val = "";
+        $start = $request->input('start') + 1;
+        $totalDataRecord = $query->count();
+        $limit_val = $request->input('length');
+        $start_val = $request->input('start');
+        $orderArray = $request->get('order');
+        $columnNameArray = $request->get('columns');
+        $columnIndex = $orderArray[0]['column'];
+        $order_val = $columnNameArray[$columnIndex]['data'];
+        $dir_val = $orderArray[0]['dir'];
+        $search_text = $request->input('search.value');
+
+        $filteredUserQuery = $query->select('id','name','status');
+        
+        if (!empty($search_text)) {
+            $filteredUserQuery = $filteredUserQuery->where(function ($query) use ($search_text) {
+                $query->where('name', 'LIKE', "%{$search_text}%");
+                    // ->orWhere('user.name', 'LIKE', "%{$search_text}%");
+            });
+        }
+        $totalFilteredRecord = $filteredUserQuery->count();
+        $post_data = $filteredUserQuery->select('id','name','status');
+        $post_data = $post_data->limit($limit_val)
+            ->offset($start_val)
+            // ->orderBy($order_val, $dir_val)
+            ->get();
+        if(!empty($post_data))
+        {
+            $count = 1;
+            foreach ($post_data  as $index =>  $row) {
+                $serialNumber = $start + $index;
+                $active_value = '<div class="btn-group">
+                        <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Action <i class="mdi mdi-chevron-down"></i></button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="javascript:void(0);" id="' . $row->id . '" onclick="editVehicle(' . $row->id . ')">Edit</a>
+                        <a class="dropdown-item" href="javascript:void(0);" id="' . $row->id . '" onclick="changeSim(' . $row->id . ')">Change Sim</a>
+                        </div>
+                        </div>';
+                $array_data[] = array(
+                    'id' => $serialNumber ?? "",
+                    'name' => $row->name ?? "",
+                    'status'=> $row->status??"",
+                    'action' => $active_value,
+                );
+
+            }
+            if(!empty($array_data))
+            {
+                $draw_val = $request->input('draw');
+                $get_json_data = array(
+                    "draw"            => intval($draw_val),
+                    "recordsTotal"    => intval($totalDataRecord),
+                    "recordsFiltered" => intval($totalFilteredRecord),
+                    "data"            => $array_data
+                );
+                echo json_encode($get_json_data);
+            }
+       }
+
     }
 }

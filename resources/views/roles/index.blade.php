@@ -1,7 +1,10 @@
 @extends('layouts.app')
 @section('content')
-<div class="row bg-white">
+<div class="row bg-white p-3">
+    <div class="d-flex justify-content-between">
     <h4>Roles</h4>
+    <a href="{{route('roles.create')}}" class="btn btn-md btn-success col-1 text-white m-2" style="align:right">Add Role</a>
+    </div>
     <div class="table-responsive bg-white">
         <table class="table table-hovered table-bordered">
             <thead >
