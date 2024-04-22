@@ -30,6 +30,10 @@ class DatabaseSeeder extends Seeder
             ChildProductMasterSeeder::class,
             ProductProcessMasterSeeder::class,
             DcMasterSeeder::class,
+            CustomerMasterSeeder::class,
+            CustomerPoMasterSeeder::class,
+            CustomerPoRateReviseSeeder::class,
+            CustomerProductMasterSeeder::class,
             BomMasterSeeder::class
         ]);
     }
