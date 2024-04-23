@@ -22,6 +22,7 @@
             @endif
             <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Invoice List</b> </span>
                 <a class="btn btn-sm btn-warning text-white" href="{{route('invoicecorrectionmaster.create')}}">Correction Request</a>
+                <a class="btn btn-sm btn-success text-white" href="{{route('traceability')}}">Traceability</a>
                 <a class="btn btn-sm btn-success text-white" href="{{route('invoiceprint')}}">Print</a>
                 <a class="btn btn-sm btn-warning text-white" href="{{route('invoicereprint')}}">Re-Print</a>
                 <a class="btn btn-sm btn-primary text-white" href="{{route('invoicedetails.create')}}">New</a>

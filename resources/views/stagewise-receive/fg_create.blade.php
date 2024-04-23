@@ -134,7 +134,7 @@
 
                         <div class="row d-flex justify-content-center mt-3">
                             <div class="col-md-3">
-                                <p><b>Route Close :</b></p>
+                                <p><b>Route Card Close :</b></p>
                                   <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="rc_close" id="inlineRadio1" value="yes">
                                     <label class="form-check-label" for="inlineRadio1">Yes</label>

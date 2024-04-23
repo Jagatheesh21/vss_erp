@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('cus_po_qty')->default(0);
             $table->integer('uom_id')->default(2);
             $table->integer('part_per')->default(1);
-            $table->integer('rate')->default(1);
+            $table->float('rate', 8, 2)->default(0);
             $table->integer('status')->default(1);
             $table->integer('prepared_by');
             $table->integer('updated_by')->nullable();

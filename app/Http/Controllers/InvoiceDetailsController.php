@@ -131,6 +131,37 @@ class InvoiceDetailsController extends Controller
 
         $customer_po_datas=CustomerPoMaster::where('part_id','=',$part_id)->where('cus_id','=',$cus_id)->where('status','=',1)->first();
         $cus_po_no='<option value="'.$customer_po_datas->id.'" selected>'.$customer_po_datas->cus_po_no.'</option>';
+        $part_rate=round((($customer_po_datas->rate)/($customer_po_datas->part_per)),2);
+        $customer_product_datas=CustomerProductMaster::with('productmasters')->where('status','=',1)->where('cus_id','=',$cus_id)->where('part_id','=',$part_id)->first();
+        $part_id=$customer_product_datas->productmasters->id;
+        $part_name=$customer_product_datas->productmasters->part_no;
+        $part_desc=$customer_product_datas->productmasters->part_desc;
+        $part_hsnc=$customer_product_datas->part_hsnc;
+        $customer_product_packing_charges=$customer_product_datas->packing_charges;
+        $customer_product_cgst=$customer_product_datas->cgst;
+        $customer_product_sgst=$customer_product_datas->sgst;
+        $customer_product_igst=$customer_product_datas->igst;
+
+        // dd($customer_product_datas);
+
+        $table1="";
+        $table1.='<tr>'.
+            '<td>'.$part_name.'<br>'.$part_desc.'</td>'.
+            '<td style="width: 150px;"><input type="text" name="hsn_code[]" class="form-control bg-light hsn_code" readonly minlength="6" maxlength="8" id="hsn_code" value="'.$part_hsnc.'"></td>'.
+            '<td><input type="number" name="part_rate[]"  class="form-control bg-light part_rate" readonly id="part_rate" value="'.$part_rate.'"></td>'.
+            '<td><input type="number" name="packing_charges[]"  class="form-control bg-light packing_charges" readonly id="packing_charges" min="0" max="'.$customer_product_packing_charges.'" value="'.$customer_product_packing_charges.'"></td>'.
+            '<td><input type="number" name="cgst[]"  class="form-control bg-light cgst" id="cgst" min="0" readonly max="'.$customer_product_cgst.'" value="'.$customer_product_cgst.'"></td>'.
+            '<td><input type="number" name="sgst[]"  class="form-control bg-light sgst" id="sgst" min="0" readonly max="'.$customer_product_sgst.'" value="'.$customer_product_sgst.'"></td>'.
+            '<td><input type="number" name="igst[]"  class="form-control bg-light igst" id="igst" min="0" readonly max="'.$customer_product_igst.'" value="'.$customer_product_igst.'"></td>'.
+            '<td style="width: 50px;"><input type="number" name="tcs[]"  class="form-control bg-light tcs" id="tcs" min="0" readonly max="0"></td>'.
+            '<td><input type="number" name="packing_charges_amt[]"  class="form-control bg-light packing_charges_amt" readonly id="packing_charges_amt" min="0" ></td>'.
+            '<td><input type="number" name="cgst_amt[]"  class="form-control bg-light cgst_amt" id="cgst_amt" readonly min="0"></td>'.
+            '<td><input type="number" name="sgst_amt[]"  class="form-control bg-light sgst_amt" id="sgst_amt" readonly min="0"></td>'.
+            '<td><input type="number" name="igst_amt[]"  class="form-control bg-light igst_amt" id="igst_amt" readonly min="0"></td>'.
+            '<td><input type="number" name="tcs_amt[]"  class="form-control bg-light tcs_amt" id="tcs_amt" readonly min="0"  value="0"></td>'.
+            '<td><input type="number" name="basic_value[]"  class="form-control bg-light basic_value" id="basic_value" readonly min="0"></td>'.
+            '<td><input type="number" name="total_value[]"  class="form-control bg-light total_value" id="total_value" readonly min="0"></td>'.
+            '</tr>';
 
         // dd($cus_po_no);
         // $part_id=$request->part_id;
@@ -161,9 +192,9 @@ class InvoiceDetailsController extends Controller
                         $t_avl_qty=$count1->t_avl_qty;
                         // dd($invoicemasterDatas);
                         // dd($count1);
-                        $table="";
+                        $table2="";
                         foreach ($invoicemasterDatas as $key => $dcmasterData) {
-                            $table.='<tr>'.
+                            $table2.='<tr>'.
                             // '<td><select name="route_part_id[]" class="form-control bg-light route_part_id" readonly id="route_part_id"><option value="'.$dcmasterData->partmaster->child_part_no.'">'.$dcmasterData->partmaster->child_part_no.'</option></select></td>'.
                             // '<td><input type="number" name="order_no[]"  class="form-control bg-light order_no" readonly  id="order_no" value="'.$dcmasterData->partmaster->no_item_id.'"></td>'.
                             // '<td><select name="route_card_id[]" class="form-control bg-light route_card_id" readonly id="route_card_id"><option value="'.$dcmasterData->rcmaster->id.'">'.$dcmasterData->rcmaster->rc_id.'</option></select></td>'.
@@ -179,7 +210,7 @@ class InvoiceDetailsController extends Controller
                             '<td><input type="number" name="balance[]"  class="form-control bg-light balance" id="balance" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
                             '</tr>';
                         }
-                        return response()->json(['t_avl_qty'=>$t_avl_qty,'table'=>$table,'operation'=>$operation,'regular'=>$check1,'alter'=>$check2,'bom'=>$bom,'cus_po_no'=>$cus_po_no]);
+                        return response()->json(['t_avl_qty'=>$t_avl_qty,'table1'=>$table1,'table2'=>$table2,'operation'=>$operation,'regular'=>$check1,'alter'=>$check2,'bom'=>$bom,'cus_po_no'=>$cus_po_no]);
                     }else{
                         $dcmasterOperationDatas=DcMaster::with('childpart','procesmaster','supplier')->where('status','=',1)->where('supplier_id','=',$cus_id)->where('part_id','=',$manufacturingPart)->first();
                         $operation_id=$dcmasterOperationDatas->operation_id;
@@ -191,16 +222,16 @@ class InvoiceDetailsController extends Controller
                         ->havingRaw('t_avl_qty >?', [0])->first();
                         $t_avl_qty=$count1->t_avl_qty;
                         // dd($dcmasterDatas);
-                        $table="";
+                        $table2="";
                         foreach ($dcmasterDatas as $key => $dcmasterData) {
-                            $table.='<tr>'.
+                            $table2.='<tr>'.
                             '<td><select name="route_card_id[]" class="form-control bg-light route_card_id" readonly id="route_card_id"><option value="'.$dcmasterData->rcmaster->id.'">'.$dcmasterData->rcmaster->child_part_no.'</option></select></td>'.
                             '<td><input type="number" name="available_quantity[]"  class="form-control bg-light available_quantity" readonly  id="available_quantity" value="'.$dcmasterData->avl_qty.'"></td>'.
                             '<td><input type="number" name="issue_quantity[]"  class="form-control bg-light issue_quantity" readonly id="issue_quantity" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
                             '<td><input type="number" name="balance[]"  class="form-control bg-light balance" readonly id="balance" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
                             '</tr>';
                         }
-                        return response()->json(['t_avl_qty'=>$t_avl_qty,'table'=>$table,'operation'=>$operation,'regular'=>$check1,'alter'=>$check2]);
+                        return response()->json(['t_avl_qty'=>$t_avl_qty,'table1'=>$table1,'table2'=>$table2,'operation'=>$operation,'regular'=>$check1,'alter'=>$check2]);
                     }
                 }else{
                     // dd('not ok');
@@ -243,9 +274,9 @@ class InvoiceDetailsController extends Controller
 
                     $t_avl_qty=$dcmasterDatas2;
 
-                    $table="";
+                    $table2="";
                         foreach ($dcmasterDatas as $key => $dcmasterData) {
-                            $table.='<tr class="order_'.$dcmasterData->no_item_id.'">'.
+                            $table2.='<tr class="order_'.$dcmasterData->no_item_id.'">'.
                             // '<td><select name="route_part_id[]" class="form-control bg-light route_part_id" readonly id="route_part_id"><option value="'.$dcmasterData->partId.'">'.$dcmasterData->child_part_no.'</option></select></td>'.
                             // '<td><input type="number" name="order_no[]"  class="form-control bg-light order_no" readonly  id="order_no" value="'.$dcmasterData->no_item_id.'"></td>'.
                             // '<td><select name="route_card_id[]" class="form-control bg-light route_card_id" readonly id="route_card_id"><option value="'.$dcmasterData->rcId.'">'.$dcmasterData->rc_id.'</option></select></td>'.
@@ -261,7 +292,7 @@ class InvoiceDetailsController extends Controller
                             '<td><input type="number" name="balance[]"  class="form-control bg-light balance"  id="balance" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
                             '</tr>';
                         }
-                        return response()->json(['t_avl_qty'=>$t_avl_qty,'table'=>$table,'operation'=>$operation,'regular'=>$check1,'alter'=>$check2,'bom'=>$bom]);
+                        return response()->json(['t_avl_qty'=>$t_avl_qty,'table1'=>$table1,'table2'=>$table2,'operation'=>$operation,'regular'=>$check1,'alter'=>$check2,'bom'=>$bom]);
                 }
 
         // $cus_order_datas;
@@ -724,11 +755,11 @@ class InvoiceDetailsController extends Controller
 
         $count=InvoicePrint::where('invoice_no','=',$invoice_no)->count();
         $invoicePrint=InvoicePrint::where('invoice_no','=',$invoice_no)->first();
-        $invoicePrint->print_status=1;
-        $invoicePrint->status=0;
-        $invoicePrint->updated_by = auth()->user()->id;
-        $invoicePrint->updated_at = Carbon::now();
-        $invoicePrint->update();
+        // $invoicePrint->print_status=1;
+        // $invoicePrint->status=0;
+        // $invoicePrint->updated_by = auth()->user()->id;
+        // $invoicePrint->updated_at = Carbon::now();
+        // $invoicePrint->update();
 
         // dd($invoicePrint);
         $page_count=$count*4;
@@ -781,6 +812,59 @@ class InvoiceDetailsController extends Controller
         return view('invoice.supplymentary_index',compact('invoiceDatas'));
     }
 
+    public function traceability(){
+        return view('invoice.traceability');
+    }
+
+    public function rccheckdata(Request $request){
+        // dd($request->all());
+        $invoice_number=$request->invoice_no;
+        $invoiceDatas=InvoiceDetails::with(['rcmaster','customerproductmaster','productmaster','customerpomaster','uom_masters','currency_masters'])->where('invoice_no','=',$invoice_number)->first();
+        $rc_no=$invoiceDatas->rcmaster->rc_id;
+        $part_id=$invoiceDatas->part_id;
+        $part_no=$invoiceDatas->productmaster->part_no;
+        $check=ChildProductMaster::where('status','=',1)->where('part_id','=',$part_id)->where('stocking_point','=',22)->count();
+        $t13Datas=TransDataD13::with('current_rcmaster')->where('rc_id','=',$invoice_number)->orderBy('id','DESC')->get();
+
+        if ($check>0) {
+            $table1="";
+            $table1.='<div class="col-md-12">'.
+            '<div class="table-responsive">'.
+                '<table class="table table-bordered table-striped table-responsive">'.
+                    '<thead>'.
+                    '<tr>'.
+                        '<th><b>PART NUMBER</b></th>'.
+                        '<th><b>ROUTE CARD</b></th>'.
+                        '<th><b>PREVIOUS ROUTE CARD</b></th>'.
+                    '</tr>'.
+                    '</thead>'.
+                    '<tbody  id="table_logic1">';
+                        foreach ($t13Datas as $key => $value) {
+                            $previous_rc_id=$value->previous_rc_id;
+                            $new_rcno=$value->current_rcmaster->rc_id;
+                            $previous_t13datas=TransDataD13::with('previous_rcmaster')->where('previous_rc_id','=',$previous_rc_id)->orderBy('id','DESC')->get();
+                            $t12Datas=TransDataD12::with(['current_rcmaster','previous_rcmaster'])->where('rc_id','=',$invoice_number)->where('previous_rc_id','=',$previous_rc_id)->get();
+
+                            foreach ($t12Datas as $key => $value2) {
+                                $previous_rc_id=$value2->rc_id;
+                                $previous_rcno=$value2->previous_rcmaster->rc_id;
+
+                        $table1.='<tr>'.
+                        '<td>'.$part_no.'</td>'.
+                        '<td>'.$new_rcno.'</td>'.
+                        '<td>'.$previous_rcno.'</td>'.
+                        '</tr>';
+                            }
+                        }
+                        $table1.='</tbody>'.
+                    '</table>'.
+                    '</div>'.
+                '</div>';
+                return response()->json(['table1'=>$table1,'check'=>$check,'rc_no'=>$rc_no]);
+        }else{
+
+        }
+    }
     public function supplymentaryInvoiceCreateForm(){
         date_default_timezone_set('Asia/Kolkata');
         $current_date=date('Y-m-d');

@@ -14,7 +14,8 @@
             <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Create Invoice</b></span><a class="btn btn-sm btn-primary" href="{{route('invoicedetails.index')}}">Invoice List</a>
             </div>
             <div class="card-body">
-                        <div class="row d-flex justify-content-center">
+                    <div class="row d-flex justify-content-center">
+                    <span class="me-auto mb-3"><button class="btn btn-primary">STEP 1-Customer Details</button></span>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="invoice_number">Invoice No. *</label>
@@ -211,7 +212,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row d-flex justify-content-center">
+                        <div class="row d-flex">
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="vehicle_no">VEHICLE NO *</label>
@@ -226,7 +227,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="issue_wt">ISSUE WEIGHT *</label>
-                                    <input type="number" name="issue_wt" @readonly(true) id="issue_wt" min="0" class="form-control bg-light @error('issue_wt') is-invalid @enderror" >
+                                    <input type="number" name="issue_wt" @readonly(true)  id="issue_wt" min="0" class="form-control bg-light @error('issue_wt') is-invalid @enderror" >
                                     @error('issue_wt')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -245,39 +246,72 @@
                                     @enderror
                                 </div>
                             </div>
-                            <input type="hidden" name="regular" class="form-control regular" id="regular">
+                            <input type="hidden" name="regular" class="form-control regular" id="regular" >
                             <input type="hidden" name="alter" class="form-control alter" id="alter">
                             <input type="hidden" name="bom" class="form-control bom" id="bom">
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <button class="btn btn-primary mt-4" id="proceed">Proceed Invoice</button>
+                        </div>
+                        <div class="row clearfix mt-3" id="step2">
+                        <span class="me-auto mb-3"><button class="btn btn-info text-white">STEP 2-Customer PO Rate Details</button></span>
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped table-responsive">
+                                        <thead>
+                                        <tr>
+                                            <th><b>PART NUMBER</b></th>
+                                            <th><b>HSN CODE</b></th>
+                                            <th><b>RATE</b></th>
+                                            <th><b>PACKING CHARGES(%)</b></th>
+                                            <th><b>CGST(%)</b></th>
+                                            <th><b>SGST(%)</b></th>
+                                            <th><b>IGST(%)</b></th>
+                                            <th><b>TCS (%)</b></th>
+                                            <th><b>PACKING CHARGES AMOUNT</b></th>
+                                            <th><b>CGST AMOUNT</b></th>
+                                            <th><b>SGST AMOUNT</b></th>
+                                            <th><b>IGST AMOUNT</b></th>
+                                            <th><b>TCS  AMOUNT</b></th>
+                                            <th><b>BASIC  VALUE</b></th>
+                                            <th><b>TOTAL  VALUE</b></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody  id="table_logic1">
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
-                        <div class="row clearfix mt-3">
-                        <div class="col-md-12">
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-striped table-responsive">
-                                <thead>
-                                <tr>
-                                    <th><b>Part No</b></th>
-                                    <th><b>Order</b></th>
-                                    <th><b>Route Card</b></th>
-                                    <th><b>Route Card Available Quantity</b></th>
-                                    <th><b>Invoice Quantity</b></th>
-                                    <th><b>Balance</b></th>
-                                </tr>
-                                </thead>
-                                <tbody  id="table_logic">
-                                </tbody>
-                            </table>
+                        <div class="row clearfix mt-3"  id="step3">
+                            <span class="me-auto mb-3"><button class="btn btn-secondary text-white">STEP 3-Rote Card Details</button></span>
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped table-responsive">
+                                        <thead>
+                                        <tr>
+                                            <th><b>Part No</b></th>
+                                            <th><b>Order</b></th>
+                                            <th><b>Route Card</b></th>
+                                            <th><b>Route Card Available Quantity</b></th>
+                                            <th><b>Invoice Quantity</b></th>
+                                            <th><b>Balance</b></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody  id="table_logic2">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row d-flex justify-content-center">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <button class="btn btn-success text-white mt-4" id="proceed">Proceed Invoice</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 </form>
 @endsection
 @push('scripts')
@@ -286,6 +320,8 @@
         $("#part_id").select2();
         $("#trans_mode").select2();
         $('#proceed').hide();
+        $('#step2').hide();
+        $('#step3').hide();
         $('#invoice_quantity').attr('readonly',true);
         $('#invoice_quantity').addClass('bg-light');
         $('#cus_id').change(function (e) {
@@ -299,7 +335,7 @@
                 success: function (response) {
                     console.log(response);
                     $('#invoice_quantity').attr('readonly',true);
-                    $('#table_logic').html('<tr><td colspan="6" class="text-center">No Record Found</td></tr>');
+                    $('#table_logic2').html('<tr><td colspan="6" class="text-center">No Record Found</td></tr>');
                     $('#proceed').hide();
                     if(response.count > 0){
                     $('#part_id').html(response.part_id);
@@ -328,11 +364,14 @@
                         $('#invoice_quantity'). attr('max',response.t_avl_qty);
                         $('#invoice_quantity').attr('readonly',false);
                         $('#invoice_quantity').removeClass('bg-light');
-                        $('#table_logic').html(response.table);
+                        $('#table_logic1').html(response.table1);
+                        $('#table_logic2').html(response.table2);
                         $('#regular').val(response.regular);
                         $('#alter').val(response.alter);
                         $('#bom').val(response.bom);
                         $('#proceed').hide();
+                        $('#step2').show();
+                        $('#step3').show();
                     }
                 });
             });
@@ -364,6 +403,24 @@
             var regular=$('#regular').val();
             var bom=$('#bom').val();
             var issue_wt=invoice_quantity*bom;
+            var part_rate=$('.part_rate').val();
+            var basic_value=part_rate*invoice_quantity;
+            var cgst=$('.cgst').val();
+            var sgst=$('.sgst').val();
+            var igst=$('.igst').val();
+            var packing_charges=$('.packing_charges').val();
+            var packing_charges_amt=((basic_value)*((packing_charges)*(0.01)));
+            var cgst_amt=(basic_value)*((cgst)*(0.01));
+            var sgst_amt=(basic_value)*((sgst)*(0.01));
+            var igst_amt=(basic_value)*((igst)*(0.01));
+            var total_amt=(basic_value+packing_charges_amt+cgst_amt+sgst_amt+igst_amt);
+            $('.basic_value').val(basic_value.toFixed(2));
+            $('.tcs').val(0);
+            $('.packing_charges_amt').val(packing_charges_amt.toFixed(2));
+            $('.cgst_amt').val(cgst_amt.toFixed(2));
+            $('.sgst_amt').val(sgst_amt.toFixed(2));
+            $('.igst_amt').val(igst_amt.toFixed(2));
+            $('.total_value').val(total_amt.toFixed(2));
             // alert(issue_wt);
             $('#issue_wt').val(issue_wt);
             var diff=invoice_avl_qty-invoice_quantity;

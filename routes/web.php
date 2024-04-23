@@ -117,6 +117,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/supplymentaryinvoice_print-form/id', [InvoiceDetailsController::class,'supplymentaryInvoicePrint'])->name('supplymentaryinvoiceprint');
     Route::get('/supplymentaryinvoice_reprint-form/id', [InvoiceDetailsController::class,'supplymentaryReInvoicePrint'])->name('supplymentaryreinvoiceprint');
     Route::post('supplymentaryinvoicefetch-po', [InvoiceDetailsController::class,'supplymentaryinvoiceItemPo'])->name('supplymentaryinvoiceitempo');
+    Route::get('/traceability-form/id', [InvoiceDetailsController::class,'traceability'])->name('traceability');
+    Route::post('rccheckdata', [InvoiceDetailsController::class,'rcCheckData'])->name('rcinvoice_data');
 
 
 

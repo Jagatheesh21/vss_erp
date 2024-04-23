@@ -117,7 +117,7 @@ class FinalQcInspectionController extends Controller
                         }
 
 
-                         $d11Datas=TransDataD11::where('process_id','=',$request->previous_process_id[$key])->where('product_process_id','=',$request->previous_product_process_id[$key])->first();
+                         $d11Datas=TransDataD11::where('process_id','=',$request->previous_process_id[$key])->where('product_process_id','=',$request->previous_product_process_id[$key])->where('rc_id','=',$request->rc_id[$key])->first();
                          if($request->rc_status[$key]==0){
                              // dd($request->rc_date);
                              $d11Datas->close_date=$current_date;
@@ -203,7 +203,7 @@ class FinalQcInspectionController extends Controller
                         $partRejectionData->prepared_by = auth()->user()->id;
                         $partRejectionData->save();
 
-                        $d11Datas=TransDataD11::where('process_id','=',$request->previous_process_id[$key])->where('product_process_id','=',$request->previous_product_process_id[$key])->first();
+                        $d11Datas=TransDataD11::where('process_id','=',$request->previous_process_id[$key])->where('product_process_id','=',$request->previous_product_process_id[$key])->where('rc_id','=',$request->rc_id[$key])->first();
                         // dd($d11Datas);
                         if($request->rc_status[$key]==0){
                             // dd($request->rc_date);
@@ -289,7 +289,7 @@ class FinalQcInspectionController extends Controller
                             $partRejectionData->prepared_by = auth()->user()->id;
                             $partRejectionData->save();
 
-                            $d11Datas=TransDataD11::where('process_id','=',$request->previous_process_id[$key])->where('product_process_id','=',$request->previous_product_process_id[$key])->first();
+                            $d11Datas=TransDataD11::where('process_id','=',$request->previous_process_id[$key])->where('product_process_id','=',$request->previous_product_process_id[$key])->where('rc_id','=',$request->rc_id[$key])->first();
                             if($request->rc_status[$key]==0){
                                 // dd($request->rc_date);
                                 $d11Datas->close_date=$current_date;
@@ -360,7 +360,7 @@ class FinalQcInspectionController extends Controller
                      }
 
 
-                      $d11Datas=TransDataD11::where('process_id','=',$request->previous_process_id[$key])->where('product_process_id','=',$request->previous_product_process_id[$key])->first();
+                      $d11Datas=TransDataD11::where('process_id','=',$request->previous_process_id[$key])->where('product_process_id','=',$request->previous_product_process_id[$key])->where('rc_id','=',$request->rc_id[$key])->first();
                       if($request->rc_status[$key]==0){
                           // dd($request->rc_date);
                           $d11Datas->close_date=$current_date;
@@ -444,7 +444,7 @@ class FinalQcInspectionController extends Controller
                             $partRejectionData->prepared_by = auth()->user()->id;
                             $partRejectionData->save();
 
-                            $d11Datas=TransDataD11::where('process_id','=',$request->previous_process_id[$key])->where('product_process_id','=',$request->previous_product_process_id[$key])->first();
+                            $d11Datas=TransDataD11::where('process_id','=',$request->previous_process_id[$key])->where('product_process_id','=',$request->previous_product_process_id[$key])->where('rc_id','=',$request->rc_id[$key])->first();
                             if($request->rc_status[$key]==0){
                                 // dd($request->rc_date);
                                 $d11Datas->close_date=$current_date;
@@ -526,7 +526,7 @@ class FinalQcInspectionController extends Controller
                             $partRejectionData->prepared_by = auth()->user()->id;
                             $partRejectionData->save();
 
-                            $d11Datas=TransDataD11::where('process_id','=',$request->previous_process_id[$key])->where('product_process_id','=',$request->previous_product_process_id[$key])->first();
+                            $d11Datas=TransDataD11::where('process_id','=',$request->previous_process_id[$key])->where('product_process_id','=',$request->previous_product_process_id[$key])->where('rc_id','=',$request->rc_id[$key])->first();
                             if($request->rc_status[$key]==0){
                                 // dd($request->rc_date);
                                 $d11Datas->close_date=$current_date;
