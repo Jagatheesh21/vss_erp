@@ -28,6 +28,7 @@ return new class extends Migration
             $table->text('remarks4')->nullable();
             $table->date('po_close_date')->nullable();
             $table->integer('correction_status')->default(0);
+            $table->integer('print_status')->default(0);
             $table->integer('status')->default(1);
             $table->integer('prepared_by');
             $table->integer('updated_by')->nullable();

@@ -45,4 +45,12 @@ class POProductDetail extends Model
        return $this->belongsTo(RawMaterial::class,'supplier_product_id');
    }
 
+   public function uom_datas(){
+        return $this->belongsTo(ModeOfUnit::class,'uom_id');
+    }
+
+    public function currency_datas(){
+        return $this->belongsTo(Currency::class,'currency_id');
+    }
+
 }

@@ -34,6 +34,7 @@ class DatabaseSeeder extends Seeder
             CustomerPoMasterSeeder::class,
             CustomerPoRateReviseSeeder::class,
             CustomerProductMasterSeeder::class,
+            StageQrCodeLockSeeder::class,
             BomMasterSeeder::class
         ]);
     }

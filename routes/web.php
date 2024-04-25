@@ -29,6 +29,8 @@ use App\Http\Controllers\DcPrintController;
 use App\Http\Controllers\InvoiceDetailsController;
 use App\Http\Controllers\InvoiceCorrectionMasterController;
 use App\Http\Controllers\InvoiceCorrectionDetailController;
+use App\Http\Controllers\StageQrCodeLockController;
+use App\Http\Controllers\UserController;
 // invoice updated
 
 /*
@@ -119,7 +121,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('supplymentaryinvoicefetch-po', [InvoiceDetailsController::class,'supplymentaryinvoiceItemPo'])->name('supplymentaryinvoiceitempo');
     Route::get('/traceability-form/id', [InvoiceDetailsController::class,'traceability'])->name('traceability');
     Route::post('rccheckdata', [InvoiceDetailsController::class,'rcCheckData'])->name('rcinvoice_data');
-
+    Route::get('/user-management/id', [UserController::class,'userIndex'])->name('userindex');
+    Route::get('/user-management/create', [UserController::class,'userCreate'])->name('usercreate');
+    Route::post('/user-management/store', [UserController::class,'userStore'])->name('userstore');
+    Route::get('user-management/{id}/edit', [UserController::class,'userEdit'])->name('useredit');
+    Route::get('department/export/excel', [DepartmentController::class, 'export_excel'])->name('department.export_excel');
 
 
 
@@ -152,6 +158,8 @@ Route::middleware(['auth'])->group(function () {
         'invoicedetails'=>InvoiceDetailsController::class,
         'invoicecorrectionmaster'=>InvoiceCorrectionMasterController::class,
         'invoicecorrectiondetail'=>InvoiceCorrectionDetailController::class,
+        'stageqrcodelock'=>StageQrCodeLockController::class,
+
     ]);
 });
 

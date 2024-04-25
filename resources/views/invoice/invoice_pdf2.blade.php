@@ -308,7 +308,7 @@
                 <div class="container">
                     <div class="col-11 mx-auto">
                         <div class="table-responsive">
-                            <table class="table table-bordered border-dark" style="min-height:400px">
+                            <table class="table table-bordered border-dark" style="min-height:400px;max-height:400px;">
                                 <thead>
                                     <tr style="font-family: arial;font-size:11px;text-align:center;color:black;font-weight:10px;vertical-align: top;">
                                         <td><b>S.No</b></td>

@@ -3,8 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Department;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ExportDepartment;
 use App\Http\Requests\StoreDepartmentRequest;
 use App\Http\Requests\UpdateDepartmentRequest;
+use Illuminate\Http\RedirectResponse;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
 use DB;
 use Auth;
 use Illuminate\Http\Request;
@@ -14,13 +19,21 @@ use App\Jobs\SendNotificationJob;
 
 class DepartmentController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('permission:create-department|edit-department|delete-department', ['only' => ['index','show']]);
+        $this->middleware('permission:create-department', ['only' => ['create','store']]);
+        $this->middleware('permission:edit-department', ['only' => ['edit','update']]);
+        $this->middleware('permission:delete-department', ['only' => ['destroy']]);
+    }
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
         $user = Auth::user();
-        dispatch(new SendNotificationJob($user));
+        // dispatch(new SendNotificationJob($user));
         if ($request->ajax()) {
             $data = Department::latest()->get();
             return Datatables::of($data)
@@ -31,17 +44,17 @@ class DepartmentController extends Controller
                         return $data->status=1?'Active':'Inactive';
                     })
                     ->addColumn('action', function($row){
-   
+
                            $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Edit" class="edit btn btn-primary btn-sm text-white editDepartment">Edit</a>';
-   
+
                            $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Delete" class="btn btn-danger btn-sm text-white deleteDepartment">Delete</a>';
-    
+
                             return $btn;
                     })
                     ->rawColumns(['action'])
                     ->make(true);
         }
-        
+
         return view('department.index');
     }
 
@@ -71,6 +84,10 @@ class DepartmentController extends Controller
             return back()->withErrors($th->getMessage());
         }
 
+    }
+
+    public function export_excel(Request $request){
+        return Excel::download(new ExportDepartment, 'departments.xlsx');
     }
 
     /**
@@ -119,7 +136,7 @@ class DepartmentController extends Controller
         //
     }
     public function getDepartments(Request $request)
-    {        
+    {
         $query = Department::whereNotNull('id');
         $totalFilteredRecord = $totalDataRecord = $draw_val = "";
         $start = $request->input('start') + 1;
@@ -134,7 +151,7 @@ class DepartmentController extends Controller
         $search_text = $request->input('search.value');
 
         $filteredUserQuery = $query->select('id','name','status');
-        
+
         if (!empty($search_text)) {
             $filteredUserQuery = $filteredUserQuery->where(function ($query) use ($search_text) {
                 $query->where('name', 'LIKE', "%{$search_text}%");

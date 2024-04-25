@@ -6,6 +6,10 @@
         <div class="card">
             <div class="card-header d-flex" style="justify-content:space-between"><span> Department List </span>
             <a class="btn btn-sm btn-primary" href="{{route('department.create')}}">Add Department</a>
+            <a class="btn btn-warning"
+                       href="{{ route('department.export_excel') }}">
+                              Export Department Data
+                      </a>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -18,7 +22,7 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        
+
                     </table>
                 </div>
             </div>

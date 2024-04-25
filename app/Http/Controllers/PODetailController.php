@@ -15,7 +15,12 @@ use App\Models\ItemProcesmaster;
 use App\Http\Requests\StorePODetailRequest;
 use App\Http\Requests\UpdatePODetailRequest;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Number;
 use Illuminate\Support\Facades\DB;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Http\Response;
+use Spatie\Browsershot\Browsershot;
+use Carbon\Carbon;
 
 class PODetailController extends Controller
 {
@@ -165,7 +170,28 @@ class PODetailController extends Controller
 
     public function poprint(Request $request){
         $id=$request->id;
-        dd($id);
+        // dd($id);
+        $po_datas=PODetail::with(['supplier','rcmaster'])->find($id);
+        // dd($po_datas);
+
+        $po_product_datas=POProductDetail::with(['supplier_products','uom_datas'])->where('po_id','=',$id)->get();
+        // dd($po_product_datas);
+        $total_basic_value=POProductDetail::where('po_id','=',$id)->sum('basic_value');
+        $total_packing_charge_amt=POProductDetail::where('po_id','=',$id)->sum('packing_charge_amt');
+        $total_cgstamt=POProductDetail::where('po_id','=',$id)->sum('cgstamt');
+        $total_sgstamt=POProductDetail::where('po_id','=',$id)->sum('sgstamt');
+        $total_igstamt=POProductDetail::where('po_id','=',$id)->sum('igstamt');
+        $tax_amount=round((($total_packing_charge_amt)+($total_cgstamt)+($total_sgstamt)+($total_igstamt)),2);
+        $po_total=round(($total_basic_value+$tax_amount),2);
+        // dd($total_basic_value);
+        $qrCodes=QrCode::size(75)->style('round')->generate($id);
+        $html = view('po.po_print',compact('po_datas','total_basic_value','po_product_datas','qrCodes','total_packing_charge_amt','total_cgstamt','total_sgstamt','total_igstamt','tax_amount','po_total'))->render();
+        $pdf=Browsershot::html($html)->setIncludePath(config('services.browsershot.include_path'))->format('A4')->pdf();
+        return new Response($pdf,200,[
+            'Content-Type'=>'application/pdf',
+            'Content-Disposition'=>'inline;filename="po.pdf"'
+        ]);
+
     }
 
     public function pocorrection(Request $request){
@@ -181,6 +207,7 @@ class PODetailController extends Controller
      */
     public function store(StorePODetailRequest $request)
     {
+        // dd($request->all());
         DB::beginTransaction();
         try {
             $process=ItemProcesmaster::where('operation','=','Purchase Order')->where('status','=',1)->first();
@@ -221,7 +248,32 @@ class PODetailController extends Controller
                 $po_product_datas->supplier_product_id =$request->supplier_product_id[$key];
                 $po_product_datas->duedate =$request->duedate[$key];
                 $po_product_datas->qty =$request->qty[$key];
-                $po_product_datas->rate =$request->rate[$key];
+                $part_rate=round(($request->products_rate[$key]),2);
+                $sup_cgst=(($request->cgst*0.01));
+                $sup_sgst=(($request->sgst*0.01));
+                $sup_igst=(($request->igst*0.01));
+                $sup_packing_charge=(($request->packing_charges*0.01));
+                $basic_value=round((($part_rate)*($request->qty[$key])),2);
+                $totalcgst_amt=round((($basic_value)*($sup_cgst)),2);
+                $totalsgst_amt=round((($basic_value)*($sup_sgst)),2);
+                $totaligst_amt=round((($basic_value)*($sup_igst)),2);
+                $totalpacking_charge=round((($basic_value)*($sup_packing_charge)),2);
+                $pototal=(($basic_value)+($totalcgst_amt)+($totalsgst_amt)+($totaligst_amt)+($totalpacking_charge));
+                $po_product_datas->uom_id=$request->uom_id[$key];
+                $po_product_datas->rate=$part_rate;
+                $po_product_datas->currency_id=$request->currency_id;
+                $po_product_datas->packing_charge=$request->packing_charges;
+                $po_product_datas->cgst=$request->cgst;
+                $po_product_datas->sgst=$request->sgst;
+                $po_product_datas->igst=$request->igst;
+                // $po_product_datas->tcs=$customer_product_uom;
+                $po_product_datas->basic_value=$basic_value;
+                $po_product_datas->packing_charge_amt=$totalpacking_charge;
+                $po_product_datas->cgstamt=$totalcgst_amt;
+                $po_product_datas->sgstamt=$totalsgst_amt;
+                $po_product_datas->igstamt=$totaligst_amt;
+                // $po_product_datas->tcsamt=$customer_product_uom;
+                $po_product_datas->pototal=$pototal;
                 $po_product_datas->prepared_by = auth()->user()->id;
                 $po_product_datas->save();
             }

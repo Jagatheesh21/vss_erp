@@ -9,6 +9,11 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
+use Auth;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -124,5 +129,56 @@ class UserController extends Controller
         $user->delete();
         return redirect()->route('users.index')
                 ->withSuccess('User is deleted successfully.');
+    }
+
+    public function userIndex(){
+        $userDatas=DB::table('users as a')
+        ->join('model_has_roles AS b', 'a.id', '=', 'b.model_id')
+        ->join('roles AS c', 'c.id', '=', 'b.role_id')
+        ->select('c.name as role','b.role_id','a.id as user_id','a.name','a.email','a.username','a.password')
+        ->orderBy('a.id', 'DESC')
+        ->get();
+        // dd($userDatas);
+        return view('users.index',compact('userDatas'));
+    }
+
+    public function userCreate(){
+
+        $roles=Role::all();
+        $userDatas=User::orderBy('id','DESC')->first();
+        $old_username=$userDatas->username;
+        $new_username=$old_username+1;
+        return view('users.create',compact('roles','new_username'));
+    }
+
+    public function userStore(Request $request){
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:250',
+            'email' => 'required|string|email:rfc,dns|max:250|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+            'roles' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return redirect()->route('usercreate')
+                        ->withErrors($validator)
+                        ->withInput();
+        }else {
+            // dd($request->all());
+
+            $input = $request->all();
+            $input['password'] = Hash::make($request->password);
+
+            $user = User::create($input);
+            $user->assignRole($request->roles);
+
+            return redirect()->route('userindex')
+                    ->withSuccess('New user is added successfully.');
+        }
+
+
+    }
+
+    public function userEdit($id){
+        dd($id);
     }
 }

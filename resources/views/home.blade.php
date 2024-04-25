@@ -51,6 +51,7 @@
                         <li class="list-group-item"><a href="{{route('invoicecorrectionmaster.index')}}">Invoice Correction Approval</a></li>
                         <li class="list-group-item"><a href="{{route('invoicecorrectionform')}}">Invoice Correction</a></li>
                         <li class="list-group-item"><a href="{{route('supplymentaryinvoice')}}">Supplymentary Invoice</a></li>
+                        <li class="list-group-item"><a href="{{route('stageqrcodelock.index')}}">QR Code Lock</a></li>
                         <li class="list-group-item">A third item</li>
                     </ul>
                 </div>
@@ -64,6 +65,18 @@
                         <li class="list-group-item"><a href="{{route('grn_qc.index')}}">Incoming QA Clearance</a></li>
                         <li class="list-group-item"><a href="{{route('fqc_approval.index')}}">Final QA Clearance</a></li>
                         <li class="list-group-item"><a href="{{route('ptsfqclist')}}">PTS Final QA Clearance</a></li>
+                        <li class="list-group-item">A second item</li>
+                        <li class="list-group-item">A third item</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card border-secondary mb-3">
+                <div class="card-header">User</div>
+                <div class="card-body text-secondary">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><a href="{{route('userindex')}}">User Management</a></li>
                         <li class="list-group-item">A second item</li>
                         <li class="list-group-item">A third item</li>
                     </ul>
