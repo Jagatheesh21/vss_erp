@@ -1,7 +1,21 @@
 @extends('layouts.app')
 @section('content')
 <link  rel="stylesheet" href="{{asset('node_modules/boxicons/css/boxicons.min.css')}}" />
-
+@if(Session::has('success'))
+<div class="alert alert-success mt-4">
+{{ Session::get('success')}}
+</div>
+@endif
+@if(Session::has('error'))
+<div class="alert alert-danger mt-4">
+{{ Session::get('error')}}
+</div>
+@endif
+@if (session()->has('message'))
+<div class="alert alert-danger mt-4">
+{{ session()->get('message')}}
+</div>
+@endif
 <div class="row d-flex justify-content-center">
     <div class="col-12">
         <div class="card">
@@ -58,7 +72,9 @@
                                         @else
                                         <span class="btn btn-sm btn-danger text-white">Inactive</span>
                                     @endif</td>
-                                    <td><a href="{{route('grn_inward.edit',$inward_data->id)}}" class="btn btn-sm btn-info"><i class='bx bxs-edit' style='color:white;'>&nbsp;</a></td>
+                                    <td class="d-flex"><a href="{{route('grn_inward.edit',$inward_data->id)}}" class="btn btn-sm btn-info mx-2"><i class='bx bxs-edit' style='color:white;'>&nbsp;</i></a>
+                                        <a href="{{route('grn_inward.show',$inward_data->id)}}" class="btn btn-sm btn-success"><i class='bx bx-printer' style='color:white;'>&nbsp;</i></a>
+                                    </td>
                                 </tr>
                                 @empty
                                 <tr>

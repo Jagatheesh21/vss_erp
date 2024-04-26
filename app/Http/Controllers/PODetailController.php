@@ -305,10 +305,13 @@ class PODetailController extends Controller
         $suppliers = Supplier::where('status','=','1')->get();
         $podatas=PODetail::with(['supplier','rcmaster'])->find($id);
         $poProductDatas=POProductDetail::with(['suppliers','product_names'])->where('po_id','=',$id)->get();
+        $total_basic_value=POProductDetail::with(['suppliers','product_names'])->where('po_id','=',$id)->sum('basic_value');
         // dd($podatas);
         $currency_datas=Currency::where('status','=','1')->get();
+        $supplier_products = SupplierProduct::with(['category','product','material','uom'])->where('supplier_id',$id)->where('status','=','1')->groupBy('raw_material_category_id')->get();
+        // $supplier_rmdatas = SupplierProduct::with(['category','product','material','uom'])->where('supplier_id',$id)->where('raw_material_category_id',$raw_material_category_id)->where('status','=','1')->get();
 
-        return view('po.edit',compact('podatas','poProductDatas','suppliers','currency_datas'));
+        return view('po.edit',compact('podatas','poProductDatas','suppliers','currency_datas','supplier_products','total_basic_value'));
     }
 
     /**
@@ -317,6 +320,80 @@ class PODetailController extends Controller
     public function update(UpdatePODetailRequest $request, PODetail $pODetail)
     {
         //
+        // dd($request->all());
+        DB::beginTransaction();
+        try {
+            $po_datas = PODetail::find($request->id);
+            // dd($po_datas);
+            $po_datas->podate = $request->podate;
+            $po_datas->purchasetype = $request->purchasetype;
+            $po_datas->payment_terms = $request->payment_terms;
+            $po_datas->supplier_id = $request->supplier_id;
+            $po_datas->indentno = $request->indentno;
+            $po_datas->indentdate = $request->indentdate;
+            $po_datas->quotno = $request->quotno;
+            $po_datas->quotdt = $request->quotdt;
+            $po_datas->remarks1 = $request->remarks1;
+            $po_datas->remarks2 = $request->remarks2;
+            $po_datas->remarks3 = $request->remarks3;
+            $po_datas->remarks4 = $request->remarks4;
+            $po_datas->correction_status=0;
+            $po_datas->updated_by = auth()->user()->id;
+            $po_datas->updated_at = Carbon::now();
+            $po_datas->update();
+
+            $old_po_product_dats=POProductDetail::where('po_id','=',$request->id)->get()->each->delete();
+
+            $po_id=$po_datas->id;
+            $raw_material_category_datas=$request->raw_material_category_id;
+            foreach ($raw_material_category_datas as $key => $raw_material_category_data) {
+                $po_product_datas = new POProductDetail;
+                $po_product_datas->po_id =$po_id;
+                $po_product_datas->supplier_id =$request->supplier_id;
+                $po_product_datas->supplier_product_id =$request->supplier_product_id[$key];
+                $po_product_datas->duedate =$request->duedate[$key];
+                $po_product_datas->qty =$request->qty[$key];
+                $part_rate=round(($request->products_rate[$key]),2);
+                $sup_cgst=(($request->cgst*0.01));
+                $sup_sgst=(($request->sgst*0.01));
+                $sup_igst=(($request->igst*0.01));
+                $sup_packing_charge=(($request->packing_charges*0.01));
+                $basic_value=round((($part_rate)*($request->qty[$key])),2);
+                $totalcgst_amt=round((($basic_value)*($sup_cgst)),2);
+                $totalsgst_amt=round((($basic_value)*($sup_sgst)),2);
+                $totaligst_amt=round((($basic_value)*($sup_igst)),2);
+                $totalpacking_charge=round((($basic_value)*($sup_packing_charge)),2);
+                $pototal=(($basic_value)+($totalcgst_amt)+($totalsgst_amt)+($totaligst_amt)+($totalpacking_charge));
+                $po_product_datas->uom_id=$request->uom_id[$key];
+                $po_product_datas->rate=$part_rate;
+                $po_product_datas->currency_id=$request->currency_id;
+                $po_product_datas->packing_charge=$request->packing_charges;
+                $po_product_datas->cgst=$request->cgst;
+                $po_product_datas->sgst=$request->sgst;
+                $po_product_datas->igst=$request->igst;
+                // $po_product_datas->tcs=$customer_product_uom;
+                $po_product_datas->basic_value=$basic_value;
+                $po_product_datas->packing_charge_amt=$totalpacking_charge;
+                $po_product_datas->cgstamt=$totalcgst_amt;
+                $po_product_datas->sgstamt=$totalsgst_amt;
+                $po_product_datas->igstamt=$totaligst_amt;
+                // $po_product_datas->tcsamt=$customer_product_uom;
+                $po_product_datas->pototal=$pototal;
+                $po_product_datas->prepared_by = auth()->user()->id;
+                $po_product_datas->save();
+            }
+            DB::commit();
+            // return redirect()->back()->withSuccess('Purchase Order Corrected Successfully!');
+            return response()->json(['success' => 'Purchase Order Corrected Successfully!']);
+
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollback();
+            //dd($th->getMessage());
+            return response()->json(['errors' => $th->getMessage()]);
+            // return redirect()->back()->withErrors($th->getMessage());
+        }
+
     }
 
     /**

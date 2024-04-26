@@ -6,7 +6,7 @@
 
 <form action="{{route('po.update',$podatas->id)}}" id="po_formdata" method="POST">
     @csrf
-    @method('POST')
+    @method('PUT')
 
 <div class="row d-flex justify-content-center">
     <div id="data"></div>
@@ -323,17 +323,27 @@
                                 </tr>
                                 </thead>
                                 <tbody>
+                                    @foreach ($poProductDatas as $poProductData)
                                 <tr>
-                                    <td><select name="raw_material_category_id[]"  class="form-control raw_material_category_id"></select></td>
-                                    <td><select name="supplier_product_id[]" id="" class="form-control supplier_product_id"></select></td>
-                                    <td><input type="text" class="form-control products_hsnc"  name="products_hsnc[]"></td>
-                                    <td><input type="date" class="form-control duedate" id="duedate" name="duedate[]"></td>
-                                    <td><select name="uom_id[]"  class="form-control bg-white uom_id"></td>
-                                    <td><input type="number"  class="form-control products_rate" name="products_rate[]" readonly></td>
-                                    <td><input type="text"  class="form-control qty" name="qty[]" value="1"></td>
-                                    <td><input type="number" class="form-control rate" name="rate[]" readonly></td>
-                                    <td>&nbsp;</td>
+                                    <td><select name="raw_material_category_id[]"  class="form-control raw_material_category_id">
+                                        @foreach ($supplier_products as $supplier_product)
+                                            <option value="{{$poProductData->supplier_products->category->id}}" @if($supplier_product->raw_material_category_id==$poProductData->supplier_products->category->id) selected @endif>{{$poProductData->supplier_products->category->name}}</option>
+                                        @endforeach
+                                    </select></td>
+                                    <td><select name="supplier_product_id[]" id="" class="form-control supplier_product_id">
+                                        <option value="{{$poProductData->supplier_products->material->id}}"  selected >{{$poProductData->supplier_products->material->name}}</option>
+                                        </select></td>
+                                    <td><input type="text" class="form-control products_hsnc"  name="products_hsnc[]" value="{{$poProductData->supplier_products->products_hsnc}}"></td>
+                                    <td><input type="date" class="form-control duedate" id="duedate" name="duedate[]" value="{{$poProductData->duedate}}"></td>
+                                    <td><select name="uom_id[]"  class="form-control bg-white uom_id">
+                                        <option value="{{$poProductData->supplier_products->uom->id}}"  selected >{{$poProductData->supplier_products->uom->name}}</option>
+                                    </select></td>
+                                    <td><input type="number"  class="form-control products_rate" name="products_rate[]" readonly value="{{$poProductData->rate}}"></td>
+                                    <td><input type="text"  class="form-control qty" name="qty[]" value="{{$poProductData->qty}}"></td>
+                                    <td><input type="number" class="form-control rate" name="rate[]" value="{{$poProductData->basic_value}}" readonly></td>
+                                    <td><button class="btn btn-sm btn-danger text-white remove_item">Remove</button></td>
                                 </tr>
+                                @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -348,7 +358,7 @@
                     <hr>
                     <div class="row mb-3 d-flex justify-content-end clearfix">
                         <div class="col-2"><h6>Grand Total:</h6></div>
-                        <div class="col-2"><input type="text" name="grand_total" class="form-control" id="grand_total" readonly></div>
+                        <div class="col-2"><input type="text" name="grand_total" class="form-control" id="grand_total" value="{{$total_basic_value}}" readonly></div>
                         <!-- <div class="col-md-12">
                             <div class="col-md-10">Total</div>
                             <div class="col-md-2"></div>
@@ -482,6 +492,21 @@ $(document).ready(function(){
             }
         });
 	});
+    $(".remove_item").click(function(){
+        $(this).closest('tr').remove();
+        calculate();
+        // swalWithBootstrapButtons.fire({
+        // title: 'Are you sure?',
+        // text: "You want to remove this item!",
+        // icon: 'warning',
+        // showCancelButton: true,
+        // confirmButtonText: 'Yes, Remove it!',
+        // cancelButtonText: 'No, cancel!',
+        // reverseButtons: true
+        // }).then((result) => {
+        // if (result.isConfirmed) {
+        // }
+        });
     $(".supplier_product_id").change(function(e){
         e.preventDefault();
         var supplier_id=$("#supplier_id").val();
@@ -583,7 +608,7 @@ $(document).ready(function(){
                 contentType:false,
                 success: function(data) {
                     // Clear previous errors
-                    toastr.success("Success", "Purchase order created successfully!");
+                    toastr.success("Success", "Purchase order Updated successfully!");
                     location.reload(true);
                 // console.log(data.responseJSON);
                 // if (data.code==404||data.code==500 || data.code==422) {

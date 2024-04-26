@@ -23,8 +23,12 @@ use App\Models\RouteMaster;
 use App\Http\Requests\StoreGRNInwardRegisterRequest;
 use App\Http\Requests\UpdateGRNInwardRegisterRequest;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Number;
 use Illuminate\Support\Facades\DB;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Http\Response;
+use Spatie\Browsershot\Browsershot;
+use Carbon\Carbon;
 
 class GRNInwardRegisterController extends Controller
 {
@@ -181,6 +185,11 @@ class GRNInwardRegisterController extends Controller
                 $process_id=$process->id;
 
                 $poDatas=PODetail::find($request->po_id);
+                $poDatas->correction_status=2;
+                $poDatas->updated_by = auth()->user()->id;
+                $poDatas->updated_at = Carbon::now();
+                $poDatas->update();
+
                 $pre_rc_id=$poDatas->ponumber;
 
                 $rcMaster=new RouteMaster;
@@ -547,9 +556,21 @@ class GRNInwardRegisterController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(GRNInwardRegister $gRNInwardRegister)
+    public function show($id)
     {
         //
+        // dd($id);
+        $count=GrnQuality::with(['grn_data','heat_no_data','rack_data'])->where('grnnumber_id','=',$id)->where('status','!=',0)->get()->count();
+        if ($count > 0) {
+            $grn_qc_datas=GrnQuality::with(['grn_data','heat_no_data','rack_data'])->where('grnnumber_id','=',$id)->where('status','!=',0)->get();
+            dd($grn_qc_datas);
+
+        } else {
+            return back()->withMessage('Sorry No Inspected RM Not Availble!');
+
+        }
+
+
     }
 
     /**

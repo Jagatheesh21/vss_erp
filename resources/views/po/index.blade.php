@@ -49,14 +49,15 @@
 
                                     <td>
                                         @if ($po_data->correction_status==1)
-                                        <a href="{{route('po.edit',$po_data->id)}}" class="btn btn-sm btn-primary  me-md-2 text-white">Correction</a>
-                                        @endif
-                                        @if ($po_data->correction_status!=1)
-                                        <a href="{{route('po.correction',$po_data->id)}}"  data-toggle="tooltip"  data-id="{{$po_data->id}}" data-original-title="Edit" class="edit btn btn-info mx-2 btn-sm text-white">Correction Request</a>
+                                            <a href="{{route('po.edit',$po_data->id)}}" class="btn btn-sm btn-primary  me-md-2 text-white">Correction</a>
+                                        @elseif ($po_data->correction_status==0)
+                                            <a href="{{route('po.correction',$po_data->id)}}"  data-toggle="tooltip"  data-id="{{$po_data->id}}" data-original-title="Edit" class="edit btn btn-info mx-2 btn-sm text-white">Correction Request</a>
+                                        @else
+
                                         @endif
 
                                         {{-- <a href="#" class="edit btn btn-info mx-2 btn-sm text-white">Correction Request</a> --}}
-                                        <a href="{{route('po.print',$po_data->id)}}"  data-toggle="tooltip"  data-id="{{$po_data->id}}" data-original-title="Edit" class="edit btn btn-info mx-2 btn-sm text-white">Print</a>
+                                        <a href="{{route('po.print',$po_data->id)}}"  data-toggle="tooltip"  data-id="{{$po_data->id}}" target="_blank" data-original-title="Edit" class="edit btn btn-info mx-2 btn-sm text-white">Print</a>
                                     </td>
                                 </tr>
                                 @empty
