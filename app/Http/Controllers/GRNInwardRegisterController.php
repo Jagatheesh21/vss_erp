@@ -563,7 +563,17 @@ class GRNInwardRegisterController extends Controller
         $count=GrnQuality::with(['grn_data','heat_no_data','rack_data'])->where('grnnumber_id','=',$id)->where('status','!=',0)->get()->count();
         if ($count > 0) {
             $grn_qc_datas=GrnQuality::with(['grn_data','heat_no_data','rack_data'])->where('grnnumber_id','=',$id)->where('status','!=',0)->get();
-            dd($grn_qc_datas);
+            // $qrCodes=QrCode::size(95)->style('round')->generate($id);
+
+            // dd($grn_qc_datas);
+            // return view('grn_inward.grn_print',compact('grn_qc_datas'));
+            $html = view('grn_inward.grn_print',compact('grn_qc_datas'))->render();
+            $width=101.6;$height=101.6;
+            $pdf=Browsershot::html($html)->setIncludePath(config('services.browsershot.include_path'))->paperSize($width, $height)->pdf();
+            return new Response($pdf,200,[
+                'Content-Type'=>'application/pdf',
+                'Content-Disposition'=>'inline;filename="invoice.pdf"'
+            ]);
 
         } else {
             return back()->withMessage('Sorry No Inspected RM Not Availble!');
