@@ -48,10 +48,9 @@
             min-height: 3.3955in !important;
             min-width: 3.7in !important;
         }   th, td {
-            text-align:justify;
+            text-align:center;
             border:1px solid black;
-            padding:0px
-
+            padding:0px;
         }
     </style>
     @stack('styles')
@@ -61,9 +60,9 @@
     <div class="grnprint">
         <div class="container-fluid">
             <div class="col-12">
-                <div class="row mt-1">
+                <div class="row" style="margin-top:6px!important">
                     <div class="col-12">
-                        <h6 style="font-size:10px!important;font-color:black;text-align:center;"><b>VENKATESWARA STEELS & SPRING (I) PVT LTD(UNIT-I)</b></h6>
+                        <h6 style="font-size:10px!important;font-color:black;text-align:center;"><b>VENKATESWARA STEELS & SPRING (I) PVT LTD (UNIT-I)</b></h6>
                         <h6 style="font-size:10px!important;font-color:black;text-align:center;" class="mx-auto"><b>GRN APPROVAL</b></h6>
                     </div>
                 </div>
@@ -82,11 +81,11 @@
                                 <tr>
                                     <th style="font-size:10px!important;font-color:black;">WEIGHT</th>
                                     @if ($grn_qc_data->status==1)
-                                    <th style="font-size:10px!important;font-color:black;">{{$grn_qc_data->approved_qty}}</th>
+                                    <th style="font-size:10px!important;font-color:black;">{{$grn_qc_data->approved_qty}} {{$grn_qc_data->grn_data->poproduct->uom_datas->name}}</th>
                                     @elseif ($grn_qc_data->status==3)
-                                    <th style="font-size:10px!important;font-color:black;">{{$grn_qc_data->onhold_qty}}</th>
+                                    <th style="font-size:10px!important;font-color:black;">{{$grn_qc_data->onhold_qty}} {{$grn_qc_data->grn_data->poproduct->uom_datas->name}}</th>
                                     @else
-                                    <th style="font-size:10px!important;font-color:black;">{{$grn_qc_data->rejected_qty}}</th>
+                                    <th style="font-size:10px!important;font-color:black;">{{$grn_qc_data->rejected_qty}} {{$grn_qc_data->grn_data->poproduct->uom_datas->name}}</th>
                                     @endif
                                 </tr>
                                 <tr>
@@ -121,11 +120,17 @@
                                 </tr>
                                 <tr>
                                     <th style="font-size:10px!important;font-color:black;">INSP BY</th>
-                                    <th style="font-size:10px!important;font-color:black;">{{$grn_qc_data->inspected_by}}</th>
+                                    <th style="font-size:10px!important;font-color:black;">{{$grn_qc_data->inspected_user->name}}</th>
                                 </tr>
                                 <tr>
-                                    <th style="font-size:17px!important;font-color:black;margin:auto">G</th>
-                                    <th style="font-size:10px!important;font-color:black;">{{QrCode::size(90)->style('round')->generate($grn_qc_data->id)}}</th>
+                                    @if ($grn_qc_data->status==1)
+                                    <th style="font-size:17px!important;font-color:black;margin:auto;text-align:center;">G</th>
+                                    @elseif ($grn_qc_data->status==3)
+                                    <th style="font-size:17px!important;font-color:black;margin:auto;text-align:center;">S</th>
+                                    @else
+                                    <th style="font-size:17px!important;font-color:black;margin:auto;text-align:center;">R</th>
+                                    @endif
+                                    <th style="font-size:10px!important;font-color:black;margin:auto;text-align:center;">{{QrCode::size(90)->style('round')->generate($grn_qc_data->id)}}</th>
                                 </tr>
                             </table>
                         </div>

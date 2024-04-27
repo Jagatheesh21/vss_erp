@@ -23,4 +23,10 @@ class GrnQuality extends Model
     {
         return $this->belongsTo(Rackmaster::class,'rack_id');
     }
+
+    public function inspected_user()
+    {
+        return $this->belongsTo(User::class,'inspected_by');
+    }
+
 }

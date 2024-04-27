@@ -9,12 +9,14 @@ use App\Models\SupplierProduct;
 use App\Models\RawMaterial;
 use App\Models\Rackmaster;
 use App\Models\ModeOfUnit;
+use App\Models\StageQrCodeLock;
 use App\Models\GRNInwardRegister;
 use App\Models\GrnQuality;
 use App\Models\PODetail;
 use App\Models\POProductDetail;
 use App\Models\ProductProcessMaster;
 use App\Models\HeatNumber;
+use App\Models\BomMaster;
 use App\Models\TransDataD11;
 use App\Models\TransDataD12;
 use App\Models\TransDataD13;
@@ -308,7 +310,17 @@ class GRNInwardRegisterController extends Controller
         ->get();
         // dd($grnDatas);
         // dd($new_rcnumber);
-        return view('rm_issuance.create',compact('grnDatas','new_rcnumber','current_date'));
+        $activity='RM Issuance';
+        $stage='Store';
+        $qrCodes_count=StageQrCodeLock::where('stage','=',$stage)->where('activity','=',$activity)->where('status','=',1)->count();
+        if ($qrCodes_count>0) {
+            # code...
+            // dd('QR Code Entry...');
+            return view('rm_issuance.qr_create',compact('new_rcnumber','current_date'));
+        } else {
+            return view('rm_issuance.create',compact('grnDatas','new_rcnumber','current_date'));
+        }
+
     }
 
     public function grnRmFetchData(Request $request){
@@ -373,6 +385,57 @@ class GRNInwardRegisterController extends Controller
             $part.='<option value="'.$rmData->part_id.'">'.$rmData->part_no.'</option>';
         }
         return response()->json(['rm'=>$rm,'part'=>$part,'heat_no'=>$heat_no,'uom'=>$uom,'fifoGrn'=>$fifoGrnCard,'success'=>$success]);
+    }
+
+    public function grnQcFetchData(Request $request){
+        $grn_qc_id=$request->rm_qc_id;
+        $grn_qc_datas=GrnQuality::with(['grn_data','heat_no_data','rack_data'])->where('id','=',$grn_qc_id)->first();
+        if ($grn_qc_datas->status==1) {
+            $count=1;
+            $grn_no='<option value="'.$grn_qc_datas->grn_data->id.'">'.$grn_qc_datas->grn_data->rcmaster->rc_id.'</option>';
+            $rm_id='<option value="'.$grn_qc_datas->grn_data->poproduct->supplier_products->material->id.'">'.$grn_qc_datas->grn_data->poproduct->supplier_products->material->name.'</option>';
+            $uom='<option value="'.$grn_qc_datas->grn_data->poproduct->uom_datas->id.'">'.$grn_qc_datas->grn_data->poproduct->uom_datas->name.'</option>';
+            $heat_id=$grn_qc_datas->heat_no_data->id;
+            $heat_no='<option value="'.$grn_qc_datas->heat_no_data->heatnumber.'">'.$grn_qc_datas->heat_no_data->heatnumber.'</option>';
+            $coil_no='<option value="'.$grn_qc_datas->heat_no_data->coil_no.'">'.$grn_qc_datas->heat_no_data->coil_no.'</option>';
+            $tc_no=$grn_qc_datas->heat_no_data->tc_no;
+            $lot_no=$grn_qc_datas->heat_no_data->lot_no;
+
+            $fifoCheck=DB::table('g_r_n_inward_registers as a')
+            ->join('p_o_product_details AS b', 'a.p_o_product_id', '=', 'b.id')
+            ->join('supplier_products as c', 'b.supplier_product_id', '=', 'c.id')
+            ->join('raw_materials as d', 'c.raw_material_id', '=', 'd.id')
+            ->join('bom_masters as e', 'e.rm_id', '=', 'd.id')
+            ->join('child_product_masters as f', 'e.child_part_id', '=', 'f.id')
+            ->join('mode_of_units as g', 'c.uom_id', '=', 'g.id')
+            ->join('product_process_masters as l','l.part_id','=','f.id')
+            ->join('route_masters as k','k.id','=','a.grnnumber')
+            ->select('a.grnnumber','d.id as rm_id','d.name as rm_desc','a.id as grn_no','k.rc_id')
+            ->where('a.status','=',0)
+            ->where('l.process_master_id','=',3)
+            ->where('f.item_type','=',1)
+            ->where('d.id','=',$grn_qc_datas->grn_data->poproduct->supplier_products->material->id)
+            ->first();
+            $fifoGrn=$fifoCheck->grn_no;
+            $fifoGrnCard=$fifoCheck->rc_id;
+            if ($fifoGrn==$grn_qc_datas->grn_data->id) {
+                $success = true;
+            }else {
+                $success = false;
+            }
+            $partDatas=BomMaster::with('childpart_master')->where('rm_id','=',$grn_qc_datas->grn_data->poproduct->supplier_products->material->id)->get();
+            $part='<option value="" selected>Select The Part Number</option>';
+            foreach ($partDatas as $key => $partData) {
+                $part.='<option value="'.$partData->childpart_master->id.'">'.$partData->childpart_master->child_part_no.'</option>';
+            }
+            $grnQcDatas=GrnQuality::find($grn_qc_id);
+            $avl_qty=(($grnQcDatas->approved_qty)-($grnQcDatas->issue_qty)-($grnQcDatas->return_qty));
+            return response()->json(['count'=>$count,'grn_no'=>$grn_no,'rm_id'=>$rm_id,'heat_id'=>$heat_id,'heat_no'=>$heat_no,'coil_no'=>$coil_no,'lot_no'=>$lot_no,'tc_no'=>$tc_no,'uom'=>$uom,'fifoGrn'=>$fifoGrnCard,'success'=>$success,'avl_qty'=>$avl_qty,'part'=>$part]);
+        }else{
+            $count=0;
+            return response()->json(['count'=>$count]);
+        }
+
     }
 
     public function grnHeatFetchData(Request $request){
@@ -560,7 +623,7 @@ class GRNInwardRegisterController extends Controller
     {
         //
         // dd($id);
-        $count=GrnQuality::with(['grn_data','heat_no_data','rack_data'])->where('grnnumber_id','=',$id)->where('status','!=',0)->get()->count();
+        $count=GrnQuality::with(['grn_data','heat_no_data','rack_data','inspected_user'])->where('grnnumber_id','=',$id)->where('status','!=',0)->get()->count();
         if ($count > 0) {
             $grn_qc_datas=GrnQuality::with(['grn_data','heat_no_data','rack_data'])->where('grnnumber_id','=',$id)->where('status','!=',0)->get();
             // $qrCodes=QrCode::size(95)->style('round')->generate($id);
@@ -582,7 +645,21 @@ class GRNInwardRegisterController extends Controller
 
 
     }
-
+    public function rmIssuancePrint($id)
+    {
+        // dd($id);
+        $d12Datas=TransDataD12::with('partmaster','current_rcmaster','heat_nomaster','grndata','rm_master')->where('rc_id','=',$id)->where('process_id','=',3)->first();
+        // dd($d12Datas);
+        $qrCodes=QrCode::size(95)->style('round')->generate($id);
+        // return view('rm_issuance.routecard_print',compact('d12Datas','qrCodes'));
+        $html = view('rm_issuance.routecard_print',compact('d12Datas','qrCodes'))->render();
+        // $width=101.6;$height=101.6;
+        $pdf=Browsershot::html($html)->setIncludePath(config('services.browsershot.include_path'))->format('A4')->pdf();
+        return new Response($pdf,200,[
+            'Content-Type'=>'application/pdf',
+            'Content-Disposition'=>'inline;filename="invoice.pdf"'
+        ]);
+    }
     /**
      * Show the form for editing the specified resource.
      */

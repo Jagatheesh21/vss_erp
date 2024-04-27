@@ -35,6 +35,7 @@
                                     <th>Test Certificate Number</th>
                                     <th>Issue Qty</th>
                                     <th>Status</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -63,6 +64,14 @@
                                         @else
                                         <span class="btn btn-sm btn-danger text-white">Inactive</span>
                                     @endif</td>
+                                    <td>
+                                        @if ($d12Data->status==1)
+                                        <a href="{{route('rmissuance.show',$d12Data->current_rcmaster->id)}}" class="btn btn-sm btn-success"><i class='bx bx-printer' style='color:white;'>&nbsp;</i></a>
+
+                                        @else
+
+                                        @endif
+                                    </td>
                                 </tr>
                                 @empty
                                 <tr>

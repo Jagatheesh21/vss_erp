@@ -63,12 +63,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/grnsuppliers-fetchdata/id', [PODetailController::class,'grn_supplierfetchdata'])->name('grn_supplierfetchdata');
     Route::get('/grnrm-fetchdata/id', [GRNInwardRegisterController::class,'grn_rmfetchdata'])->name('grn_rmfetchdata');
     Route::get('/grn_iqc-data/{id}', [GrnQualityController::class,'approval'])->name('grn_iqc.approval');
+    Route::get('/rm-printdata/{id}', [GRNInwardRegisterController::class,'rmIssuancePrint'])->name('rmissuance.show');
     Route::get('rm_issuance', [GRNInwardRegisterController::class,'rmIssuanceData'])->name('rmissuance.index');
     Route::get('rm_issuance-create', [GRNInwardRegisterController::class,'rmIssuance'])->name('rmissuance.create');
     Route::post('/rm_issuance-data', [GRNInwardRegisterController::class,'storeData'])->name('rmissuance.storedata');
     Route::post('/rm_issuance-fetchdata', [GRNInwardRegisterController::class,'grnRmFetchData'])->name('grnrmfetchdata');
     Route::post('/rm_heatno-fetchdata', [GRNInwardRegisterController::class,'grnHeatFetchData'])->name('grnheatfetchdata');
     Route::post('/rm_coilno-fetchdata', [GRNInwardRegisterController::class,'grnCoilFetchData'])->name('grncoilfetchdata');
+    Route::post('/grnqc-fetchdata', [GRNInwardRegisterController::class,'grnQcFetchData'])->name('grnqcfetchdata');
     Route::get('sf_receive/list', [StagewiseReceiveController::class,'sfReceiveList'])->name('sfreceive');
     Route::get('sf_receive/create', [StagewiseReceiveController::class,'sfReceiveCreateForm'])->name('sfreceive.create');
     Route::post('sf-receive', [StagewiseReceiveController::class,'sfReceiveEntry'])->name('sfreceive.store');
