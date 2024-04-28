@@ -66,7 +66,7 @@
                                     @endif</td>
                                     <td>
                                         @if ($d12Data->status==1)
-                                        <a href="{{route('rmissuance.show',$d12Data->current_rcmaster->id)}}" class="btn btn-sm btn-success"><i class='bx bx-printer' style='color:white;'>&nbsp;</i></a>
+                                        <a href="{{route('rmissuance.show',$d12Data->current_rcmaster->id)}}" class="btn btn-sm btn-success" target="_blank"><i class='bx bx-printer' style='color:white;'>&nbsp;</i></a>
 
                                         @else
 

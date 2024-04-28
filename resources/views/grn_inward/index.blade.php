@@ -73,7 +73,7 @@
                                         <span class="btn btn-sm btn-danger text-white">Inactive</span>
                                     @endif</td>
                                     <td class="d-flex"><a href="{{route('grn_inward.edit',$inward_data->id)}}" class="btn btn-sm btn-info mx-2"><i class='bx bxs-edit' style='color:white;'>&nbsp;</i></a>
-                                        <a href="{{route('grn_inward.show',$inward_data->id)}}" class="btn btn-sm btn-success"><i class='bx bx-printer' style='color:white;'>&nbsp;</i></a>
+                                        <a href="{{route('grn_inward.show',$inward_data->id)}}" class="btn btn-sm btn-success" target="_blank"><i class='bx bx-printer' style='color:white;'>&nbsp;</i></a>
                                     </td>
                                 </tr>
                                 @empty

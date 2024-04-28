@@ -22,6 +22,7 @@ use App\Models\BomMaster;
 use App\Models\DcMaster;
 use App\Models\ChildProductMaster;
 use App\Models\FinalQcInspection;
+use App\Models\StageQrCodeLock;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -48,14 +49,17 @@ class StagewiseReceiveController extends Controller
         date_default_timezone_set('Asia/Kolkata');
         $current_date=date('Y-m-d');
         $d11Datas=TransDataD11::where('process_id','=',3)->where('status','=',1)->get();
-        return view('stagewise-receive.sf_create',compact('d11Datas','current_date'));
+        $activity='SF Receive';
+        $stage='Store';
+        $qrCodes_count=StageQrCodeLock::where('stage','=',$stage)->where('activity','=',$activity)->where('status','=',1)->count();
+        return view('stagewise-receive.sf_create',compact('d11Datas','current_date','qrCodes_count'));
     }
 
     public function sfPartFetchEntry(Request $request){
         // $request->all();
         // dd($request->all());
         $rc_no=$request->rc_no;
-        $d11Datas=TransDataD11::where('process_id','=',3)->where('rc_id','=',$rc_no)->where('status','=',1)->first();
+        $d11Datas=TransDataD11::with('rcmaster')->where('process_id','=',3)->where('rc_id','=',$rc_no)->where('status','=',1)->first();
         // dd($d11Datas);
         $part_id=$d11Datas->part_id;
         $current_process_id=$d11Datas->process_id;
@@ -64,6 +68,7 @@ class StagewiseReceiveController extends Controller
         $receive_qty=$d11Datas->receive_qty;
         $reject_qty=$d11Datas->reject_qty;
         $rework_qty=$d11Datas->rework_qty;
+        $rc_data='<option value="'.$d11Datas->rcmaster->id.'">'.$d11Datas->rcmaster->rc_id.'</option>';
 
         $bomDatas=BomMaster::where('child_part_id','=',$part_id)->sum('input_usage');
         $process_issue_qty=floor(($previous_process_issue_qty/$bomDatas));
@@ -126,11 +131,13 @@ class StagewiseReceiveController extends Controller
 
         // dd($success);
 
-        return response()->json(['success'=>$success,'fifoRcNo'=>$fifoRcNo,'avl_qty'=>$avl_qty,'part'=>$part,'bom'=>$bom,'avl_kg'=>$avl_kg,'message'=>$message,'process_id'=>$process_id,'product_process_id'=>$product_process_id,'next_process_id'=>$next_process_id,'next_productprocess_id'=>$next_productprocess_id,'process'=>$process,'fifoRcCard'=>$fifoRcCard]);
+        return response()->json(['success'=>$success,'fifoRcNo'=>$fifoRcNo,'avl_qty'=>$avl_qty,'part'=>$part,'bom'=>$bom,'avl_kg'=>$avl_kg,'message'=>$message,'process_id'=>$process_id,'product_process_id'=>$product_process_id,'next_process_id'=>$next_process_id,'next_productprocess_id'=>$next_productprocess_id,'process'=>$process,'fifoRcCard'=>$fifoRcCard,'rc_data'=>$rc_data]);
 
         // $avl_qty=(($process_issue_qty)-($receive_qty)-($reject_qty)-($rework_qty));
         // dd($d11Datas->part_id);
     }
+
+
 
     public function sfReceiveEntry(Request $request){
         // dd($request->all());

@@ -18,7 +18,7 @@
     @stack('styles')
 </head>
 <body>
-    <table class="tg" style="undefined;table-layout: fixed; width: 1022px">
+    <table class="tg" style="undefined;table-layout: fixed; width: 900px!important">
         <colgroup>
         <col style="width: 86.66667px">
         <col style="width: 166.66667px">
@@ -297,7 +297,7 @@
             <td class="tg-baqh">CHILD RC NO</td>
             <td class="tg-baqh">QTY ISSUE</td>
             <td class="tg-baqh">KG ISSUE</td>
-            <td class="tg-baqh">RECEI<br>VED</td>
+            <td class="tg-baqh">RECEIVED</td>
             <td class="tg-baqh" colspan="2">ISSUED BY</td>
             <td class="tg-baqh" colspan="4">STOCK DETAIL EXCEPT THIS MRC</td>
           </tr>

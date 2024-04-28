@@ -650,9 +650,10 @@ class GRNInwardRegisterController extends Controller
         // dd($id);
         $d12Datas=TransDataD12::with('partmaster','current_rcmaster','heat_nomaster','grndata','rm_master')->where('rc_id','=',$id)->where('process_id','=',3)->first();
         // dd($d12Datas);
-        $qrCodes=QrCode::size(95)->style('round')->generate($id);
+        $qrCodes=QrCode::size(70)->style('round')->generate($id);
         // return view('rm_issuance.routecard_print',compact('d12Datas','qrCodes'));
-        $html = view('rm_issuance.routecard_print',compact('d12Datas','qrCodes'))->render();
+        // $html = view('rm_issuance.routecard_print',compact('d12Datas','qrCodes'))->render();
+        $html=view('rm_issuance.rc',compact('d12Datas','qrCodes'))->render();
         // $width=101.6;$height=101.6;
         $pdf=Browsershot::html($html)->setIncludePath(config('services.browsershot.include_path'))->format('A4')->pdf();
         return new Response($pdf,200,[
