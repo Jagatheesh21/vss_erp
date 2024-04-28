@@ -44,6 +44,8 @@
                         <input type="hidden" name="previous_process_id" id="previous_process_id">
                         <input type="hidden" name="previous_product_process_id" id="previous_product_process_id">
                         <input type="hidden" name="next_process_id" id="next_process_id">
+                        <input type="hidden" name="qrcodes_count" id="qrcodes_count" value="{{$qrCodes_count}}">
+                        <input type="hidden" name="qr_rc_id" id="qr_rc_id">
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="rc_no">Route Card Number *</label>
@@ -259,6 +261,7 @@ $(document).ready(function(){
                         $('#next_process_id').val(response.next_process_id);
                         $('#next_productprocess_id').html(response.next_productprocess_id);
                         $('#rc_no').html(response.rc_data);
+                        $('#qr_rc_id').val(response.qr_rc_id);
                         }else{
                             alert('This Part Number is Not connected Item Process Master..So Please Contact Mr.PPC/ERP Team');
                         }
@@ -291,18 +294,19 @@ $(document).ready(function(){
                 if(response.success){
                     if (response.process) {
                         if(response.message){
-                        $('#part_id').html(response.part);
-                        $('#avl_kg').val(response.avl_kg);
-                        $('#avl_qty').val(response.avl_qty);
-                        $('#receive_qty').attr('max', response.avl_qty);
-                        $('#receive_qty').attr('min', 0);
-                        $('#bom').val(response.bom);
-                        $('#inlineRadio1').hide();
-                        $('#previous_process_id').val(response.process_id);
-                        $('#previous_product_process_id').val(response.product_process_id);
-                        $('#next_process_id').val(response.next_process_id);
-                        $('#next_productprocess_id').html(response.next_productprocess_id);
-
+                            $('#part_id').html(response.part);
+                            $('#avl_kg').val(response.avl_kg);
+                            $('#avl_qty').val(response.avl_qty);
+                            $('#receive_qty').attr('max', response.avl_qty);
+                            $('#receive_kg').attr('max', response.avl_kg);
+                            $('#receive_qty').attr('min', 0);
+                            $('#bom').val(response.bom);
+                            $('#inlineRadio1').hide();
+                            $('#previous_process_id').val(response.process_id);
+                            $('#previous_product_process_id').val(response.product_process_id);
+                            $('#next_process_id').val(response.next_process_id);
+                            $('#next_productprocess_id').html(response.next_productprocess_id);
+                            $('#qr_rc_id').val(response.qr_rc_id);
                         }else{
                             alert('This Part Number is Not connected Item Process Master..So Please Contact Mr.PPC/ERP Team');
                         }

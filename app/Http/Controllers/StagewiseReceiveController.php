@@ -69,6 +69,7 @@ class StagewiseReceiveController extends Controller
         $reject_qty=$d11Datas->reject_qty;
         $rework_qty=$d11Datas->rework_qty;
         $rc_data='<option value="'.$d11Datas->rcmaster->id.'">'.$d11Datas->rcmaster->rc_id.'</option>';
+        $qr_rc_id=$d11Datas->rcmaster->id;
 
         $bomDatas=BomMaster::where('child_part_id','=',$part_id)->sum('input_usage');
         $process_issue_qty=floor(($previous_process_issue_qty/$bomDatas));
@@ -131,7 +132,7 @@ class StagewiseReceiveController extends Controller
 
         // dd($success);
 
-        return response()->json(['success'=>$success,'fifoRcNo'=>$fifoRcNo,'avl_qty'=>$avl_qty,'part'=>$part,'bom'=>$bom,'avl_kg'=>$avl_kg,'message'=>$message,'process_id'=>$process_id,'product_process_id'=>$product_process_id,'next_process_id'=>$next_process_id,'next_productprocess_id'=>$next_productprocess_id,'process'=>$process,'fifoRcCard'=>$fifoRcCard,'rc_data'=>$rc_data]);
+        return response()->json(['success'=>$success,'fifoRcNo'=>$fifoRcNo,'avl_qty'=>$avl_qty,'part'=>$part,'bom'=>$bom,'avl_kg'=>$avl_kg,'message'=>$message,'process_id'=>$process_id,'product_process_id'=>$product_process_id,'next_process_id'=>$next_process_id,'next_productprocess_id'=>$next_productprocess_id,'process'=>$process,'fifoRcCard'=>$fifoRcCard,'rc_data'=>$rc_data,'qr_rc_id'=>$qr_rc_id]);
 
         // $avl_qty=(($process_issue_qty)-($receive_qty)-($reject_qty)-($rework_qty));
         // dd($d11Datas->part_id);
@@ -143,10 +144,16 @@ class StagewiseReceiveController extends Controller
         // dd($request->all());
         DB::beginTransaction();
         try {
+            $qrcodes_count=$request->qrcodes_count;
+            if ($qrcodes_count==0) {
+                $rc_card_id=$request->rc_no;
+            } else {
+                $rc_card_id=$request->qr_rc_id;
+            }
             $receive_qty=$request->receive_qty;
             $avl_qty=$request->avl_qty;
             if ($receive_qty<=$avl_qty) {
-                $d11Datas=TransDataD11::where('process_id','=',$request->previous_process_id)->where('product_process_id','=',$request->previous_product_process_id)->where('rc_id','=',$request->rc_no)->first();
+                $d11Datas=TransDataD11::where('process_id','=',$request->previous_process_id)->where('product_process_id','=',$request->previous_product_process_id)->where('rc_id','=',$rc_card_id)->first();
             if($request->rc_close=="yes"){
                 // dd($request->rc_date);
                 $d11Datas->close_date=$request->rc_date;
@@ -161,8 +168,8 @@ class StagewiseReceiveController extends Controller
 
             $d12Datas=new TransDataD12;
             $d12Datas->open_date=$request->rc_date;
-            $d12Datas->rc_id=$request->rc_no;
-            $d12Datas->previous_rc_id=$request->rc_no;
+            $d12Datas->rc_id=$rc_card_id;
+            $d12Datas->previous_rc_id=$rc_card_id;
             $d12Datas->part_id=$request->part_id;
             $d12Datas->process_id=$request->next_process_id;
             $d12Datas->product_process_id=$request->next_productprocess_id;
