@@ -62,7 +62,7 @@
                 <div class="row" style="margin-top:6px!important">
                     <div class="col-12">
                         <h6 style="font-size:10px!important;font-color:black;text-align:center;"><b>VENKATESWARA STEELS & SPRING (I) PVT LTD (UNIT-I)</b></h6>
-                        <h6 style="font-size:10px!important;font-color:black;text-align:center;" class="mx-auto"><b>SF RECEIPT</b></h6>
+                        <h6 style="font-size:10px!important;font-color:black;text-align:center;" class="mx-auto"><b>SF ISSUANCE</b></h6>
                     </div>
                 </div>
                 <div class="row">
@@ -72,6 +72,10 @@
                                 <tr>
                                     <th style="font-size:10px!important;font-color:black;">RC NO</th>
                                     <th style="font-size:10px!important;font-color:black;">{{$rc_no}}</th>
+                                </tr>
+                                <tr>
+                                    <th style="font-size:10px!important;font-color:black;">Previous RC NO</th>
+                                    <th style="font-size:10px!important;font-color:black;">{{$prc_no}}</th>
                                 </tr>
                                 <tr>
                                     <th style="font-size:10px!important;font-color:black;">Part No</th>
@@ -86,19 +90,23 @@
                                     <th style="font-size:10px!important;font-color:black;">{{$next_process}}</th>
                                 </tr>
                                 <tr>
-                                    <th style="font-size:10px!important;font-color:black;">Received Qty</th>
-                                    <th style="font-size:10px!important;font-color:black;">{{$receive_qty}}</th>
+                                    <th style="font-size:10px!important;font-color:black;">Issued Qty</th>
+                                    <th style="font-size:10px!important;font-color:black;">{{$issue_qty}}</th>
                                 </tr>
                                 <tr>
-                                    <th style="font-size:10px!important;font-color:black;">Received By</th>
-                                    <th style="font-size:10px!important;font-color:black;">{{$receive_by}}</th>
+                                    <th style="font-size:10px!important;font-color:black;">Issued By</th>
+                                    <th style="font-size:10px!important;font-color:black;">{{$issue_by}}</th>
                                 </tr>
                                 <tr>
-                                    <th style="font-size:10px!important;font-color:black;">Received Date & Time</th>
-                                    <th style="font-size:10px!important;font-color:black;">{{$receive_date}}</th>
+                                    <th style="font-size:10px!important;font-color:black;">Issued Date & Time</th>
+                                    <th style="font-size:10px!important;font-color:black;">{{$issue_date}}</th>
                                 </tr>
                                 <tr>
-                                    <th style="font-size:17px!important;font-color:black;margin:auto;text-align:center;">A</th>
+                                    @if ($current_process=='Semifinished2')
+                                        <th style="font-size:17px!important;font-color:black;margin:auto;text-align:center;">C</th>
+                                    @else
+                                        <th style="font-size:17px!important;font-color:black;margin:auto;text-align:center;">B</th>
+                                    @endif
                                     <th style="font-size:10px!important;font-color:black;margin:auto;text-align:center;">{{QrCode::size(60)->style('round')->generate($rc_id)}}</th>
                                 </tr>
                             </table>

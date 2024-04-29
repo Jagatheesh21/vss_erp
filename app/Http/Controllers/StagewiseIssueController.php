@@ -40,7 +40,7 @@ class StagewiseIssueController extends Controller
         ->join('users AS d', 'a.prepared_by', '=', 'd.id')
         ->join('route_masters AS e', 'a.rc_id', '=', 'e.id')
         ->join('route_masters AS f', 'a.previous_rc_id', '=', 'f.id')
-        ->select('b.operation','b.id as process_id','a.open_date','e.rc_id','f.rc_id as previous_rc_id','a.issue_qty','c.child_part_no as part_no','a.prepared_by','a.created_at','d.name as user_name')
+        ->select('b.operation','b.id as process_id','a.open_date','e.rc_id','f.rc_id as previous_rc_id','a.issue_qty','c.child_part_no as part_no','a.prepared_by','a.created_at','d.name as user_name','a.id')
         ->whereIn('a.process_id', [6,7,8])
         ->whereRaw('a.rc_id!=a.previous_rc_id')
         ->orderBy('a.id', 'DESC')
@@ -63,6 +63,34 @@ class StagewiseIssueController extends Controller
         $stage='Store';
         $qrCodes_count=StageQrCodeLock::where('stage','=',$stage)->where('activity','=',$activity)->where('status','=',1)->count();
         return view('stagewise-issue.sf_create',compact('d11Datas','current_date','qrCodes_count'));
+    }
+
+    public function sfPartIssueQrCode($id){
+        // dd($id);
+        $t12Datas=TransDataD12::with(['partmaster','previous_rcmaster','receiver','current_rcmaster'])->find($id);
+        $previous_rc_id=$t12Datas->previous_rc_id;
+        $rc_id=$t12Datas->rc_id;
+        $issue_date=$t12Datas->created_at;
+        $issue_qty=$t12Datas->issue_qty;
+        $issue_by=$t12Datas->receiver->name;
+        $part_no=$t12Datas->partmaster->child_part_no;
+        $prc_no=$t12Datas->previous_rcmaster->rc_id;
+        $rc_no=$t12Datas->current_rcmaster->rc_id;
+        $t11Datas=TransDataD11::with(['nextprocessmaster','currentprocessmaster'])->where('rc_id','=',$rc_id)->first();
+        $next_process=$t11Datas->nextprocessmaster->operation;
+        if ($t11Datas->currentprocessmaster->operation=='Store') {
+            $current_process='CNC Coiling';
+        } else {
+            $current_process=$t11Datas->currentprocessmaster->operation;
+        }
+
+        $html = view('stagewise-issue.sfissue_qrcodeprint',compact('rc_no','prc_no','issue_date','issue_qty','issue_by','current_process','next_process','rc_id','part_no'))->render();
+        $width=75;$height=125;
+        $pdf=Browsershot::html($html)->setIncludePath(config('services.browsershot.include_path'))->paperSize($width, $height)->landscape()->pdf();
+        return new Response($pdf,200,[
+            'Content-Type'=>'application/pdf',
+            'Content-Disposition'=>'inline;filename="sfreceiveqrcode.pdf"'
+        ]);
     }
 
 
