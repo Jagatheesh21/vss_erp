@@ -38,6 +38,7 @@
                                     <th>Receive Qty</th>
                                     <th>Received By</th>
                                     <th>Received Date</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -52,6 +53,7 @@
                                     <td>{{$d12Data->receive_qty}}</td>
                                     <td>{{$d12Data->user_name}}</td>
                                     <td>{{$d12Data->created_at}}</td>
+                                    <td><a href="{{route('sfpartreceiveqrcode',$d12Data->id)}}" class="btn btn-sm btn-success" target="_blank"><i class='bx bx-printer' style='color:white;'>&nbsp;</i></a></td>
                                 </tr>
                                 @empty
                                 <tr>

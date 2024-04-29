@@ -23,7 +23,11 @@ use App\Models\DcMaster;
 use App\Models\ChildProductMaster;
 use App\Models\FinalQcInspection;
 use App\Models\StageQrCodeLock;
+use Illuminate\Support\Number;
 use Illuminate\Support\Facades\DB;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Http\Response;
+use Spatie\Browsershot\Browsershot;
 use Carbon\Carbon;
 
 
@@ -37,7 +41,7 @@ class StagewiseReceiveController extends Controller
         ->join('users AS d', 'a.prepared_by', '=', 'd.id')
         ->join('route_masters AS e', 'a.rc_id', '=', 'e.id')
         ->join('route_masters AS f', 'a.previous_rc_id', '=', 'f.id')
-        ->select('b.operation','b.id as process_id','a.open_date','e.rc_id as rc_no','f.rc_id as previous_rc_no','a.receive_qty','c.child_part_no as part_no','a.prepared_by','a.created_at','d.name as user_name')
+        ->select('a.id','b.operation','b.id as process_id','a.open_date','e.rc_id as rc_no','f.rc_id as previous_rc_no','a.receive_qty','c.child_part_no as part_no','a.prepared_by','a.created_at','d.name as user_name')
         ->whereIn('a.process_id', [6,7,8])
         ->whereRaw('a.rc_id=a.previous_rc_id')
         ->orderBy('a.id', 'DESC')
@@ -53,6 +57,31 @@ class StagewiseReceiveController extends Controller
         $stage='Store';
         $qrCodes_count=StageQrCodeLock::where('stage','=',$stage)->where('activity','=',$activity)->where('status','=',1)->count();
         return view('stagewise-receive.sf_create',compact('d11Datas','current_date','qrCodes_count'));
+    }
+
+    public function sfPartReceiveQrCode($id){
+        // dd($id);
+        $t12Datas=TransDataD12::with(['partmaster','previous_rcmaster','receiver'])->find($id);
+        $rc_id=$t12Datas->previous_rc_id;
+        $receive_date=$t12Datas->created_at;
+        $receive_qty=$t12Datas->receive_qty;
+        $receive_by=$t12Datas->receiver->name;
+        $rc_no=$t12Datas->previous_rcmaster->rc_id;
+        $t11Datas=TransDataD11::with(['nextprocessmaster','currentprocessmaster'])->where('rc_id','=',$rc_id)->first();
+        $next_process=$t11Datas->nextprocessmaster->operation;
+        if ($t11Datas->currentprocessmaster->operation=='Store') {
+            $current_process='CNC Coiling';
+        } else {
+            # code...
+        }
+
+        $html = view('stagewise-receive.sfreceive_qrcodeprint',compact('rc_no','receive_date','receive_qty','receive_by','current_process','next_process','rc_id'))->render();
+        $width=75;$height=125;
+        $pdf=Browsershot::html($html)->setIncludePath(config('services.browsershot.include_path'))->paperSize($width, $height)->landscape()->pdf();
+        return new Response($pdf,200,[
+            'Content-Type'=>'application/pdf',
+            'Content-Disposition'=>'inline;filename="sfreceiveqrcode.pdf"'
+        ]);
     }
 
     public function sfPartFetchEntry(Request $request){

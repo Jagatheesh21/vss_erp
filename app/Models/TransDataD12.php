@@ -47,4 +47,8 @@ class TransDataD12 extends Model
     {
         return $this->belongsTo(RawMaterial::class,'rm_id');
     }
+
+    public function receiver(){
+        return $this->belongsTo(User::class,'prepared_by');
+    }
 }

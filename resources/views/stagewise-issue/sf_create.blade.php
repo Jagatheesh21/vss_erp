@@ -3,9 +3,6 @@
 
 @endpush
 @section('content')
-<form action="{{route('sfissue.store')}}" id="sfissue_formdata" method="POST">
-    @csrf
-    @method('POST')
 
 <div class="row d-flex justify-content-center">
     <div id="data"></div>
@@ -26,15 +23,40 @@
             <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Semi Finished Store Issue Register</b></span><a class="btn btn-sm btn-primary" href="{{route('sfissue')}}">SF Issue List</a>
             </div>
             <div class="card-body">
+                @if ($qrCodes_count!=0)
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="scan_rc_id">Scan Route Card ID *</label>
+                            <input type="text" name="scan_rc_id" id="scan_rc_id"  class="form-control @error('scan_rc_id') is-invalid @enderror" autofocus>
+                            @error('scan_rc_id')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+                @else
+
+                @endif
+                <form action="{{route('sfissue.store')}}" id="sfissue_formdata" method="POST">
+                    @csrf
+                    @method('POST')
                         <div class="row d-flex justify-content-center">
                             <input type="hidden" name="next_process_id" id="next_process_id">
                             <input type="hidden" name="next_product_process_id" id="next_product_process_id">
                             <input type="hidden" name="previous_product_process_id" id="previous_product_process_id">
-
+                            <input type="hidden" name="qrcodes_count" id="qrcodes_count" value="{{$qrCodes_count}}">
+                            <input type="hidden" name="qr_rc_id" id="qr_rc_id">
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="pre_rc_no">Previous Route Card Number *</label>
-                                    <select name="pre_rc_no" class="form-control @error('pre_rc_no') is-invalid @enderror" @required(true) id="pre_rc_no">
+                                    <select name="pre_rc_no" class="form-control @error('pre_rc_no') is-invalid @enderror" @required(true)  @if ($qrCodes_count!=0)
+                                    @disabled(true)
+                                @else
+                                    @disabled(false)
+                                @endif id="pre_rc_no">
                                         <option value="" selected></option>
                                         @foreach ($d11Datas as $d11Data)
                                             <option value="{{$d11Data->id}}" >{{$d11Data->rc_no}}</option>
@@ -121,29 +143,13 @@
                                 </div>
                             </div>
                         </div>
-
-                        {{-- <div class="row d-flex justify-content-center mt-3">
-                            <div class="col-md-3">
-                                <p><b>Route Close :</b></p>
-                                  <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="rc_close" id="inlineRadio1" value="yes">
-                                    <label class="form-check-label" for="inlineRadio1">Yes</label>
-                                  </div>
-                                  <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="rc_close" id="inlineRadio2" checked value="no">
-                                    <label class="form-check-label" for="inlineRadio2">No</label>
-                                  </div>
-                            </div>
-                        </div> --}}
-
                         <div class="row d-flex justify-content-center ">
                             <div class="col-md-2 mt-4">
                                 <input type="submit" class="btn btn-success  text-white align-center" id="btn" value="Save">
                                 <input class="btn btn-danger text-white" id="reset" type="reset" value="Reset">
                             </div>
                         </div>
-
-
+                </form>
             </div>
         </div>
         <div class="card mt-3">
@@ -182,7 +188,6 @@
         </div>
     </div>
 </div>
-</form>
 @endsection
 
 @push('scripts')
@@ -205,6 +210,43 @@ $(document).ready(function(){
     $("#reset").click(function (e) {
         e.preventDefault();
         location.reload(true);
+    });
+
+    $('#scan_rc_id').change(function (e) {
+        e.preventDefault();
+        var rc_no=$(this).val();
+        // alert(rc_no);
+        if (rc_no!='') {
+            $.ajax({
+            type: "POST",
+            url: "{{ route('sfissuepartfetchdata') }}",
+            data:{
+                "_token": "{{ csrf_token() }}",
+                "rc_no":rc_no,
+            },
+            success: function (response) {
+                 console.log(response);
+                if(response.success){
+                    $('#part_id').html(response.part);
+                    $('#avl_qty').val(response.avl_qty);
+                    $('#previous_process_id').html(response.process);
+                    $('#previous_product_process_id').val(response.current_product_process_id);
+                    $('#next_process_id').val(response.next_process_id);
+                    $('#next_product_process_id').val(response.next_productprocess_id);
+                    $('#bom').val(response.bom);
+                    $('#receive_qty').attr('max', response.avl_qty);
+                    $('#receive_qty').attr('min', 0);
+                    $('#rc_no').val(response.rcno);
+                    $('#pre_rc_no').html(response.rc_datas);
+                    $('#qr_rc_id').val(response.qr_rc_id);
+                }else{
+                    var msg='Please Follow The FIFO ..Try RC No Is '+response.fifoRcNo;
+                    alert(msg);
+                    location.reload(true);
+                }
+            }
+        });
+        }
     });
 
     $('#pre_rc_no').change(function (e) {

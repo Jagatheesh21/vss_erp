@@ -22,7 +22,12 @@ use App\Models\BomMaster;
 use App\Models\ItemProcesmaster;
 use App\Models\ChildProductMaster;
 use App\Models\RouteMaster;
+use App\Models\StageQrCodeLock;
+use Illuminate\Support\Number;
 use Illuminate\Support\Facades\DB;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Http\Response;
+use Spatie\Browsershot\Browsershot;
 use Carbon\Carbon;
 
 class StagewiseIssueController extends Controller
@@ -54,18 +59,23 @@ class StagewiseIssueController extends Controller
             ->havingRaw('avl_qty >?', [0])
             ->get();
     // dd($d11Datas);
-        return view('stagewise-issue.sf_create',compact('d11Datas','current_date'));
+        $activity='SF Issuance';
+        $stage='Store';
+        $qrCodes_count=StageQrCodeLock::where('stage','=',$stage)->where('activity','=',$activity)->where('status','=',1)->count();
+        return view('stagewise-issue.sf_create',compact('d11Datas','current_date','qrCodes_count'));
     }
 
 
     public function sfIssuePartFetchEntry(Request $request){
         // dd($request->all());
         $rc_no=$request->rc_no;
-
+        $new_d11Datas=TransDataD11::with('rcmaster')->where('rc_id','=',$rc_no)->first();
         $d11Datas  = DB::table('trans_data_d11_s')
         ->select(DB::raw('(SUM(receive_qty)-SUM(issue_qty)) as avl_qty'),'trans_data_d11_s.*')
         ->where('rc_id', $rc_no)
         ->first();
+        $rc_datas='<option value="'.$new_d11Datas->rcmaster->id.'">'.$new_d11Datas->rcmaster->rc_id.'</option>';
+        $qr_rc_id=$new_d11Datas->rcmaster->id;
         // dd($d11Datas);
         $select_rcno=$d11Datas->rc_id;
         $avl_qty=$d11Datas->avl_qty;
@@ -153,7 +163,7 @@ class StagewiseIssueController extends Controller
         $next_product_process_id=$next_productProcess->id;
         $next_process_id=$next_productProcess->process_id;
         $next_process_order_id=$next_productProcess->process_order_id;
-        return response()->json(['process'=>$current_stock_id,'avl_qty'=>$avl_qty,'part'=>$part,'current_process_id'=>$current_process_id,'current_product_process_id'=>$current_product_process_id,'next_process_id'=>$next_process_id,'next_productprocess_id'=>$next_product_process_id,'bom'=>$bom,'rcno'=>$new_rcnumber,'success'=>$success,'fifoRcNo'=>$fifoRcNo]);
+        return response()->json(['process'=>$current_stock_id,'avl_qty'=>$avl_qty,'part'=>$part,'current_process_id'=>$current_process_id,'current_product_process_id'=>$current_product_process_id,'next_process_id'=>$next_process_id,'next_productprocess_id'=>$next_product_process_id,'bom'=>$bom,'rcno'=>$new_rcnumber,'success'=>$success,'fifoRcNo'=>$fifoRcNo,'rc_datas'=>$rc_datas,'qr_rc_id'=>$qr_rc_id]);
 
         // dd($next_process_order_id);
         // dd($next_productProcess);
@@ -164,6 +174,12 @@ class StagewiseIssueController extends Controller
         // dd($request->all());
         DB::beginTransaction();
         try {
+            $qrcodes_count=$request->qrcodes_count;
+            if ($qrcodes_count==0) {
+                $rc_card_id=$request->pre_rc_no;
+            } else {
+                $rc_card_id=$request->qr_rc_id;
+            }
             $rcMaster=new RouteMaster;
             $rcMaster->create_date=$request->rc_date;
             $rcMaster->process_id=$request->previous_process_id;
@@ -174,7 +190,7 @@ class StagewiseIssueController extends Controller
             $rcMasterData=RouteMaster::where('rc_id','=',$request->rc_no)->where('process_id','=',$request->previous_process_id)->first();
             $rc_id=$rcMasterData->id;
 
-            $previousD11Datas=TransDataD11::where('rc_id','=',$request->pre_rc_no)->where('next_process_id','=',$request->previous_process_id)->first();
+            $previousD11Datas=TransDataD11::where('rc_id','=',$rc_card_id)->where('next_process_id','=',$request->previous_process_id)->first();
             // dd($previousD11Datas);
             $old_issueqty=$previousD11Datas->issue_qty;
             $total_issue_qty=$old_issueqty+$request->issue_qty;
@@ -202,7 +218,7 @@ class StagewiseIssueController extends Controller
             $d12Datas=new TransDataD12;
             $d12Datas->open_date=$request->rc_date;
             $d12Datas->rc_id=$rc_id;
-            $d12Datas->previous_rc_id=$request->pre_rc_no;
+            $d12Datas->previous_rc_id=$rc_card_id;
             $d12Datas->part_id=$request->part_id;
             $d12Datas->process_id=$request->previous_process_id;
             $d12Datas->product_process_id=$request->previous_product_process_id;
@@ -212,7 +228,7 @@ class StagewiseIssueController extends Controller
 
             $d13Datas=new TransDataD13;
             $d13Datas->rc_id=$rc_id;
-            $d13Datas->previous_rc_id=$request->pre_rc_no;
+            $d13Datas->previous_rc_id=$rc_card_id;
             $d13Datas->prepared_by = auth()->user()->id;
             $d13Datas->save();
             DB::commit();

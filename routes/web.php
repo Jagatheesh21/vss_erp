@@ -75,6 +75,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('sf_receive/create', [StagewiseReceiveController::class,'sfReceiveCreateForm'])->name('sfreceive.create');
     Route::post('sf-receive', [StagewiseReceiveController::class,'sfReceiveEntry'])->name('sfreceive.store');
     Route::post('sf-receive/part_no', [StagewiseReceiveController::class,'sfPartFetchEntry'])->name('sfpartfetchdata');
+    Route::get('/sfreceive-qrprintdata/{id}', [StagewiseReceiveController::class,'sfPartReceiveQrCode'])->name('sfpartreceiveqrcode');
     Route::get('sf_issue/list', [StagewiseIssueController::class,'sfIssueList'])->name('sfissue');
     Route::get('sf_issue/create', [StagewiseIssueController::class,'sfIssueCreateForm'])->name('sfissue.create');
     Route::post('sf_issue', [StagewiseIssueController::class,'sfIssueEntry'])->name('sfissue.store');
