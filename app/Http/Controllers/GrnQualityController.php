@@ -114,6 +114,7 @@ class GrnQualityController extends Controller
             'j.inspected_by',
             'j.inspected_date',
             'j.status')
+            ->orderBy('j.id','DESC')
             ->get();
         // dd($grnqc_datas);
         return view('grn_qc.index',compact('grnqc_datas'));

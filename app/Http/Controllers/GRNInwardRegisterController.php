@@ -262,6 +262,20 @@ class GRNInwardRegisterController extends Controller
         }
     }
 
+    public function rmReturnData(){
+
+    }
+
+    public function rmReturnReceipt(){
+        date_default_timezone_set('Asia/Kolkata');
+        $current_date=date('Y-m-d');
+        $d11Datas=TransDataD11::with('rcmaster')->where('rc_status','=',1)->get();
+        $activity='Return RM Receipt';
+        $stage='Store';
+        $qrCodes_count=StageQrCodeLock::where('stage','=',$stage)->where('activity','=',$activity)->where('status','=',1)->count();
+        return view('rm_issuance.return_rm',compact('d11Datas','qrCodes_count','current_date'));
+    }
+
     public function rmIssuanceData(){
         $d12Datas=TransDataD12::with(['partmaster','currentprocessmaster','currentproductprocessmaster','current_rcmaster','previous_rcmaster','heat_nomaster','grndata','rm_master'])->where('process_id','=',3)->orderBy('id', 'DESC')->get();
         // dd($d12Datas);

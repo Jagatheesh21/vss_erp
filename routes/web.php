@@ -30,6 +30,8 @@ use App\Http\Controllers\InvoiceDetailsController;
 use App\Http\Controllers\InvoiceCorrectionMasterController;
 use App\Http\Controllers\InvoiceCorrectionDetailController;
 use App\Http\Controllers\StageQrCodeLockController;
+use App\Http\Controllers\RetrunRMDetailsController;
+use App\Http\Controllers\RMDcController;
 use App\Http\Controllers\UserController;
 // invoice updated
 
@@ -65,6 +67,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/grn_iqc-data/{id}', [GrnQualityController::class,'approval'])->name('grn_iqc.approval');
     Route::get('/rm-printdata/{id}', [GRNInwardRegisterController::class,'rmIssuancePrint'])->name('rmissuance.show');
     Route::get('rm_issuance', [GRNInwardRegisterController::class,'rmIssuanceData'])->name('rmissuance.index');
+    Route::get('rm_returnreceipt', [GRNInwardRegisterController::class,'rmReturnReceipt'])->name('returnrmreceipt');
+    Route::get('rm_return', [GRNInwardRegisterController::class,'rmReturnData'])->name('returnrm.index');
+    Route::post('rm_returnstore', [GRNInwardRegisterController::class,'rmReturnStore'])->name('returnrm.store');
     Route::get('rm_issuance-create', [GRNInwardRegisterController::class,'rmIssuance'])->name('rmissuance.create');
     Route::post('/rm_issuance-data', [GRNInwardRegisterController::class,'storeData'])->name('rmissuance.storedata');
     Route::post('/rm_issuance-fetchdata', [GRNInwardRegisterController::class,'grnRmFetchData'])->name('grnrmfetchdata');
@@ -163,7 +168,8 @@ Route::middleware(['auth'])->group(function () {
         'invoicecorrectionmaster'=>InvoiceCorrectionMasterController::class,
         'invoicecorrectiondetail'=>InvoiceCorrectionDetailController::class,
         'stageqrcodelock'=>StageQrCodeLockController::class,
-
+        'retrunrmdetails'=>RetrunRMDetailsController::class,
+        'rmdc'=>RMDcController::class,
     ]);
 });
 
