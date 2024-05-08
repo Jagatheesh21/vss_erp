@@ -10,7 +10,7 @@ class PermissionController extends Controller
 {
     public function index()
     {
-        $permissions = Permission::all();
+        $permissions = Permission::OrderBy('id','DESC')->get();
         return view('permissions.index',compact('permissions'));
     }
     public function create()
@@ -23,7 +23,9 @@ class PermissionController extends Controller
         $permission->name = $request->name;
         $permission->guard_name = "web";
         $permission->save();
-        
+        return redirect()->route('permissions.index')
+        ->withSuccess('New Permission is added successfully.');
+
     }
     public function edit($id)
     {
@@ -42,6 +44,6 @@ class PermissionController extends Controller
     }
     public function destroy(Request $request)
     {
-        
+
     }
 }

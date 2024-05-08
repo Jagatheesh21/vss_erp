@@ -2,6 +2,22 @@
 
 @section('content')
     <div class="row">
+
+        {{-- User Mangement --}}
+        @role('Super Admin')
+        <div class="col-3">
+            <div class="card border-primary mb-3">
+                <div class="card-header">User Mangement</div>
+                <div class="card-body text-primary">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><a href="{{route('roles.index')}}">Roles</a></li>
+                        <li class="list-group-item"><a href="{{route('permissions.index')}}">Permissions</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        @endrole
+        {{-- User Management --}}
         <div class="col-3">
             <div class="card border-primary mb-3">
                 <div class="card-header">Purchase Order</div>

@@ -33,6 +33,9 @@ use App\Http\Controllers\StageQrCodeLockController;
 use App\Http\Controllers\RetrunRMDetailsController;
 use App\Http\Controllers\RMDcController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PermissionController;
+use Spatie\Permission\Contracts\Role;
+
 // invoice updated
 
 /*
@@ -47,7 +50,12 @@ use App\Http\Controllers\UserController;
 */
 
 Auth::routes();
-
+Route::group(['middleware' => ['auth','role:Super Admin']], function () {
+    Route::get('role_permission/{role_id}',[RoleController::class,'role_permission'])->name('role_permission');
+    Route::post('assign_permission',[RoleController::class,'assign_permissions'])->name('assign_permission');
+    Route::resource('roles',RoleController::class);
+    Route::resource('permissions',PermissionController::class);
+});
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('/customers-data/id', [CustomerMasterController::class,'customersData'])->name('customersdata');
@@ -139,7 +147,6 @@ Route::middleware(['auth'])->group(function () {
 
 
     Route::resources([
-        'roles' => RoleController::class,
         'users' => UserController::class,
         'products' => ProductController::class,
         'department' => DepartmentController::class,

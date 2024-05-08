@@ -27,8 +27,7 @@ class RoleController extends Controller
     public function index(): View
     {
         return view('roles.index', [
-            'roles' => Role::orderBy('id','DESC')->paginate(3)
-        ]);
+            'roles' => Role::whereNot('name','Super Admin')->get()]);
     }
 
     /**
@@ -48,10 +47,10 @@ class RoleController extends Controller
     {
         $role = Role::create(['name' => $request->name]);
 
-        $permissions = Permission::whereIn('id', $request->permissions)->get(['name'])->toArray();
-        
-        $role->syncPermissions($permissions);
+        //$permissions = Permission::whereIn('id', $request->permissions)->get(['name'])->toArray();
 
+        //$role->syncPermissions($permissions);
+        //$role->givePermissionTo(['create-product']);
         return redirect()->route('roles.index')
                 ->withSuccess('New role is added successfully.');
     }
@@ -100,11 +99,11 @@ class RoleController extends Controller
 
         $role->update($input);
 
-        $permissions = Permission::whereIn('id', $request->permissions)->get(['name'])->toArray();
+       // $permissions = Permission::whereIn('id', $request->permissions)->get(['name'])->toArray();
 
-        $role->syncPermissions($permissions);    
-        
-        return redirect()->back()
+        //$role->syncPermissions($permissions);
+
+        return redirect()->route('roles.index')
                 ->withSuccess('Role is updated successfully.');
     }
 
@@ -122,5 +121,28 @@ class RoleController extends Controller
         $role->delete();
         return redirect()->route('roles.index')
                 ->withSuccess('Role is deleted successfully.');
+    }
+    public function role_permission($role_id)
+    {
+        $rolePermissions = DB::table("role_has_permissions")->where("role_id",$role_id)
+            ->pluck('permission_id')
+            ->all();
+        return view('roles.assign_permission', [
+            'role_id'=>$role_id,'role' => Role::find($role_id),'permissions' => Permission::get(),'role_permissions' =>$rolePermissions
+        ]);
+
+    }
+    public function assign_permissions(Request $request)
+    {
+        //dd($request->all());
+        $role_id = $request->role_id;
+        $role = Role::find($role_id);
+        $sync_permissions = $request->permissions;
+        $permissions = Permission::whereIn('id', $request->permissions)->get(['name'])->toArray();
+
+        $role->syncPermissions($sync_permissions);
+        return redirect()->route('roles.index')
+        ->withSuccess('Permission Assigned  successfully.');
+
     }
 }
