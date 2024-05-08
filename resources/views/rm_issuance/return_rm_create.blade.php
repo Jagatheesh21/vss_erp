@@ -170,41 +170,6 @@
                 </form>
             </div>
         </div>
-        <div class="card mt-3">
-            <div class="card-header">
-                <h4 class="text-center">BOM CALCULATOR</h4>
-            </div>
-            <div class="card-body">
-                <div class="row mt-4">
-                    <div class="table">
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-striped table-responsive">
-                                <thead>
-                                    <tr>
-                                        <th>BOM (IN KG)</th>
-                                        <th>ENTER QUANTITY (KG)</th>
-                                        <th>QUANTITY IN NOS</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <input type="text" name="bom" id="bom" class="form-control bg-light" @readonly(true)>
-                                        </td>
-                                        <td>
-                                            <input type="number" name="input_wt" id="input_wt" class="form-control">
-                                        </td>
-                                        <td>
-                                            <input type="number" name="bom_qty" id="bom_qty" class="form-control bg-light" @readonly(true)>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 @endsection
@@ -284,40 +249,40 @@ $(document).ready(function(){
         if (rc_no!='') {
             $.ajax({
             type: "POST",
-            url: "{{ route('sfpartfetchdata') }}",
+            url: "{{ route('rmreturnpartfetchdata') }}",
             data:{
                 "_token": "{{ csrf_token() }}",
                 "rc_no":rc_no,
             },
             success: function (response) {
-                // console.log(response);
-                if(response.success){
-                    if (response.process) {
-                        if(response.message){
-                            $('#part_id').html(response.part);
-                            $('#avl_kg').val(response.avl_kg);
-                            $('#avl_qty').val(response.avl_qty);
-                            $('#receive_qty').attr('max', response.avl_qty);
-                            $('#receive_kg').attr('max', response.avl_kg);
-                            $('#receive_qty').attr('min', 0);
-                            $('#bom').val(response.bom);
-                            $('#inlineRadio1').hide();
-                            $('#previous_process_id').val(response.process_id);
-                            $('#previous_product_process_id').val(response.product_process_id);
-                            $('#next_process_id').val(response.next_process_id);
-                            $('#next_productprocess_id').html(response.next_productprocess_id);
-                            $('#qr_rc_id').val(response.qr_rc_id);
-                        }else{
-                            alert('This Part Number is Not connected Item Process Master..So Please Contact Mr.PPC/ERP Team');
-                        }
-                    } else {
-                        alert('This Part Number Process is Not connected SemiFinished Store..So Please Contact Mr.PPC/ERP Team');
-                    }
-                }else{
-                    var msg='Please Follow The FIFO ..Try RC No Is '+response.fifoRcCard;
-                    alert(msg);
-                    location.reload(true);
-                }
+                console.log(response);
+                // if(response.success){
+                //     if (response.process) {
+                //         if(response.message){
+                //             $('#part_id').html(response.part);
+                //             $('#avl_kg').val(response.avl_kg);
+                //             $('#avl_qty').val(response.avl_qty);
+                //             $('#receive_qty').attr('max', response.avl_qty);
+                //             $('#receive_kg').attr('max', response.avl_kg);
+                //             $('#receive_qty').attr('min', 0);
+                //             $('#bom').val(response.bom);
+                //             $('#inlineRadio1').hide();
+                //             $('#previous_process_id').val(response.process_id);
+                //             $('#previous_product_process_id').val(response.product_process_id);
+                //             $('#next_process_id').val(response.next_process_id);
+                //             $('#next_productprocess_id').html(response.next_productprocess_id);
+                //             $('#qr_rc_id').val(response.qr_rc_id);
+                //         }else{
+                //             alert('This Part Number is Not connected Item Process Master..So Please Contact Mr.PPC/ERP Team');
+                //         }
+                //     } else {
+                //         alert('This Part Number Process is Not connected SemiFinished Store..So Please Contact Mr.PPC/ERP Team');
+                //     }
+                // }else{
+                //     var msg='Please Follow The FIFO ..Try RC No Is '+response.fifoRcCard;
+                //     alert(msg);
+                //     location.reload(true);
+                // }
             }
         });
         }
