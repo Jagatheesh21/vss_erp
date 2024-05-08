@@ -143,6 +143,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/user-management/store', [UserController::class,'userStore'])->name('userstore');
     Route::get('user-management/{id}/edit', [UserController::class,'userEdit'])->name('useredit');
     Route::get('department/export/excel', [DepartmentController::class, 'export_excel'])->name('department.export_excel');
+    Route::post('rmreturn-receive/part_no', [RetrunRMDetailsController::class,'rmReturnPartFetchEntry'])->name('rmreturnpartfetchdata');
 
 
 

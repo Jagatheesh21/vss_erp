@@ -14,4 +14,10 @@ class HeatNumber extends Model
         return $this->belongsTo(GRNInwardRegister::class,'grnnumber_id');
     }
 
+
+    public function rackmaster()
+    {
+        return $this->belongsTo(Rackmaster::class,'rack_id');
+    }
+
 }
