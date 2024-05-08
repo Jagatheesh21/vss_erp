@@ -26,7 +26,7 @@
                         <li class="list-group-item"><a href="{{route('grn_inward.index')}}">Material Inward (GRN)</a></li>
                         {{-- <li class="list-group-item"><a href="#">GRN Correction</a></li> --}}
                         <li class="list-group-item"><a href="{{route('rmissuance.index')}}">Material Issuance</a></li>
-                        <li class="list-group-item"><a href="{{route('retrunrmdetails')}}">Return Raw Material Receipt</a></li>
+                        <li class="list-group-item"><a href="{{route('retrunrmdetails.index')}}">Return Raw Material Receipt</a></li>
                         <li class="list-group-item"><a href="{{route('sfreceive')}}">Semi-Finished Material Receive</a></li>
                         <li class="list-group-item"><a href="{{route('sfissue')}}">Semi-Finished Material Issuance</a></li>
                         <li class="list-group-item"><a href="{{route('osreceive')}}">Out-Store Material Receive</a></li>

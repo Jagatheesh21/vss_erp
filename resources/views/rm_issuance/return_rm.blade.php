@@ -16,7 +16,7 @@
     @endif
         <div class="card">
             <div class="card-header d-flex" style="justify-content:space-between"><span><b>Return RM List</b>  </span>
-                <a class="btn btn-md btn-primary" href="{{route('rmissuance.create')}}"><b><i class='bx bx-plus bx-flashing' style='color:white;' ></i>&nbsp;&nbsp; New</b></a>
+                <a class="btn btn-md btn-primary" href="{{route('retrunrmdetails.create')}}"><b><i class='bx bx-plus bx-flashing' style='color:white;' ></i>&nbsp;&nbsp; New</b></a>
             </div>
             <div class="card-body">
                 <div class="table">
