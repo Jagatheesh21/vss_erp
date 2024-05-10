@@ -41,9 +41,7 @@
                     @csrf
                     @method('POST')
                     <div class="row d-flex justify-content-center">
-                        <input type="hidden" name="previous_process_id" id="previous_process_id">
-                        <input type="hidden" name="previous_product_process_id" id="previous_product_process_id">
-                        <input type="hidden" name="next_process_id" id="next_process_id">
+                        <input type="hidden" name="next_process_id" id="next_process_id" value="2">
                         <input type="hidden" name="qrcodes_count" id="qrcodes_count" value="{{$qrCodes_count}}">
                         <input type="hidden" name="qr_rc_id" id="qr_rc_id">
                         <div class="col-md-3">
@@ -91,10 +89,10 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="next_productprocess_id">Stocking Point *</label>
-                                <select name="next_productprocess_id" id="next_productprocess_id" class="form-control bg-light @error('next_productprocess_id') is-invalid @enderror" @readonly(true)>
+                                <label for="current_process_id">Stocking Point *</label>
+                                <select name="current_process_id" id="current_process_id" class="form-control bg-light @error('current_process_id') is-invalid @enderror" @readonly(true)>
                                 </select>
-                                @error('next_productprocess_id')
+                                @error('current_process_id')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
@@ -105,8 +103,79 @@
                     <div class="row d-flex justify-content-center">
                         <div class="col-md-3">
                             <div class="form-group">
+                                <label for="rm_id">RM Desc *</label>
+                                <select name="rm_id" id="rm_id"  class="form-control bg-light @error('rm_id') is-invalid @enderror" @readonly(true)>
+                                </select>
+                                @error('rm_id')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="grn_no">GRN No *</label>
+                                <select name="grn_no" id="grn_no" class="form-control bg-light @error('grn_no') is-invalid @enderror" @readonly(true)>
+                                </select>
+                                @error('grn_no')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="heat_no">Heat No *</label>
+                                <select name="heat_no" id="heat_no" class="form-control bg-light @error('heat_no') is-invalid @enderror" @readonly(true)>
+                                </select>
+                                @error('heat_no')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="coil_no">Coil No *</label>
+                                <input type="text" name="coil_no" id="coil_no" @readonly(true) required class="form-control bg-light @error('coil_no') is-invalid @enderror">
+                                @error('coil_no')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="lot_no">Lot No *</label>
+                                <input type="text" name="lot_no" id="lot_no" required @readonly(true) class="form-control bg-light @error('lot_no') is-invalid @enderror">
+                                @error('lot_no')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="tc_no">T.C No *</label>
+                                <input type="text" name="tc_no" id="tc_no" required @readonly(true) class="form-control bg-light @error('tc_no') is-invalid @enderror">
+                                @error('tc_no')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
                                 <label for="avl_kg">Available Stock (In KG) *</label>
-                                <input type="number" name="avl_kg" id="avl_kg"  class="form-control bg-light @error('avl_kg') is-invalid @enderror" @readonly(true)>
+                                <input type="number" name="avl_kg" id="avl_kg" class="form-control bg-light @error('avl_kg') is-invalid @enderror" @readonly(true)>
                                 @error('avl_kg')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -116,31 +185,9 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="avl_qty">Available Stock (In Numbers) *</label>
-                                <input type="number" name="avl_qty" id="avl_qty"  class="form-control bg-light @error('avl_qty') is-invalid @enderror" @readonly(true)>
-                                @error('avl_qty')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
                                 <label for="receive_kg">Receive Quantity IN KG *</label>
-                                <input type="number" name="receive_kg" id="receive_kg" required min="0" step="0.0000000000000001" class="form-control @error('receive_kg') is-invalid @enderror">
+                                <input type="number" name="receive_kg" id="receive_kg" required min="0" step="0.01" class="form-control @error('receive_kg') is-invalid @enderror">
                                 @error('receive_kg')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="receive_qty">Receive Quantity In Numbers*</label>
-                                <input type="number" name="receive_qty" id="receive_qty" required min="0" class="form-control bg-light @error('receive_qty') is-invalid @enderror" @readonly(true)>
-                                @error('receive_qty')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -156,7 +203,7 @@
                                 <label class="form-check-label" for="inlineRadio1">Yes</label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="rc_close" id="inlineRadio2" checked value="no">
+                                <input class="form-check-input" type="radio" name="rc_close" id="inlineRadio2" checked  value="no">
                                 <label class="form-check-label" for="inlineRadio2">No</label>
                             </div>
                         </div>
@@ -214,17 +261,13 @@ $(document).ready(function(){
                     if (response.process) {
                         if(response.message){
                         $('#part_id').html(response.part);
+                        $('#rm_id').html(response.rm);
+                        $('#grn_no').html(response.grn_datas);
+                        $('#heat_no').html(response.heat_no_datas);
+                        $('#heat_no').html(response.heat_no_datas);
+                        $('#heat_no').html(response.heat_no_datas);
                         $('#avl_kg').val(response.avl_kg);
-                        $('#avl_qty').val(response.avl_qty);
-                        $('#receive_qty').attr('max', response.avl_qty);
                         $('#receive_kg').attr('max', response.avl_kg);
-                        $('#receive_qty').attr('min', 0);
-                        $('#bom').val(response.bom);
-                        $('#inlineRadio1').hide();
-                        $('#previous_process_id').val(response.process_id);
-                        $('#previous_product_process_id').val(response.product_process_id);
-                        $('#next_process_id').val(response.next_process_id);
-                        $('#next_productprocess_id').html(response.next_productprocess_id);
                         $('#rc_no').html(response.rc_data);
                         $('#qr_rc_id').val(response.qr_rc_id);
                         }else{
@@ -256,76 +299,61 @@ $(document).ready(function(){
             },
             success: function (response) {
                 console.log(response);
-                // if(response.success){
-                //     if (response.process) {
-                //         if(response.message){
-                //             $('#part_id').html(response.part);
-                //             $('#avl_kg').val(response.avl_kg);
-                //             $('#avl_qty').val(response.avl_qty);
-                //             $('#receive_qty').attr('max', response.avl_qty);
-                //             $('#receive_kg').attr('max', response.avl_kg);
-                //             $('#receive_qty').attr('min', 0);
-                //             $('#bom').val(response.bom);
-                //             $('#inlineRadio1').hide();
-                //             $('#previous_process_id').val(response.process_id);
-                //             $('#previous_product_process_id').val(response.product_process_id);
-                //             $('#next_process_id').val(response.next_process_id);
-                //             $('#next_productprocess_id').html(response.next_productprocess_id);
-                //             $('#qr_rc_id').val(response.qr_rc_id);
-                //         }else{
-                //             alert('This Part Number is Not connected Item Process Master..So Please Contact Mr.PPC/ERP Team');
-                //         }
-                //     } else {
-                //         alert('This Part Number Process is Not connected SemiFinished Store..So Please Contact Mr.PPC/ERP Team');
-                //     }
-                // }else{
-                //     var msg='Please Follow The FIFO ..Try RC No Is '+response.fifoRcCard;
-                //     alert(msg);
-                //     location.reload(true);
-                // }
+                if(response.success){
+                    $('#part_id').html(response.part);
+                    $('#rm_id').html(response.rm);
+                    $('#grn_no').html(response.grn_datas);
+                    $('#heat_no').html(response.heat_no_datas);
+                    $('#coil_no').val(response.coil_no);
+                    $('#lot_no').val(response.lot_no);
+                    $('#tc_no').val(response.tc_no);
+                    $('#avl_kg').val(response.avl_kg);
+                    $('#receive_kg').val(response.avl_kg);
+                    $('#receive_kg').attr('max', response.avl_kg);
+                    $('#receive_kg').attr('min', 0);
+                    $('#current_process_id').html(response.operation);
+                    $('#rc_no').html(response.rc_data);
+                    $('#qr_rc_id').val(response.qr_rc_id);
+                    $("#inlineRadio1").prop('checked', true);
+                    $('#inlineRadio1').show();
+                }else{
+                    var msg='Sorry This Route Card is Already Used And Closed.Please Try Another Route Card...';
+                    alert(msg);
+                    location.reload(true);
+                }
             }
         });
-        }
-    });
-    $('#input_wt').change(function (e) {
-        e.preventDefault();
-        var bom_kg=$('#bom').val();
-        var input_wt=$(this).val();
-        if (bom_kg!=''&&input_wt!='') {
-            var nos=input_wt/bom_kg;
-            var bom= Math.floor(nos);
-            if (bom) {
-                $('#bom_qty').val(bom);
-            }
-        }else{
-            alert('Please Check The Input Weight And BOM...');
         }
     });
 
     $('#receive_kg').change(function (e) {
         e.preventDefault();
-        var bom_kg=$('#bom').val();
-        var receive_wt=$(this).val();
-        if (bom_kg!=''&&receive_wt!='') {
-            var nos=receive_wt/bom_kg;
-            var bom= Math.floor(nos);
-            if (bom) {
-                $('#receive_qty').val(bom);
-                var avl_kg=$('#avl_kg').val();
-                var diff=avl_kg-receive_wt;
+        var avl_kg=$('#avl_kg').val();
+        var receive_kg=$(this).val();
+        if (avl_kg!=''&&receive_kg!='') {
+                var diff=avl_kg-receive_kg;
                 // alert(diff);
-                if(diff < 1){
+                if (diff<0) {
+                    alert('Your entering the wrong quantity when comparing available quantity...');
+                    $('#inlineRadio1').hide();
+                    $("#inlineRadio2").prop('checked', true);
+                }if(diff>0.90){
+                    $('#inlineRadio1').hide();
+                    $("#inlineRadio2").prop('checked', true);
+                }if(diff==0){
                     $('#inlineRadio1').show();
+                    $("#inlineRadio1").prop('checked', true);
+                }if (diff>0) {
+                    $('#inlineRadio1').hide();
+                    $("#inlineRadio2").prop('checked', true);
                 }
                 else{
-                    $('#inlineRadio1').hide();
+                    $('#inlineRadio1').show();
+                    $("#inlineRadio2").prop('checked', true);
                 }
-            }
-
         }else{
-            alert('Please Check The Receive Weight And BOM...');
+            alert('Please Check The Receive Weight And Available Weight...');
             $('#inlineRadio1').hide();
-
         }
     });
 
