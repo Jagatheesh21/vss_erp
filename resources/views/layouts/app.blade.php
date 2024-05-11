@@ -26,6 +26,7 @@
     <link href="{{asset('css/style.css')}}" rel="stylesheet">
     <!-- We use those styles to show code examples, you should remove them in your application.-->
     <link href="{{asset('css/examples.css')}}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
     <link rel="stylesheet" href="{{asset('css/sweetalert2.min.css')}}">
     <link rel="stylesheet" href="{{asset('css/toaster.min.css')}}" />
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.min.css" />
@@ -109,6 +110,8 @@
     <script src="https://cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.0.1/js/dataTables.buttons.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.0.1/js/buttons.dataTables.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script>
     setTimeout(() => {
     $('.alert').alert('close');

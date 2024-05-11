@@ -28,6 +28,22 @@
                 <a class="btn btn-sm btn-primary text-white" href="{{route('invoicedetails.create')}}">New</a>
             </div>
             <div class="card-body">
+                <form action="{{route('invoicedetails')}}" method="POST">
+                    @csrf
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label for="">Date From</label>
+                        <input type="date" class="form-control" name="date_from" id="date_from" value="{{old('date_from')}}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="">Date To</label>
+                        <input type="date" class="form-control" name="date_to" id="date_to" value="{{old('date_to')}}">
+                    </div>
+                    <div class="col-md-3 mt-4">
+                        <button type="submit" class="btn btn-sm btn-success text-white" name="submit">Submit</button>
+                    </div>
+                </div>
+                </form>
                 <div class="table">
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped table-responsive">
@@ -141,3 +157,9 @@
     </div>
 </div>
 @endsection
+@push('scripts')
+<script type="javascript">
+    $('#date_from').datepicker();
+    $('#date_to').datepicker();
+</script>
+@endpush

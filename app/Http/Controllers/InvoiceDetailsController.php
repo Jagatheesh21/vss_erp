@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use DataTables;
 use Auth;
 use Illuminate\Http\Response;
 use Spatie\Browsershot\Browsershot;
@@ -38,12 +39,38 @@ class InvoiceDetailsController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        // if ($request->ajax()) {
+        //     $data=InvoiceDetails::with(['rcmaster','customerproductmaster','productmaster','customerpomaster','uom_masters','currency_masters'])->get();
+        //     return Datatables::of($data)
+        //             ->addIndexColumn()
+
+        //             ->addColumn('action', function($row){
+
+        //                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Edit" class="edit btn btn-primary btn-sm text-white editDepartment">Edit</a>';
+
+        //                    $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Delete" class="btn btn-danger btn-sm text-white deleteDepartment">Delete</a>';
+
+        //                     return $btn;
+        //             })
+        //             ->rawColumns(['action'])
+        //             ->make(true);
+        // }
         //
-        $invoiceDatas=InvoiceDetails::with(['rcmaster','customerproductmaster','productmaster','customerpomaster','uom_masters','currency_masters'])->get();
-        // dd($invoiceDatas);
-        return view('invoice.invoice_index',compact('invoiceDatas'));
+
+        //dd($request->all());
+         $query=InvoiceDetails::with(['rcmaster','customerproductmaster','productmaster','customerpomaster','uom_masters','currency_masters']);
+         if(!empty($request->date_from)){
+            $query = $query->where('created_at','>',$request->date_from);
+        }
+        if(!empty($request->date_to)){
+            $query = $query->where('created_at','<',$request->date_to);
+        }
+        $invoiceDatas = $query->get();
+        //dd($invoiceDatas);
+         return view('invoice.invoice_index',compact('invoiceDatas'));
+        //return view('invoice.invoice_index');
     }
 
     /**
