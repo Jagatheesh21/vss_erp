@@ -53,5 +53,31 @@ class CustomerPoMasterSeeder extends Seeder
             'rate'=>'2.50',
             'prepared_by'=>'1'
         ]);
+        $customerPoMaster4 = CustomerPoMaster::create([
+            'create_date' => '2024-04-22',
+            'cus_id' => 1,
+            'part_id' => 4,
+            'cus_po_no'=>'5200005732',
+            'cus_po_date'=>'2024-04-01',
+            'cus_po_item_no'=>3,
+            'cus_po_qty'=>1000,
+            'uom_id'=>'2',
+            'part_per'=>'1',
+            'rate'=>'3.00',
+            'prepared_by'=>'1'
+        ]);
+        $customerPoMaster5 = CustomerPoMaster::create([
+            'create_date' => '2024-04-22',
+            'cus_id' => 1,
+            'part_id' => 5,
+            'cus_po_no'=>'5200005732',
+            'cus_po_date'=>'2024-04-01',
+            'cus_po_item_no'=>3,
+            'cus_po_qty'=>1000,
+            'uom_id'=>'2',
+            'part_per'=>'1',
+            'rate'=>'3.50',
+            'prepared_by'=>'1'
+        ]);
     }
 }

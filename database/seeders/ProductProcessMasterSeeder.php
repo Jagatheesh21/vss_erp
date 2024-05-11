@@ -281,5 +281,118 @@ class ProductProcessMasterSeeder extends Seeder
             'prepared_by'=>'1'
         ]);
 
+        $productProcessMaster39 = ProductProcessMaster::create([
+            'part_id' =>6,
+            'process_master_id' => 22,
+            'process_order_id' =>6,
+            'foreman_id' => 1,
+            'prepared_by'=>'1'
+        ]);
+        $productProcessMaster40= ProductProcessMaster::create([
+            'part_id' => 7,
+            'process_master_id' => 1,
+            'process_order_id' => 1,
+            'foreman_id' => 1,
+            'prepared_by'=>'1'
+        ]);
+        $productProcessMaster41= ProductProcessMaster::create([
+            'part_id' => 7,
+            'process_master_id' => 2,
+            'process_order_id' => 2,
+            'foreman_id' => 1,
+            'prepared_by'=>'1'
+        ]);
+        $productProcessMaster42 = ProductProcessMaster::create([
+            'part_id' => 7,
+            'process_master_id' => 3,
+            'process_order_id' => 3,
+            'foreman_id' => 1,
+            'prepared_by'=>'1'
+        ]);
+        $productProcessMaster42 = ProductProcessMaster::create([
+            'part_id' => 7,
+            'process_master_id' => 4,
+            'process_order_id' => 4,
+            'foreman_id' => 1,
+            'prepared_by'=>'1'
+        ]);
+        $productProcessMaster43 = ProductProcessMaster::create([
+            'part_id' => 7,
+            'process_master_id' => 6,
+            'process_order_id' => 5,
+            'foreman_id' => 1,
+            'prepared_by'=>'1'
+        ]);
+        $productProcessMaster44 = ProductProcessMaster::create([
+            'part_id' => 7,
+            'process_master_id' => 9,
+            'process_order_id' =>6,
+            'foreman_id' => 1,
+            'prepared_by'=>'1'
+        ]);
+        $productProcessMaster45 = ProductProcessMaster::create([
+            'part_id' => 7,
+            'process_master_id' => 22,
+            'process_order_id' =>7,
+            'foreman_id' => 1,
+            'prepared_by'=>'1'
+        ]);
+        $productProcessMaster46= ProductProcessMaster::create([
+            'part_id' => 8,
+            'process_master_id' => 1,
+            'process_order_id' => 1,
+            'foreman_id' => 1,
+            'prepared_by'=>'1'
+        ]);
+        $productProcessMaster47= ProductProcessMaster::create([
+            'part_id' => 8,
+            'process_master_id' => 2,
+            'process_order_id' => 2,
+            'foreman_id' => 1,
+            'prepared_by'=>'1'
+        ]);
+        $productProcessMaster48 = ProductProcessMaster::create([
+            'part_id' => 8,
+            'process_master_id' => 3,
+            'process_order_id' => 3,
+            'foreman_id' => 1,
+            'prepared_by'=>'1'
+        ]);
+        $productProcessMaster49 = ProductProcessMaster::create([
+            'part_id' => 8,
+            'process_master_id' => 4,
+            'process_order_id' => 4,
+            'foreman_id' => 1,
+            'prepared_by'=>'1'
+        ]);
+        $productProcessMaster50 = ProductProcessMaster::create([
+            'part_id' => 8,
+            'process_master_id' => 6,
+            'process_order_id' => 5,
+            'foreman_id' => 1,
+            'prepared_by'=>'1'
+        ]);
+        $productProcessMaster51 = ProductProcessMaster::create([
+            'part_id' => 8,
+            'process_master_id' => 9,
+            'process_order_id' =>6,
+            'foreman_id' => 1,
+            'prepared_by'=>'1'
+        ]);
+        $productProcessMaster52 = ProductProcessMaster::create([
+            'part_id' => 8,
+            'process_master_id' => 22,
+            'process_order_id' =>7,
+            'foreman_id' => 1,
+            'prepared_by'=>'1'
+        ]);
+        $productProcessMaster53 = ProductProcessMaster::create([
+            'part_id' => 9,
+            'process_master_id' => 22,
+            'process_order_id' =>1,
+            'foreman_id' => 1,
+            'prepared_by'=>'1'
+        ]);
+
     }
 }

@@ -262,19 +262,22 @@ class InvoiceDetailsController extends Controller
                     }
                 }else{
                     // dd('not ok');
-                    $dcmasterOperationDatas=DcMaster::with('childpart','procesmaster','supplier')->where('status','=',1)->where('supplier_id','=',$cus_id)->where('part_id','=',$part_id)->first();
-                    $operation_id=$dcmasterOperationDatas->operation_id;
-                    $operation_name=$dcmasterOperationDatas->procesmaster->operation;
+                    // $dcmasterOperationDatas=CustomerProductMaster::with('childpart','procesmaster','supplier')->where('status','=',1)->where('supplier_id','=',$cus_id)->where('part_id','=',$part_id)->first();
+                    // $operation_id=$dcmasterOperationDatas->operation_id;
+                    // $operation_name=$dcmasterOperationDatas->procesmaster->operation;
+                    // $operation='<option value="'.$operation_id.'" selected>'.$operation_name.'</option>';
+                    $invoicemasterOperationDatas=CustomerProductMaster::with('customermaster','customerpomaster','uom_masters','currency_masters','productmasters')->where('status','=',1)->where('cus_id','=',$cus_id)->where('part_id','=',$part_id)->first();
+                    $operation_id=22;
+                    $operation_name='FG For Invoicing';
                     $operation='<option value="'.$operation_id.'" selected>'.$operation_name.'</option>';
 
-                    $dcmasterDatas=DB::table('dc_masters as a')
+                    $dcmasterDatas=DB::table('customer_product_masters as a')
                     ->join('product_masters AS b', 'a.part_id', '=', 'b.id')
                     ->join('child_product_masters AS c', 'c.part_id', '=', 'b.id')
                     ->join('trans_data_d11_s AS d', 'd.part_id', '=', 'c.id')
                     ->join('route_masters AS e', 'd.rc_id', '=', 'e.id')
                     ->select('e.id as rcId','e.rc_id','c.id as partId','c.child_part_no','c.no_item_id',DB::raw('((receive_qty)-(issue_qty)) as avl_qty'))
                     ->where('a.part_id','=',$part_id)
-                    ->where('a.operation_id','=',$operation_id)
                     ->where('c.stocking_point','=',$operation_id)
                     ->where('d.next_process_id','=',$operation_id)
                     ->where('c.item_type','=',1)
@@ -282,14 +285,13 @@ class InvoiceDetailsController extends Controller
                     ->orderBy('c.no_item_id', 'ASC')
                     ->orderBy('e.id', 'ASC')
                     ->get();
-                    $dcmasterDatas2=DB::table('dc_masters as a')
+                    $dcmasterDatas2=DB::table('customer_product_masters as a')
                     ->join('product_masters AS b', 'a.part_id', '=', 'b.id')
                     ->join('child_product_masters AS c', 'c.part_id', '=', 'b.id')
                     ->join('trans_data_d11_s AS d', 'd.part_id', '=', 'c.id')
                     ->join('route_masters AS e', 'd.rc_id', '=', 'e.id')
                     ->select(DB::raw('((receive_qty)-(issue_qty)) as t_avl_qty'))
                     ->where('a.part_id','=',$part_id)
-                    ->where('a.operation_id','=',$operation_id)
                     ->where('c.stocking_point','=',$operation_id)
                     ->where('d.next_process_id','=',$operation_id)
                     ->where('c.item_type','=',1)
@@ -319,7 +321,7 @@ class InvoiceDetailsController extends Controller
                             '<td><input type="number" name="balance[]"  class="form-control bg-light balance"  id="balance" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
                             '</tr>';
                         }
-                        return response()->json(['t_avl_qty'=>$t_avl_qty,'table1'=>$table1,'table2'=>$table2,'operation'=>$operation,'regular'=>$check1,'alter'=>$check2,'bom'=>$bom]);
+                        return response()->json(['t_avl_qty'=>$t_avl_qty,'table1'=>$table1,'table2'=>$table2,'operation'=>$operation,'regular'=>$check1,'alter'=>$check2,'bom'=>$bom,'cus_po_no'=>$cus_po_no]);
                 }
 
         // $cus_order_datas;

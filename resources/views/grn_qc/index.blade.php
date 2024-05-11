@@ -74,7 +74,7 @@
                                         <span class="btn btn-sm btn-warning text-white">ON-HOLD</span>
                                     @endif</td>
                                     <td class="me-auto">
-                                        <a href="{{route('grn_qc.show',$grnqc_data->id)}}"  class="btn btn-sm py-0 mx-2 btn-primary"><i class='bx bxs-show' style='color:white;'>&nbsp;</i></a>
+                                        {{-- <a href="{{route('grn_qc.show',$grnqc_data->id)}}"  class="btn btn-sm py-0 mx-2 btn-primary"><i class='bx bxs-show' style='color:white;'>&nbsp;</i></a> --}}
                                         @if ($grnqc_data->status!=1)
                                         {{-- <a href="{{route('grn_qc.edit',$grnqc_data->id)}}" class="btn btn-sm py-0 mx-2 btn-info"><i class='bx bxs-edit' style='color:white;'>&nbsp;</i></a> --}}
                                         <a href="{{route('grn_iqc.approval',$grnqc_data->grn_id)}}" data-toggle="tooltip"  data-id="{{$grnqc_data->id}}" class="btn btn-sm py-0 mx-2 btn-info"><i class='bx bxs-edit' style='color:white;'>&nbsp;</i></a>

@@ -44,5 +44,25 @@ class CustomerPoRateReviseSeeder extends Seeder
             'rate'=>'2.50',
             'prepared_by'=>'1'
         ]);
+        $customerPoRateReviseMaster4 = CustomerPoRateRevise::create([
+            'cus_id' => 1,
+            'part_id' => 4,
+            'cus_po_id'=>4,
+            'cus_po_qty'=>1000,
+            'uom_id'=>'2',
+            'part_per'=>'1',
+            'rate'=>'3.00',
+            'prepared_by'=>'1'
+        ]);
+        $customerPoRateReviseMaster5 = CustomerPoRateRevise::create([
+            'cus_id' => 1,
+            'part_id' => 5,
+            'cus_po_id'=>5,
+            'cus_po_qty'=>1000,
+            'uom_id'=>'2',
+            'part_per'=>'1',
+            'rate'=>'3.50',
+            'prepared_by'=>'1'
+        ]);
     }
 }

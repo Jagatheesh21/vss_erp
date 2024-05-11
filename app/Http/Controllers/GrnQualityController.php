@@ -95,6 +95,7 @@ class GrnQualityController extends Controller
             ->join('supplier_products AS e', 'c.supplier_product_id', '=', 'e.id')
             ->join('raw_material_categories AS f', 'e.raw_material_category_id', '=', 'f.id')
             ->join('raw_materials AS g', 'e.raw_material_id', '=', 'g.id')
+            // ->join('users AS u', 'j.inspected_by', '=', 'u.id')
             ->select('j.id as id','a.id as grn_id','n.rc_id as grnnumber',
             'a.grndate',
             'b.ponumber',
@@ -112,6 +113,7 @@ class GrnQualityController extends Controller
             'j.onhold_qty',
             'j.rejected_qty',
             'j.inspected_by',
+            // 'u.name as inspected_by',
             'j.inspected_date',
             'j.status')
             ->orderBy('j.id','DESC')

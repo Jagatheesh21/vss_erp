@@ -14,7 +14,7 @@
                 {{ Session::get('error')}}
                 </div>
             @endif
-            <div class="card-header d-flex" style="justify-content:space-between"><span> RawMaterial List </span>
+            <div class="card-header d-flex" style="justify-content:space-between"><span> <b>RawMaterial List</b> </span>
                 <a class="btn btn-sm btn-primary" href="{{route('raw_material.create')}}">Add RawMaterial</a>
             </div>
             <div class="card-body">

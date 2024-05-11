@@ -29,6 +29,7 @@ class ChildProductMasterSeeder extends Seeder
         $childProductMaster3 = ChildProductMaster::create([
             'stocking_point' => '22',
             'child_part_no' => '29371408',
+            'item_type'=> 1,
             'part_id' => '3',
             'prepared_by'=>'1'
         ]);
@@ -36,6 +37,7 @@ class ChildProductMasterSeeder extends Seeder
             'stocking_point' => '17',
             'child_part_no' => '29371408-S',
             'part_id' => '3',
+            'item_type'=> 1,
             'no_item_id' => '1',
             'prepared_by'=>'1'
         ]);
@@ -43,7 +45,40 @@ class ChildProductMasterSeeder extends Seeder
             'stocking_point' => '17',
             'child_part_no' => '29371408-T',
             'part_id' => '3',
+            'item_type'=> 1,
             'no_item_id' => '2',
+            'prepared_by'=>'1'
+        ]);
+        $childProductMaster6 = ChildProductMaster::create([
+            'stocking_point' => '22',
+            'child_part_no' => '29374193',
+            'part_id' => '4',
+            'item_type'=> 1,
+            'no_item_id' => '1',
+            'prepared_by'=>'1'
+        ]);
+        $childProductMaster7 = ChildProductMaster::create([
+            'stocking_point' => '22',
+            'child_part_no' => '29374193-S',
+            'part_id' => '4',
+            'item_type'=> 1,
+            'no_item_id' => '1',
+            'prepared_by'=>'1'
+        ]);
+        $childProductMaster8 = ChildProductMaster::create([
+            'stocking_point' => '22',
+            'child_part_no' => '29374193-T',
+            'part_id' => '4',
+            'item_type'=> 1,
+            'no_item_id' => '2',
+            'prepared_by'=>'1'
+        ]);
+        $childProductMaster9 = ChildProductMaster::create([
+            'stocking_point' => '22',
+            'child_part_no' => '29192710/J',
+            'part_id' => '4',
+            'item_type'=> 0,
+            'no_item_id' => '1',
             'prepared_by'=>'1'
         ]);
     }

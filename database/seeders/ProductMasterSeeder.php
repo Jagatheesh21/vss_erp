@@ -29,5 +29,15 @@ class ProductMasterSeeder extends Seeder
             'part_desc' => 'Spring',
             'prepared_by'=>'1'
         ]);
+        $productMaster4 = ProductMaster::create([
+            'part_no' => '29374193',
+            'part_desc' => 'Spring',
+            'prepared_by'=>'1'
+        ]);
+        $productMaster5 = ProductMaster::create([
+            'part_no' => '29192710/J',
+            'part_desc' => 'Spring',
+            'prepared_by'=>'1'
+        ]);
     }
 }

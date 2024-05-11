@@ -491,7 +491,7 @@ class GRNInwardRegisterController extends Controller
             $count2=GrnQuality::where('heat_no_id','=',$heat_id)->where('grnnumber_id','=',$grn_id)->first()->count();
             if ($count2>0) {
                 $grnQcDatas=GrnQuality::where('heat_no_id','=',$heat_id)->where('grnnumber_id','=',$grn_id)->first();
-                $avl_qty=(($grnQcDatas->approved_qty)-($grnQcDatas->issue_qty)-($grnQcDatas->return_qty));
+                $avl_qty=(($grnQcDatas->approved_qty)-($grnQcDatas->issue_qty));
                 $grn_qc_id=$grnQcDatas->id;
             }else{
                 $avl_qty=0;

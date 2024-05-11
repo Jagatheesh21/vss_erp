@@ -59,5 +59,41 @@ class BomMasterSeeder extends Seeder
             'foreman' => 'NON-LEAN',
             'prepared_by'=>'1'
         ]);
+        $bomMaster6 = BomMaster::create([
+            'child_part_id' => 6,
+            'rm_id' => 1,
+            'uom_id' => 1,
+            'input_usage' => 0.3195000,
+            'output_usage' => 0.3195000,
+            'foreman' => 'NON-LEAN',
+            'prepared_by'=>'1'
+        ]);
+        $bomMaster7 = BomMaster::create([
+            'child_part_id' => 7,
+            'rm_id' => 1,
+            'uom_id' => 1,
+            'input_usage' => 0.2940000,
+            'output_usage' => 0.2940000,
+            'foreman' => 'NON-LEAN',
+            'prepared_by'=>'1'
+        ]);
+        $bomMaster8 = BomMaster::create([
+            'child_part_id' => 8,
+            'rm_id' => 1,
+            'uom_id' => 1,
+            'input_usage' => 0.0255000,
+            'output_usage' => 0.0255000,
+            'foreman' => 'NON-LEAN',
+            'prepared_by'=>'1'
+        ]);
+        $bomMaster9 = BomMaster::create([
+            'child_part_id' => 9,
+            'rm_id' => 1,
+            'uom_id' => 1,
+            'input_usage' => 0.0040800,
+            'output_usage' => 0.0040800,
+            'foreman' => 'NON-LEAN',
+            'prepared_by'=>'1'
+        ]);
     }
 }
