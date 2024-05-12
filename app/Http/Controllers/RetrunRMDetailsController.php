@@ -41,7 +41,7 @@ class RetrunRMDetailsController extends Controller
     public function index()
     {
         //
-        $returnrmDatas=RetrunRMDetails::all();
+        $returnrmDatas=RetrunRMDetails::with(['current_rcmaster','partmaster','currentprocessmaster','grndata','heat_nomaster','rm_master','receiver'])->get();
         // dd($returnrmDatas);
         return view('rm_issuance.return_rm',compact('returnrmDatas'));
     }
@@ -87,7 +87,7 @@ class RetrunRMDetailsController extends Controller
             $TransDataD12Datas=TransDataD12::with(['grndata','heat_nomaster','partmaster'])->where('rc_id','=',$rc_no)->where('process_id','=',3)->first();
             // dd($TransDataD12Datas);
             $part_no='<option value="'.$TransDataD12Datas->partmaster->id.'">'.$TransDataD12Datas->partmaster->child_part_no.'</option>';
-            $grn_datas='<option value="'.$TransDataD12Datas->grndata->rcmaster->id.'">'.$TransDataD12Datas->grndata->rcmaster->rc_id.'</option>';
+            $grn_datas='<option value="'.$TransDataD12Datas->grndata->id.'">'.$TransDataD12Datas->grndata->rcmaster->rc_id.'</option>';
             $rm='<option value="'.$TransDataD12Datas->grndata->poproduct->supplier_products->material->id.'">'.$TransDataD12Datas->grndata->poproduct->supplier_products->material->name.'</option>';
             $heat_no_datas='<option value="'.$TransDataD12Datas->heat_nomaster->id.'">'.$TransDataD12Datas->heat_nomaster->heatnumber.'</option>';
             $coil_no=$TransDataD12Datas->heat_nomaster->coil_no;
@@ -118,14 +118,17 @@ class RetrunRMDetailsController extends Controller
         $old_rmissue_qty=$t11Datas->process_issue_qty;
         $current_rmissue_qty=(($old_rmissue_qty)-($request->receive_kg));
         $t11Datas->process_issue_qty=$current_rmissue_qty;
+        $t11Datas->remarks=$request->reason??NULL;
         if($request->rc_close=="yes"){
             // dd($request->rc_date);
             $t11Datas->close_date=$request->rc_date;
             $t11Datas->status=0;
+            $t11Datas->rc_status=0;
         }
         $t11Datas->updated_by = auth()->user()->id;
         $t11Datas->updated_at = Carbon::now();
         $t11Datas->update();
+
 
         $t12Datas=TransDataD12::with('current_rcmaster')->where('rc_id','=',$rc_card_id)->first();
         $t12Datas->rm_issue_qty=$current_rmissue_qty;
@@ -154,6 +157,22 @@ class RetrunRMDetailsController extends Controller
         $grn_qcdatas->updated_by = auth()->user()->id;
         $grn_qcdatas->updated_at = Carbon::now();
         $grn_qcdatas->update();
+
+        $retrunRMData=new RetrunRMDetails;
+        $retrunRMData->open_date=$request->rc_date;
+        $retrunRMData->process_id=$request->current_process_id;
+        $retrunRMData->part_id=$request->part_id;
+        $retrunRMData->rc_id=$request->rc_no;
+        $retrunRMData->grn_id=$request->grn_no;
+        $retrunRMData->rm_id=$request->rm_id;
+        $retrunRMData->heat_no_id=$request->heat_no;
+        $retrunRMData->avl_qty=$request->avl_kg;
+        $retrunRMData->return_qty=$request->receive_kg;
+        $retrunRMData->reason=$request->reason??NULL;
+        $retrunRMData->prepared_by=auth()->user()->id;
+        $retrunRMData->save();
+
+
         return redirect()->route('retrunrmdetails.index')->withSuccess('Return RM Received is Successfully!');
 
     }

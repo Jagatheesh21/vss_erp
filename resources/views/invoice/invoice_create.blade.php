@@ -246,6 +246,7 @@
                                     @enderror
                                 </div>
                             </div>
+                            <input type="hidden" name="traceable_count" class="form-control traceable_count" id="traceable_count" >
                             <input type="hidden" name="regular" class="form-control regular" id="regular" >
                             <input type="hidden" name="alter" class="form-control alter" id="alter">
                             <input type="hidden" name="bom" class="form-control bom" id="bom">
@@ -346,7 +347,9 @@
                     }
                 }
             });
-            $('#part_id').change(function (e) {
+        });
+
+        $('#part_id').change(function (e) {
                 e.preventDefault();
                 var cus_id=$("#cus_id").val();
                 var part_id=$(this).val();
@@ -356,26 +359,66 @@
                     data: {"cus_id":cus_id,"part_id":part_id},
                     success: function (response) {
                         // console.log(response);
-                        $('#cus_po_id').html(response.cus_po_no);
+                        if (response.success) {
+                            if (response.message) {
+                                $('#cus_po_id').html(response.cus_po_no);
+                                // $('#cus_order_qty').val(response.t_avl_qty);
+                                $('#cus_order_qty').val(1000);
+                                $('#avl_quantity').val(response.t_avl_qty);
+                                $('#operation_id').html(response.operation);
+                                $('#invoice_quantity'). attr('max',response.t_avl_qty);
+                                $('#invoice_quantity').attr('readonly',false);
+                                $('#invoice_quantity').removeClass('bg-light');
+                                $('#table_logic1').html(response.table1);
+                                $('#table_logic2').html(response.table2);
+                                $('#traceable_count').val(response.traceable_count);
+                                $('#regular').val(response.regular);
+                                $('#alter').val(response.alter);
+                                $('#bom').val(response.bom);
+                                $('#proceed').hide();
+                                $('#step2').show();
+                                $('#step3').show();
+                            }else{
+                                $('#cus_po_id').html(response.cus_po_no);
+                                // $('#cus_order_qty').val(response.t_avl_qty);
+                                $('#cus_order_qty').val(1000);
+                                $('#avl_quantity').val(response.t_avl_qty);
+                                $('#operation_id').html(response.operation);
+                                $('#invoice_quantity'). attr('max',response.t_avl_qty);
+                                $('#invoice_quantity').attr('readonly',false);
+                                $('#invoice_quantity').removeClass('bg-light');
+                                $('#table_logic1').html(response.table1);
+                                $('#table_logic2').html(response.table2);
+                                $('#traceable_count').val(response.traceable_count);
+                                $('#regular').val(response.regular);
+                                $('#alter').val(response.alter);
+                                $('#bom').val(response.bom);
+                                var msg='Sorry Something else in Pickup Part Number.So Contact to ERP Team...';
+                                alert(msg);
+                                location.reload(true);
+                            }
+                        } else {
+                            $('#cus_po_id').html(response.cus_po_no);
                         // $('#cus_order_qty').val(response.t_avl_qty);
-                        $('#cus_order_qty').val(1000);
-                        $('#avl_quantity').val(response.t_avl_qty);
-                        $('#operation_id').html(response.operation);
-                        $('#invoice_quantity'). attr('max',response.t_avl_qty);
-                        $('#invoice_quantity').attr('readonly',false);
-                        $('#invoice_quantity').removeClass('bg-light');
-                        $('#table_logic1').html(response.table1);
-                        $('#table_logic2').html(response.table2);
-                        $('#regular').val(response.regular);
-                        $('#alter').val(response.alter);
-                        $('#bom').val(response.bom);
-                        $('#proceed').hide();
-                        $('#step2').show();
-                        $('#step3').show();
+                            $('#cus_order_qty').val(1000);
+                            $('#avl_quantity').val(response.t_avl_qty);
+                            $('#operation_id').html(response.operation);
+                            $('#invoice_quantity'). attr('max',response.t_avl_qty);
+                            $('#invoice_quantity').attr('readonly',false);
+                            $('#invoice_quantity').removeClass('bg-light');
+                            $('#table_logic1').html(response.table1);
+                            $('#table_logic2').html(response.table2);
+                            $('#traceable_count').val(response.traceable_count);
+                            $('#regular').val(response.regular);
+                            $('#alter').val(response.alter);
+                            $('#bom').val(response.bom);
+                            $('#proceed').hide();
+                            $('#step2').show();
+                            $('#step3').show();
+                        }
                     }
                 });
             });
-        });
         // vehicle number format
         function format() {
             var x=$('#vehicle_no').val();
@@ -401,6 +444,7 @@
             var invoice_avl_qty = $('#avl_quantity').val();
             var invoice_order_qty = $('#cus_order_qty').val();
             var regular=$('#regular').val();
+            var alter=$('#alter').val();
             var bom=$('#bom').val();
             var issue_wt=invoice_quantity*bom;
             var part_rate=$('.part_rate').val();
@@ -457,12 +501,43 @@
                         return false;
                     }
 
-            } else {
+            }if (alter==1) {
+                if (diff2>=0) {
+                        if (diff>=0) {
+                            var total = invoice_quantity;
+                            $('table > tbody  > tr').each(function(index, row) {
+                            $(row).find('.issue_quantity').val('');
+                            var qty = $(row).find('.available_quantity').val();
+                            if(total>=qty && total>0){
+                                total-=qty;
+                                $(row).find('.issue_quantity').val(qty);
+                                console.log('method 1');
+                            }else if(qty>total){
+                            $(row).find('.issue_quantity').val(total);
+                                total = 0;
+                            }
+                            var balance = qty-($(row).find('.issue_quantity').val());
+                            $(row).find('.balance').val(balance);
+                            });
+                            $('#proceed').show();
+                        }else{
+                            $('#proceed').hide();
+                            alert('Sorry This Quantity More Than Available Quantity..');
+                            return false;
+                        }
+                    } else {
+                        $('#proceed').hide();
+                        alert('Sorry This Quantity More Than Order Quantity..');
+                        return false;
+                    }
+            }
+            else {
                 let i;
                 let x=$('table > tbody  > tr').toArray();
                 for (i= 0; i < x.length; i++) {
-                    alert(x[i].innerHTML);
+                    // alert(x[i].innerHTML);
                 }
+                $('#proceed').show();
 
             }
 

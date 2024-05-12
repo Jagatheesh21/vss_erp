@@ -195,6 +195,17 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="reason">Reason</label>
+                            <textarea name="reason" id="reason" class="form-control @error('reason') is-invalid @enderror" cols="30" rows="5"></textarea>
+                            @error('reason')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                        </div>
+                    </div>
                     <div class="row d-flex justify-content-center mt-3">
                         <div class="col-md-3">
                             <p><b>Route Card Close :</b></p>

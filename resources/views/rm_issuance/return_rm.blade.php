@@ -28,24 +28,41 @@
                                     <th>Route Card Number</th>
                                     <th>Return Date</th>
                                     <th>Part Number</th>
-                                    <th>GRN Number</th>
                                     <th>RM Desc</th>
+                                    <th>GRN Number</th>
                                     <th>Heat Number</th>
                                     <th>Coil Number</th>
+                                    <th>Lot Number</th>
                                     <th>Test Certificate Number</th>
                                     <th>Before Return Qty</th>
                                     <th>Return Qty</th>
-                                    <th>Status</th>
+                                    <th>Remarks</th>
+                                    <th>Received By</th>
+                                    <th>Received Date & Time</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse ($returnrmDatas as $returnrmData)
                                 <tr>
                                     <td>{{$loop->iteration}}</td>
+                                    <td>{{$returnrmData->current_rcmaster->rc_id}}</td>
+                                    <td>{{date('d-m-Y', strtotime($returnrmData->open_date))}}</td>
+                                    <td>{{$returnrmData->partmaster->child_part_no}}</td>
+                                    <td>{{$returnrmData->rm_master->name}}</td>
+                                    <td>{{$returnrmData->grndata->rcmaster->rc_id}}</td>
+                                    <td>{{$returnrmData->heat_nomaster->heatnumber}}</td>
+                                    <td>{{$returnrmData->heat_nomaster->coil_no}}</td>
+                                    <td>{{$returnrmData->heat_nomaster->lot_no}}</td>
+                                    <td>{{$returnrmData->heat_nomaster->tc_no}}</td>
+                                    <td>{{$returnrmData->return_qty}}</td>
+                                    <td>{{$returnrmData->avl_qty}}</td>
+                                    <td>{{$returnrmData->reason}}</td>
+                                    <td>{{$returnrmData->receiver->name}}</td>
+                                    <td>{{$returnrmData->created_at}}</td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="18" align="center">No Records Found!</td>
+                                    <td colspan="15" align="center">No Records Found!</td>
                                 </tr>
                                 @endforelse
                             </tbody>

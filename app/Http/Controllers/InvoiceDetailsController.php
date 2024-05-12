@@ -193,12 +193,30 @@ class InvoiceDetailsController extends Controller
         // dd($cus_po_no);
         // $part_id=$request->part_id;
         // $cus_id1=$request->supplier_id;
-        $bomDatas=BomMaster::find($part_id);
-        $bom=$bomDatas->manual_usage;
+        $bomDatas_count=BomMaster::find($part_id)->count();
+        if ($bomDatas_count>0) {
+            $bomDatas=BomMaster::find($part_id);
+            $bom=$bomDatas->manual_usage;
+        }else {
+            $bom=0;
+        }
+
         $check=ChildProductMaster::where('status','=',1)->where('part_id','=',$part_id)->count();
         $check1=ChildProductMaster::where('status','=',1)->where('part_id','=',$part_id)->where('item_type','=',1)->count();
         $check2=ChildProductMaster::where('status','=',1)->where('part_id','=',$part_id)->where('item_type','=',0)->count();
         $manufacturingPartDatas=ChildProductMaster::where('status','=',1)->where('part_id','=',$part_id)->get();
+
+        if ($check==0) {
+            $success=false;
+            $message=true;
+            $operation_id=22;
+            $operation_name='FG For Invoicing';
+            $operation='<option value="'.$operation_id.'" selected>'.$operation_name.'</option>';
+            $tabledata='<tr><td style="text-align:center;" colspan="6"><b>No Result Found-Non Traceability</b></td></tr>';
+            return response()->json(['t_avl_qty'=>100000,'table1'=>$table1,'table2'=>$tabledata,'operation'=>$operation,'regular'=>$check1,'alter'=>$check2,'bom'=>$bom,'cus_po_no'=>$cus_po_no,'success'=>$success,'traceable_count'=>$check,'message'=>$message]);
+        } else {
+            $success=true;
+        }
         // dd($check2);
                 if ($check1==1) {
                     // dd('ok');
@@ -212,32 +230,45 @@ class InvoiceDetailsController extends Controller
                         $operation_id=22;
                         $operation_name='FG For Invoicing';
                         $operation='<option value="'.$operation_id.'" selected>'.$operation_name.'</option>';
-                        $invoicemasterDatas=TransDataD11::with('rcmaster','partmaster')->where('next_process_id','=',$operation_id)->where('part_id','=',$manufacturingPart)->select('rc_id','part_id',DB::raw('((receive_qty)-(issue_qty)) as avl_qty'))
-                        ->havingRaw('avl_qty >?', [0])->get();
                         $count1=TransDataD11::where('next_process_id','=',$operation_id)->where('part_id','=',$manufacturingPart)->select(DB::raw('(SUM(receive_qty)-SUM(issue_qty)) as t_avl_qty'))
                         ->havingRaw('t_avl_qty >?', [0])->first();
-                        $t_avl_qty=$count1->t_avl_qty;
-                        // dd($invoicemasterDatas);
-                        // dd($count1);
-                        $table2="";
-                        foreach ($invoicemasterDatas as $key => $dcmasterData) {
-                            $table2.='<tr>'.
-                            // '<td><select name="route_part_id[]" class="form-control bg-light route_part_id" readonly id="route_part_id"><option value="'.$dcmasterData->partmaster->child_part_no.'">'.$dcmasterData->partmaster->child_part_no.'</option></select></td>'.
-                            // '<td><input type="number" name="order_no[]"  class="form-control bg-light order_no" readonly  id="order_no" value="'.$dcmasterData->partmaster->no_item_id.'"></td>'.
-                            // '<td><select name="route_card_id[]" class="form-control bg-light route_card_id" readonly id="route_card_id"><option value="'.$dcmasterData->rcmaster->id.'">'.$dcmasterData->rcmaster->rc_id.'</option></select></td>'.
-                            // '<td><input type="number" name="available_quantity[]"  class="form-control bg-light available_quantity" readonly  id="available_quantity" value="'.$dcmasterData->avl_qty.'"></td>'.
-                            // '<td><input type="number" name="issue_quantity[]"  class="form-control bg-light issue_quantity" readonly id="issue_quantity" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
-                            // '<td><input type="number" name="balance[]"  class="form-control bg-light balance" readonly id="balance" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
-                            // '</tr>';
-                            '<td><select name="route_part_id[]" class="form-control bg-light route_part_id" id="route_part_id"><option value="'.$dcmasterData->partmaster->id.'">'.$dcmasterData->partmaster->child_part_no.'</option></select></td>'.
-                            '<td><input type="number" name="order_no[]"  class="form-control bg-light order_no"  id="order_no" value="'.$dcmasterData->partmaster->no_item_id.'"></td>'.
-                            '<td><select name="route_card_id[]" class="form-control bg-light route_card_id" id="route_card_id"><option value="'.$dcmasterData->rcmaster->id.'">'.$dcmasterData->rcmaster->rc_id.'</option></select></td>'.
-                            '<td><input type="number" name="available_quantity[]"  class="form-control bg-light available_quantity"  id="available_quantity" value="'.$dcmasterData->avl_qty.'"></td>'.
-                            '<td><input type="number" name="issue_quantity[]"  class="form-control bg-light issue_quantity" id="issue_quantity" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
-                            '<td><input type="number" name="balance[]"  class="form-control bg-light balance" id="balance" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
-                            '</tr>';
+                        if ($count1!=NULL) {
+                            $t_avl_qty=$count1->t_avl_qty;
+                        }else{
+                            $t_avl_qty=0;
                         }
-                        return response()->json(['t_avl_qty'=>$t_avl_qty,'table1'=>$table1,'table2'=>$table2,'operation'=>$operation,'regular'=>$check1,'alter'=>$check2,'bom'=>$bom,'cus_po_no'=>$cus_po_no]);
+                        $message=true;
+                        // dd($count1);
+                        if ($t_avl_qty>0) {
+                            $invoicemasterDatas=TransDataD11::with('rcmaster','partmaster')->where('next_process_id','=',$operation_id)->where('part_id','=',$manufacturingPart)->select('rc_id','part_id',DB::raw('((receive_qty)-(issue_qty)) as avl_qty'))
+                            ->havingRaw('avl_qty >?', [0])->get();
+
+                            // dd($invoicemasterDatas);
+                            // dd($count1);
+                            $table2="";
+                            foreach ($invoicemasterDatas as $key => $dcmasterData) {
+                                $table2.='<tr class="order_'.$dcmasterData->partmaster->no_item_id.'">'.
+
+                                // $table2.='<tr>'.
+                                // '<td><select name="route_part_id[]" class="form-control bg-light route_part_id" readonly id="route_part_id"><option value="'.$dcmasterData->partmaster->child_part_no.'">'.$dcmasterData->partmaster->child_part_no.'</option></select></td>'.
+                                // '<td><input type="number" name="order_no[]"  class="form-control bg-light order_no" readonly  id="order_no" value="'.$dcmasterData->partmaster->no_item_id.'"></td>'.
+                                // '<td><select name="route_card_id[]" class="form-control bg-light route_card_id" readonly id="route_card_id"><option value="'.$dcmasterData->rcmaster->id.'">'.$dcmasterData->rcmaster->rc_id.'</option></select></td>'.
+                                // '<td><input type="number" name="available_quantity[]"  class="form-control bg-light available_quantity" readonly  id="available_quantity" value="'.$dcmasterData->avl_qty.'"></td>'.
+                                // '<td><input type="number" name="issue_quantity[]"  class="form-control bg-light issue_quantity" readonly id="issue_quantity" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
+                                // '<td><input type="number" name="balance[]"  class="form-control bg-light balance" readonly id="balance" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
+                                // '</tr>';
+                                '<td><select name="route_part_id[]" class="form-control bg-light route_part_id" id="route_part_id"><option value="'.$dcmasterData->partmaster->id.'">'.$dcmasterData->partmaster->child_part_no.'</option></select></td>'.
+                                '<td><input type="number" name="order_no[]"  class="form-control bg-light order_no"  id="order_no" value="'.$dcmasterData->partmaster->no_item_id.'"></td>'.
+                                '<td><select name="route_card_id[]" class="form-control bg-light route_card_id" id="route_card_id"><option value="'.$dcmasterData->rcmaster->id.'">'.$dcmasterData->rcmaster->rc_id.'</option></select></td>'.
+                                '<td><input type="number" name="available_quantity[]"  class="form-control bg-light available_quantity"  id="available_quantity" value="'.$dcmasterData->avl_qty.'"></td>'.
+                                '<td><input type="number" name="issue_quantity[]"  class="form-control bg-light issue_quantity" id="issue_quantity" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
+                                '<td><input type="number" name="balance[]"  class="form-control bg-light balance" id="balance" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
+                                '</tr>';
+                            }
+                        } else {
+                            $table2='<tr><td colspan="6">No Result Found</td></tr>';
+                        }
+                        return response()->json(['t_avl_qty'=>$t_avl_qty,'table1'=>$table1,'table2'=>$table2,'operation'=>$operation,'regular'=>$check1,'alter'=>$check2,'bom'=>$bom,'cus_po_no'=>$cus_po_no,'success'=>$success,'traceable_count'=>$check,'message'=>$message]);
                     }
                 }elseif ($check1>1){
                     // dd('not ok');
@@ -250,20 +281,6 @@ class InvoiceDetailsController extends Controller
                     $operation_name='FG For Invoicing';
                     $operation='<option value="'.$operation_id.'" selected>'.$operation_name.'</option>';
 
-                    $dcmasterDatas=DB::table('customer_product_masters as a')
-                    ->join('product_masters AS b', 'a.part_id', '=', 'b.id')
-                    ->join('child_product_masters AS c', 'c.part_id', '=', 'b.id')
-                    ->join('trans_data_d11_s AS d', 'd.part_id', '=', 'c.id')
-                    ->join('route_masters AS e', 'd.rc_id', '=', 'e.id')
-                    ->select('e.id as rcId','e.rc_id','c.id as partId','c.child_part_no','c.no_item_id',DB::raw('((receive_qty)-(issue_qty)) as avl_qty'))
-                    ->where('a.part_id','=',$part_id)
-                    ->where('c.stocking_point','=',$operation_id)
-                    ->where('d.next_process_id','=',$operation_id)
-                    ->where('c.item_type','=',1)
-                    ->havingRaw('avl_qty >?', [0])
-                    ->orderBy('c.no_item_id', 'ASC')
-                    ->orderBy('e.id', 'ASC')
-                    ->get();
                     $dcmasterDatas2=DB::table('customer_product_masters as a')
                     ->join('product_masters AS b', 'a.part_id', '=', 'b.id')
                     ->join('child_product_masters AS c', 'c.part_id', '=', 'b.id')
@@ -274,15 +291,31 @@ class InvoiceDetailsController extends Controller
                     ->where('c.stocking_point','=',$operation_id)
                     ->where('d.next_process_id','=',$operation_id)
                     ->where('c.item_type','=',1)
+                    ->where('c.status','=',1)
                     ->havingRaw('t_avl_qty >?', [0])
                     ->orderBy('c.no_item_id', 'ASC')
                     ->orderBy('e.id', 'ASC')
                     ->min('t_avl_qty');
                     // dd($dcmasterDatas2);
-
-                    $t_avl_qty=$dcmasterDatas2;
-
-                    $table2="";
+                    $message=true;
+                    if ($dcmasterDatas2!=NULL) {
+                        $t_avl_qty=$dcmasterDatas2;
+                        $dcmasterDatas=DB::table('customer_product_masters as a')
+                        ->join('product_masters AS b', 'a.part_id', '=', 'b.id')
+                        ->join('child_product_masters AS c', 'c.part_id', '=', 'b.id')
+                        ->join('trans_data_d11_s AS d', 'd.part_id', '=', 'c.id')
+                        ->join('route_masters AS e', 'd.rc_id', '=', 'e.id')
+                        ->select('e.id as rcId','e.rc_id','c.id as partId','c.child_part_no','c.no_item_id',DB::raw('((receive_qty)-(issue_qty)) as avl_qty'))
+                        ->where('a.part_id','=',$part_id)
+                        ->where('c.stocking_point','=',$operation_id)
+                        ->where('d.next_process_id','=',$operation_id)
+                        ->where('c.item_type','=',1)
+                        ->where('c.status','=',1)
+                        ->havingRaw('avl_qty >?', [0])
+                        ->orderBy('c.no_item_id', 'ASC')
+                        ->orderBy('e.id', 'ASC')
+                        ->get();
+                        $table2="";
                         foreach ($dcmasterDatas as $key => $dcmasterData) {
                             $table2.='<tr class="order_'.$dcmasterData->no_item_id.'">'.
                             // '<td><select name="route_part_id[]" class="form-control bg-light route_part_id" readonly id="route_part_id"><option value="'.$dcmasterData->partId.'">'.$dcmasterData->child_part_no.'</option></select></td>'.
@@ -300,53 +333,138 @@ class InvoiceDetailsController extends Controller
                             '<td><input type="number" name="balance[]"  class="form-control bg-light balance"  id="balance" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
                             '</tr>';
                         }
-                        return response()->json(['t_avl_qty'=>$t_avl_qty,'table1'=>$table1,'table2'=>$table2,'operation'=>$operation,'regular'=>$check1,'alter'=>$check2,'bom'=>$bom,'cus_po_no'=>$cus_po_no]);
+                    }else{
+                        $t_avl_qty=0;
+                        $table2='<tr><td colspan="6">No Result Found</td></tr>';
+                    }
+                    return response()->json(['t_avl_qty'=>$t_avl_qty,'table1'=>$table1,'table2'=>$table2,'operation'=>$operation,'regular'=>$check1,'alter'=>$check2,'bom'=>$bom,'cus_po_no'=>$cus_po_no,'success'=>$success,'traceable_count'=>$check,'message'=>$message]);
                 }elseif ($check2==1) {
                    $fetch_pickup_part_datas=ChildProductMaster::where('status','=',1)->where('part_id','=',$part_id)->where('item_type','=',0)->first();
                    $fetch_pickup_part_id=$fetch_pickup_part_datas->pickup_part_id;
                    $alter_pickup_count=ChildProductMaster::where('status','=',1)->where('part_id','=',$fetch_pickup_part_id)->where('item_type','=',1)->count();
-                $manufacturingPartDatas=ChildProductMaster::where('status','=',1)->where('part_id','=',$fetch_pickup_part_id)->where('item_type','=',1)->get();
-
-                   if ($alter_pickup_count==1) {
-                    foreach ($manufacturingPartDatas as $key => $manufacturingPartData) {
-                        $manufacturingPart=$manufacturingPartData->id;
-                        $itemType=$manufacturingPartData->item_type;
-                    }
-                    // dd($itemType);
-                    if ($itemType==1) {
-                        $invoicemasterOperationDatas=CustomerProductMaster::with('customermaster','customerpomaster','uom_masters','currency_masters','productmasters')->where('status','=',1)->where('cus_id','=',$cus_id)->where('part_id','=',$part_id)->first();
+                    if ($alter_pickup_count==0) {
+                        $message=false;
                         $operation_id=22;
                         $operation_name='FG For Invoicing';
                         $operation='<option value="'.$operation_id.'" selected>'.$operation_name.'</option>';
-                        $invoicemasterDatas=TransDataD11::with('rcmaster','partmaster')->where('next_process_id','=',$operation_id)->where('part_id','=',$manufacturingPart)->select('rc_id','part_id',DB::raw('((receive_qty)-(issue_qty)) as avl_qty'))
-                        ->havingRaw('avl_qty >?', [0])->get();
-                        $count1=TransDataD11::where('next_process_id','=',$operation_id)->where('part_id','=',$manufacturingPart)->select(DB::raw('(SUM(receive_qty)-SUM(issue_qty)) as t_avl_qty'))
-                        ->havingRaw('t_avl_qty >?', [0])->first();
-                        $t_avl_qty=$count1->t_avl_qty;
-                        // dd($invoicemasterDatas);
-                        // dd($count1);
+                        $t_avl_qty=0;
+                        $table2='<tr><td colspan="6">No Result Found</td></tr>';
+                        return response()->json(['t_avl_qty'=>$t_avl_qty,'table1'=>$table1,'table2'=>$table2,'operation'=>$operation,'regular'=>$check1,'alter'=>$check2,'bom'=>$bom,'cus_po_no'=>$cus_po_no,'success'=>$success,'traceable_count'=>$check,'message'=>$message]);
+
+                    }elseif ($alter_pickup_count==1) {
+                        $manufacturingPartDatas=ChildProductMaster::where('status','=',1)->where('part_id','=',$fetch_pickup_part_id)->where('item_type','=',1)->get();
+
+                        foreach ($manufacturingPartDatas as $key => $manufacturingPartData) {
+                            $manufacturingPart=$manufacturingPartData->id;
+                            $itemType=$manufacturingPartData->item_type;
+                        }
+                        // dd($itemType);
+                        if ($itemType==1) {
+                            $invoicemasterOperationDatas=CustomerProductMaster::with('customermaster','customerpomaster','uom_masters','currency_masters','productmasters')->where('status','=',1)->where('cus_id','=',$cus_id)->where('part_id','=',$part_id)->first();
+                            $operation_id=22;
+                            $operation_name='FG For Invoicing';
+                            $operation='<option value="'.$operation_id.'" selected>'.$operation_name.'</option>';
+                            $count1=TransDataD11::where('next_process_id','=',$operation_id)->where('part_id','=',$manufacturingPart)->select(DB::raw('(SUM(receive_qty)-SUM(issue_qty)) as t_avl_qty'))
+                            ->havingRaw('t_avl_qty >?', [0])->first();
+                            if ($count1!=NULL) {
+                                $t_avl_qty=$count1->t_avl_qty;
+                            }else{
+                                $t_avl_qty=0;
+                            }
+                            $message=true;
+                            if ($t_avl_qty>0) {
+                                $invoicemasterDatas=TransDataD11::with('rcmaster','partmaster')->where('next_process_id','=',$operation_id)->where('part_id','=',$manufacturingPart)->select('rc_id','part_id',DB::raw('((receive_qty)-(issue_qty)) as avl_qty'))
+                                ->havingRaw('avl_qty >?', [0])->get();
+                                // dd($invoicemasterDatas);
+                                // dd($count1);
+                                $table2="";
+                                    foreach ($invoicemasterDatas as $key => $dcmasterData) {
+                                        $table2.='<tr>'.
+                                        // '<td><select name="route_part_id[]" class="form-control bg-light route_part_id" readonly id="route_part_id"><option value="'.$dcmasterData->partmaster->child_part_no.'">'.$dcmasterData->partmaster->child_part_no.'</option></select></td>'.
+                                        // '<td><input type="number" name="order_no[]"  class="form-control bg-light order_no" readonly  id="order_no" value="'.$dcmasterData->partmaster->no_item_id.'"></td>'.
+                                        // '<td><select name="route_card_id[]" class="form-control bg-light route_card_id" readonly id="route_card_id"><option value="'.$dcmasterData->rcmaster->id.'">'.$dcmasterData->rcmaster->rc_id.'</option></select></td>'.
+                                        // '<td><input type="number" name="available_quantity[]"  class="form-control bg-light available_quantity" readonly  id="available_quantity" value="'.$dcmasterData->avl_qty.'"></td>'.
+                                        // '<td><input type="number" name="issue_quantity[]"  class="form-control bg-light issue_quantity" readonly id="issue_quantity" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
+                                        // '<td><input type="number" name="balance[]"  class="form-control bg-light balance" readonly id="balance" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
+                                        // '</tr>';
+                                        '<td><select name="route_part_id[]" class="form-control bg-light route_part_id" id="route_part_id"><option value="'.$dcmasterData->partmaster->id.'">'.$dcmasterData->partmaster->child_part_no.'</option></select></td>'.
+                                        '<td><input type="number" name="order_no[]"  class="form-control bg-light order_no"  id="order_no" value="'.$dcmasterData->partmaster->no_item_id.'"></td>'.
+                                        '<td><select name="route_card_id[]" class="form-control bg-light route_card_id" id="route_card_id"><option value="'.$dcmasterData->rcmaster->id.'">'.$dcmasterData->rcmaster->rc_id.'</option></select></td>'.
+                                        '<td><input type="number" name="available_quantity[]"  class="form-control bg-light available_quantity"  id="available_quantity" value="'.$dcmasterData->avl_qty.'"></td>'.
+                                        '<td><input type="number" name="issue_quantity[]"  class="form-control bg-light issue_quantity" id="issue_quantity" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
+                                        '<td><input type="number" name="balance[]"  class="form-control bg-light balance" id="balance" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
+                                        '</tr>';
+                                }
+                        }else {
+                            $table2='<tr><td colspan="6">No Result Found</td></tr>';
+                        }
+                        return response()->json(['t_avl_qty'=>$t_avl_qty,'table1'=>$table1,'table2'=>$table2,'operation'=>$operation,'regular'=>$check1,'alter'=>$check2,'bom'=>$bom,'cus_po_no'=>$cus_po_no,'success'=>$success,'traceable_count'=>$check,'message'=>$message]);
+                        }
+                   }elseif ($alter_pickup_count>1) {
+                    # code...
+                    $invoicemasterOperationDatas=CustomerProductMaster::with('customermaster','customerpomaster','uom_masters','currency_masters','productmasters')->where('status','=',1)->where('cus_id','=',$cus_id)->where('part_id','=',$fetch_pickup_part_id)->first();
+                    $operation_id=22;
+                    $operation_name='FG For Invoicing';
+                    $operation='<option value="'.$operation_id.'" selected>'.$operation_name.'</option>';
+                    $check4=ChildProductMaster::where('status','=',1)->where('part_id','=',$fetch_pickup_part_id)->where('item_type','=',1)->count();
+
+                    $dcmasterDatas2=DB::table('customer_product_masters as a')
+                    ->join('product_masters AS b', 'a.part_id', '=', 'b.id')
+                    ->join('child_product_masters AS c', 'c.part_id', '=', 'b.id')
+                    ->join('trans_data_d11_s AS d', 'd.part_id', '=', 'c.id')
+                    ->join('route_masters AS e', 'd.rc_id', '=', 'e.id')
+                    ->select(DB::raw('((receive_qty)-(issue_qty)) as t_avl_qty'))
+                    ->where('a.part_id','=',$fetch_pickup_part_id)
+                    ->where('c.stocking_point','=',$operation_id)
+                    ->where('d.next_process_id','=',$operation_id)
+                    ->where('c.item_type','=',1)
+                    ->where('c.status','=',1)
+                    ->havingRaw('t_avl_qty >?', [0])
+                    ->orderBy('c.no_item_id', 'ASC')
+                    ->orderBy('e.id', 'ASC')
+                    ->min('t_avl_qty');
+                    // dd($dcmasterDatas2);
+                    $message=true;
+                    if ($dcmasterDatas2!=NULL) {
+                        $t_avl_qty=$dcmasterDatas2;
+                        $dcmasterDatas=DB::table('customer_product_masters as a')
+                        ->join('product_masters AS b', 'a.part_id', '=', 'b.id')
+                        ->join('child_product_masters AS c', 'c.part_id', '=', 'b.id')
+                        ->join('trans_data_d11_s AS d', 'd.part_id', '=', 'c.id')
+                        ->join('route_masters AS e', 'd.rc_id', '=', 'e.id')
+                        ->select('e.id as rcId','e.rc_id','c.id as partId','c.child_part_no','c.no_item_id',DB::raw('((receive_qty)-(issue_qty)) as avl_qty'))
+                        ->where('a.part_id','=',$fetch_pickup_part_id)
+                        ->where('c.stocking_point','=',$operation_id)
+                        ->where('d.next_process_id','=',$operation_id)
+                        ->where('c.item_type','=',1)
+                        ->where('c.status','=',1)
+                        ->havingRaw('avl_qty >?', [0])
+                        ->orderBy('c.no_item_id', 'ASC')
+                        ->orderBy('e.id', 'ASC')
+                        ->get();
                         $table2="";
-                        foreach ($invoicemasterDatas as $key => $dcmasterData) {
-                            $table2.='<tr>'.
-                            // '<td><select name="route_part_id[]" class="form-control bg-light route_part_id" readonly id="route_part_id"><option value="'.$dcmasterData->partmaster->child_part_no.'">'.$dcmasterData->partmaster->child_part_no.'</option></select></td>'.
-                            // '<td><input type="number" name="order_no[]"  class="form-control bg-light order_no" readonly  id="order_no" value="'.$dcmasterData->partmaster->no_item_id.'"></td>'.
-                            // '<td><select name="route_card_id[]" class="form-control bg-light route_card_id" readonly id="route_card_id"><option value="'.$dcmasterData->rcmaster->id.'">'.$dcmasterData->rcmaster->rc_id.'</option></select></td>'.
+                        foreach ($dcmasterDatas as $key => $dcmasterData) {
+                            $table2.='<tr class="order_'.$dcmasterData->no_item_id.'">'.
+                            // '<td><select name="route_part_id[]" class="form-control bg-light route_part_id" readonly id="route_part_id"><option value="'.$dcmasterData->partId.'">'.$dcmasterData->child_part_no.'</option></select></td>'.
+                            // '<td><input type="number" name="order_no[]"  class="form-control bg-light order_no" readonly  id="order_no" value="'.$dcmasterData->no_item_id.'"></td>'.
+                            // '<td><select name="route_card_id[]" class="form-control bg-light route_card_id" readonly id="route_card_id"><option value="'.$dcmasterData->rcId.'">'.$dcmasterData->rc_id.'</option></select></td>'.
                             // '<td><input type="number" name="available_quantity[]"  class="form-control bg-light available_quantity" readonly  id="available_quantity" value="'.$dcmasterData->avl_qty.'"></td>'.
                             // '<td><input type="number" name="issue_quantity[]"  class="form-control bg-light issue_quantity" readonly id="issue_quantity" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
                             // '<td><input type="number" name="balance[]"  class="form-control bg-light balance" readonly id="balance" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
                             // '</tr>';
-                            '<td><select name="route_part_id[]" class="form-control bg-light route_part_id" id="route_part_id"><option value="'.$dcmasterData->partmaster->id.'">'.$dcmasterData->partmaster->child_part_no.'</option></select></td>'.
-                            '<td><input type="number" name="order_no[]"  class="form-control bg-light order_no"  id="order_no" value="'.$dcmasterData->partmaster->no_item_id.'"></td>'.
-                            '<td><select name="route_card_id[]" class="form-control bg-light route_card_id" id="route_card_id"><option value="'.$dcmasterData->rcmaster->id.'">'.$dcmasterData->rcmaster->rc_id.'</option></select></td>'.
-                            '<td><input type="number" name="available_quantity[]"  class="form-control bg-light available_quantity"  id="available_quantity" value="'.$dcmasterData->avl_qty.'"></td>'.
-                            '<td><input type="number" name="issue_quantity[]"  class="form-control bg-light issue_quantity" id="issue_quantity" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
-                            '<td><input type="number" name="balance[]"  class="form-control bg-light balance" id="balance" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
+                            '<td><select name="route_part_id[]" class="form-control bg-light route_part_id"  id="route_part_id"><option value="'.$dcmasterData->partId.'">'.$dcmasterData->child_part_no.'</option></select></td>'.
+                            '<td><input type="number" name="order_no[]"  class="form-control bg-light order_no"   id="order_no" value="'.$dcmasterData->no_item_id.'"></td>'.
+                            '<td><select name="route_card_id[]" class="form-control bg-light route_card_id"  id="route_card_id"><option value="'.$dcmasterData->rcId.'">'.$dcmasterData->rc_id.'</option></select></td>'.
+                            '<td><input type="number" name="available_quantity[]"  class="form-control bg-light available_quantity"   id="available_quantity" value="'.$dcmasterData->avl_qty.'"></td>'.
+                            '<td><input type="number" name="issue_quantity[]"  class="form-control bg-light issue_quantity"  id="issue_quantity" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
+                            '<td><input type="number" name="balance[]"  class="form-control bg-light balance"  id="balance" min="0" max="'.$dcmasterData->avl_qty.'"></td>'.
                             '</tr>';
                         }
-                        return response()->json(['t_avl_qty'=>$t_avl_qty,'table1'=>$table1,'table2'=>$table2,'operation'=>$operation,'regular'=>$check1,'alter'=>$check2,'bom'=>$bom,'cus_po_no'=>$cus_po_no]);
+                    }else{
+                        $t_avl_qty=0;
+                        $table2='<tr><td colspan="6">No Result Found</td></tr>';
                     }
-                   }elseif ($alter_pickup_count>1) {
-                    # code...
+                    return response()->json(['t_avl_qty'=>$t_avl_qty,'table1'=>$table1,'table2'=>$table2,'operation'=>$operation,'regular'=>$check1,'alter'=>$check4,'bom'=>$bom,'cus_po_no'=>$cus_po_no,'success'=>$success,'traceable_count'=>$check,'message'=>$message]);
                    }
                 }
 
@@ -395,15 +513,7 @@ class InvoiceDetailsController extends Controller
         $vehicle_no=$request->vehicle_no;
         $issue_wt=$request->issue_wt;
         $remarks=$request->remarks;
-        $regular=$request->regular;
-        $alter=$request->alter;
-        $bom=$request->bom;
-        $route_part_id=$request->route_part_id;
-        $order_no=$request->order_no;
-        $route_card_id=$request->route_card_id;
-        $available_quantity=$request->available_quantity;
-        $balance_qty=$request->balance;
-        $issue_quantity=$request->issue_quantity;
+        $traceable_count=$request->traceable_count;
 
         // create invoice number
         $rcMaster=new RouteMaster;
@@ -497,13 +607,20 @@ class InvoiceDetailsController extends Controller
         $invoicePrint->prepared_by=auth()->user()->id;
         $invoicePrint->save();
 
-        $count=ChildProductMaster::where('stocking_point','=',$operation_id)->where('part_id','=',$part_id)->count();
-        if ($count>0) {
+        if ($traceable_count!=0) {
+            $regular=$request->regular;
+            $alter=$request->alter;
+            $bom=$request->bom;
+            $route_part_id=$request->route_part_id;
+            $order_no=$request->order_no;
+            $route_card_id=$request->route_card_id;
+            $available_quantity=$request->available_quantity;
+            $balance_qty=$request->balance;
+            $issue_quantity=$request->issue_quantity;
             foreach ($issue_quantity as $key => $value) {
                 if ($value!=0) {
                 // dump($value);
                 //     dump($route_card_id[$key]);
-                    if ($regular==1) {
                         $previousT11Datas=TransDataD11::where('rc_id','=',$route_card_id[$key])->where('next_process_id','=',$operation_id)->where('part_id','=',$route_part_id[$key])->first();
                         $old_issue_qty=$previousT11Datas->issue_qty;
                         $total_issue_qty=(($old_issue_qty)+$value);
@@ -532,12 +649,7 @@ class InvoiceDetailsController extends Controller
                         $d13Datas->previous_rc_id=$route_card_id[$key];
                         $d13Datas->prepared_by = auth()->user()->id;
                         $d13Datas->save();
-                    }elseif ($regular>1) {
-                        # code...
-                    }
-                    elseif ($alter==1) {
-                        # code...
-                    }
+
                 }
             }
         }
@@ -612,15 +724,8 @@ class InvoiceDetailsController extends Controller
         $vehicle_no=$request->vehicle_no;
         $issue_wt=$request->issue_wt;
         $remarks=$request->remarks;
-        $regular=$request->regular;
-        $alter=$request->alter;
-        $bom=$request->bom;
-        $route_part_id=$request->route_part_id;
-        $order_no=$request->order_no;
-        $route_card_id=$request->route_card_id;
-        $available_quantity=$request->available_quantity;
-        $balance_qty=$request->balance;
-        $issue_quantity=$request->issue_quantity;
+        $traceable_count=$request->traceable_count;
+
 
 
 
@@ -701,14 +806,20 @@ class InvoiceDetailsController extends Controller
         $invoiceDatas->updated_at = Carbon::now();
         $invoiceDatas->update();
 
-
-        $count=ChildProductMaster::where('stocking_point','=',$operation_id)->where('part_id','=',$part_id)->count();
-        if ($count>0) {
+        if ($traceable_count!=0) {
+            $regular=$request->regular;
+            $alter=$request->alter;
+            $bom=$request->bom;
+            $route_part_id=$request->route_part_id;
+            $order_no=$request->order_no;
+            $route_card_id=$request->route_card_id;
+            $available_quantity=$request->available_quantity;
+            $balance_qty=$request->balance;
+            $issue_quantity=$request->issue_quantity;
             foreach ($issue_quantity as $key => $value) {
                 if ($value!=0) {
                 // dump($value);
                 //     dump($route_card_id[$key]);
-                    if ($regular==1) {
                         $previousT11Datas=TransDataD11::where('rc_id','=',$route_card_id[$key])->where('next_process_id','=',$operation_id)->where('part_id','=',$route_part_id[$key])->first();
                         $old_issue_qty=$previousT11Datas->issue_qty;
                         $total_issue_qty=(($old_issue_qty)+$value);
@@ -737,16 +848,10 @@ class InvoiceDetailsController extends Controller
                         $d13Datas->previous_rc_id=$route_card_id[$key];
                         $d13Datas->prepared_by = auth()->user()->id;
                         $d13Datas->save();
-                    }elseif ($regular>1) {
-                        # code...
-                    }
-                    elseif ($alter==1) {
-                        # code...
-                    }
+
                 }
             }
         }
-
         return redirect()->route('invoicedetails.index')->withSuccess('Invoice Updated Successfully!');
     }
 

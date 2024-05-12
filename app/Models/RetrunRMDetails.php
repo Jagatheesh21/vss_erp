@@ -25,7 +25,7 @@ class RetrunRMDetails extends Model
 
     public function heat_nomaster()
     {
-        return $this->belongsTo(HeatNumber::class,'heat_id');
+        return $this->belongsTo(HeatNumber::class,'heat_no_id');
     }
 
     public function grndata()
