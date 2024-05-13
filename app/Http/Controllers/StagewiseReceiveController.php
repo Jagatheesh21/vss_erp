@@ -106,6 +106,7 @@ class StagewiseReceiveController extends Controller
 
         $partCheck=ChildProductMaster::find($part_id);
         $part_no=$partCheck->child_part_no;
+
         $fifoCheck=TransDataD11::with('rcmaster')->where('process_id','=',3)->where('part_id','=',$part_id)->where('status','=',1)->orderBy('id', 'ASC')->first();
         $fifoRcNo=$fifoCheck->rc_id;
         $fifoRcCard=$fifoCheck->rcmaster->rc_id;
@@ -158,6 +159,7 @@ class StagewiseReceiveController extends Controller
             $process=false;
             $next_process_id=0;
             $next_productprocess_id='<option value=""></option>';
+
         }
 
         // dd($success);

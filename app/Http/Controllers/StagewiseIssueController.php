@@ -109,6 +109,25 @@ class StagewiseIssueController extends Controller
         $avl_qty=$d11Datas->avl_qty;
         $part_id=$d11Datas->part_id;
         $partData=ChildProductMaster::find($part_id);
+        $pickup_part_id=$partData->pickup_part_id;
+        $pickup_part_count=ChildProductMaster::where('pickup_part_id','=',$pickup_part_id)->whereIn('stocking_point',[6,7,8])->get()->count();
+        if ($pickup_part_count>1) {
+            $pickup_part_datas=ChildProductMaster::where('pickup_part_id','=',$pickup_part_id)->whereIn('stocking_point',[6,7,8])->whereRaw('pickup_part_id != part_id')->get();
+            $pickup_part_datas2=ChildProductMaster::where('pickup_part_id','=',$pickup_part_id)->where('stocking_point',22)->first();
+            $pickup_part='<option value="'.$pickup_part_datas2->id.'">'.$pickup_part_datas2->child_part_no.'</option>';
+            foreach ($pickup_part_datas as $key => $pickup_part_data) {
+                $pickup_part.='<option value="'.$pickup_part_data->id.'">'.$pickup_part_data->child_part_no.'</option>';
+            }
+        }
+        elseif ($pickup_part_count==1) {
+            $pickup_part_datas=ChildProductMaster::where('pickup_part_id','=',$pickup_part_id)->whereIn('stocking_point',[22])->get();
+            foreach ($pickup_part_datas as $key => $pickup_part_data) {
+                $pickup_part='<option value="'.$pickup_part_data->id.'" selected>'.$pickup_part_data->child_part_no.'</option>';
+            }
+        }else {
+            $pickup_part='<option value="" selected>No Data</option>';
+            # code...
+        }
         $part='<option value="'.$partData->id.'">'.$partData->child_part_no.'</option>';
         $current_process_id=$d11Datas->next_process_id;
         $current_product_process_id=$d11Datas->next_product_process_id;
@@ -191,7 +210,7 @@ class StagewiseIssueController extends Controller
         $next_product_process_id=$next_productProcess->id;
         $next_process_id=$next_productProcess->process_id;
         $next_process_order_id=$next_productProcess->process_order_id;
-        return response()->json(['process'=>$current_stock_id,'avl_qty'=>$avl_qty,'part'=>$part,'current_process_id'=>$current_process_id,'current_product_process_id'=>$current_product_process_id,'next_process_id'=>$next_process_id,'next_productprocess_id'=>$next_product_process_id,'bom'=>$bom,'rcno'=>$new_rcnumber,'success'=>$success,'fifoRcNo'=>$fifoRcNo,'rc_datas'=>$rc_datas,'qr_rc_id'=>$qr_rc_id]);
+        return response()->json(['process'=>$current_stock_id,'avl_qty'=>$avl_qty,'part'=>$part,'current_process_id'=>$current_process_id,'current_product_process_id'=>$current_product_process_id,'next_process_id'=>$next_process_id,'next_productprocess_id'=>$next_product_process_id,'bom'=>$bom,'rcno'=>$new_rcnumber,'success'=>$success,'fifoRcNo'=>$fifoRcNo,'rc_datas'=>$rc_datas,'qr_rc_id'=>$qr_rc_id,'pickup_part_count'=>$pickup_part_count,'pickup_part'=>$pickup_part]);
 
         // dd($next_process_order_id);
         // dd($next_productProcess);

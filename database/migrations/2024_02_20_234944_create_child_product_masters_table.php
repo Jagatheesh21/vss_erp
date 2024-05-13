@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('stocking_point');
             $table->string('child_part_no');
             $table->integer('part_id');
+            $table->integer('pickup_part_id');
             $table->integer('product_type')->default(1);
             $table->integer('machine_id')->default(1);
             $table->integer('foreman_id')->default(1);

@@ -16,6 +16,14 @@ use Auth;
 
 class RawMaterialController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('permission:create-rm|edit-rm|delete-rm', ['only' => ['index','show']]);
+        $this->middleware('permission:create-rm', ['only' => ['create','store']]);
+        $this->middleware('permission:edit-rm', ['only' => ['edit','update']]);
+        $this->middleware('permission:delete-rm', ['only' => ['destroy']]);
+    }
     /**
      * Display a listing of the resource.
      */

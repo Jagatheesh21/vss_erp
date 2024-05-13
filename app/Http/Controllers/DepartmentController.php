@@ -41,11 +41,11 @@ class DepartmentController extends Controller
                     ->editColumn('status', function($data) {
                         // $status = '<button class="btn btn-sm btn-success">Active</button>';
                         // return $status;
-                        return $data->status=1?'Active':'Inactive';
+                        return $data->status==1?'Active':'Inactive';
                     })
                     ->addColumn('action', function($row){
-
-                           $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Edit" class="edit btn btn-primary btn-sm text-white editDepartment">Edit</a>';
+                            $id = "department/$row->id/edit";
+                           $btn = '<a href="'.$id.'" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Edit" class="edit btn btn-primary btn-sm text-white editDepartment">Edit</a>';
 
                            $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Delete" class="btn btn-danger btn-sm text-white deleteDepartment">Delete</a>';
 

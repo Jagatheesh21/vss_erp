@@ -49,6 +49,7 @@
                             <input type="hidden" name="previous_product_process_id" id="previous_product_process_id">
                             <input type="hidden" name="qrcodes_count" id="qrcodes_count" value="{{$qrCodes_count}}">
                             <input type="hidden" name="qr_rc_id" id="qr_rc_id">
+                            <input type="hidden" name="pickup_part_count" id="pickup_part_count">
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="pre_rc_no">Previous Route Card Number *</label>
@@ -95,6 +96,20 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
+                                    <label for="pickup_part_id">Change To *</label>
+                                    <select name="pickup_part_id" id="pickup_part_id" class="form-control @error('pickup_part_id') is-invalid @enderror">
+                                    </select>
+                                    @error('pickup_part_id')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row d-flex justify-content-center">
+                            <div class="col-md-3">
+                                <div class="form-group">
                                     <label for="previous_process_id">Stocking Point *</label>
                                     <select name="previous_process_id" id="previous_process_id" class="form-control bg-light @error('previous_process_id') is-invalid @enderror" @readonly(true)>
                                     </select>
@@ -105,9 +120,6 @@
                                     @enderror
                                 </div>
                             </div>
-                        </div>
-                        <div class="row d-flex justify-content-center">
-
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="rc_no">Route Card Number *</label>
@@ -238,6 +250,8 @@ $(document).ready(function(){
                     $('#receive_qty').attr('min', 0);
                     $('#rc_no').val(response.rcno);
                     $('#pre_rc_no').html(response.rc_datas);
+                    $('#pickup_part_id').html(response.pickup_part);
+                    $('#pickup_part_count').val(response.pickup_part_count);
                     $('#qr_rc_id').val(response.qr_rc_id);
                 }else{
                     var msg='Please Follow The FIFO ..Try RC No Is '+response.fifoRcNo;
