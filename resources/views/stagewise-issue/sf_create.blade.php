@@ -94,21 +94,20 @@
                                     @enderror
                                 </div>
                             </div>
-                        <div id="pickup_part_id">
-
-                        </div>
-                            {{-- <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="pickup_part_id">Change To *</label>
-                                    <select name="pickup_part_id" id="pickup_part_id" class="form-control @error('pickup_part_id') is-invalid @enderror">
-                                    </select>
-                                    @error('pickup_part_id')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
+                            <div id="pickup_part_id3">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="pickup_part_id">Change To *</label>
+                                        <select name="pickup_part_id" id="pickup_part_id" class="form-control @error('pickup_part_id') is-invalid @enderror">
+                                        </select>
+                                        @error('pickup_part_id')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
                                 </div>
-                            </div> --}}
+                            </div>
                         </div>
                         <div class="row d-flex justify-content-center">
                             <div class="col-md-3">
@@ -254,8 +253,8 @@ $(document).ready(function(){
                     $('#receive_qty').attr('min', 0);
                     $('#rc_no').val(response.rcno);
                     $('#pre_rc_no').html(response.rc_datas);
-                    console.log('output');
-                    console.log(response.pickup_part);
+                    // console.log('output');
+                    // console.log(response.pickup_part);
                     $('#pickup_part_id').html(response.pickup_part);
                     $('#pickup_part_count').val(response.pickup_part_count);
                     $('#qr_rc_id').val(response.qr_rc_id);

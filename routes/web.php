@@ -123,6 +123,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/invoicedetails/index', [InvoiceDetailsController::class,'index'])->name('invoicedetails');
     Route::get('/invoicepart-data/id', [InvoiceDetailsController::class,'cusPartData'])->name('cuspartdata');
     Route::post('invoicefetch-rc', [InvoiceDetailsController::class,'invoiceItemRc'])->name('invoiceitemrc');
+    Route::post('invoicefetch-rcqty', [InvoiceDetailsController::class,'invoiceQtyRc'])->name('invoiceqtyrc');
     Route::get('invoice_correction-request', [InvoiceDetailsController::class,'invoiceCorrectionRequest'])->name('invoice_correction_request');
     Route::get('invoicefetch-request', [InvoiceDetailsController::class,'invoiceFetchData'])->name('invoicefetchdata');
     Route::get('/invoice_correction-form/id', [InvoiceDetailsController::class,'invoiceCorrectionForm'])->name('invoicecorrectionform');
