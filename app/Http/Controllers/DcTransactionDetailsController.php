@@ -31,7 +31,11 @@ class DcTransactionDetailsController extends Controller
     public function index()
     {
         //
-        $dcDatas=DcTransactionDetails::with('dcmaster','rcmaster','uom')->where('type','=',1)->orderBy('id', 'DESC')->get();
+        $value=0;
+        $dcDatas=DcTransactionDetails::with('dcmaster','rcmaster','uom')->WhereHas('dcmaster', function ($q) use ($value) {
+            $q->where('type_id', '=', $value);
+        })->orderBy('id', 'DESC')->get();
+        // dd($dcDatas);
         return view('dc.index',compact('dcDatas'));
     }
 
@@ -68,7 +72,7 @@ class DcTransactionDetailsController extends Controller
             $new_rcnumber=$current_rcno.$str;
         }
         // dd($new_rcnumber);
-            $dcmasterDatas=DcMaster::with('supplier')->where('status','=',1)->groupBy('supplier_id')->get();
+            $dcmasterDatas=DcMaster::with('supplier')->where('status','=',1)->where('type_id','=',0)->groupBy('supplier_id')->get();
             // dd($dcmasterDatas);
             // return view('dc.create2',compact('dcmasterDatas','new_rcnumber','current_date'));
             return view('dc.insert',compact('dcmasterDatas','new_rcnumber','current_date'));

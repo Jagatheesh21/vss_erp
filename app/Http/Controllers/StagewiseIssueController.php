@@ -250,10 +250,16 @@ class StagewiseIssueController extends Controller
             $previousD11Datas->updated_at = Carbon::now();
             $previousD11Datas->update();
 
+            if ($request->pickup_part_count>1) {
+                $picup_part_id=$request->pickup_part_id;
+            }else {
+                $picup_part_id=$request->part_id;
+            }
+
             $d11Datas=new TransDataD11;
             $d11Datas->open_date=$request->rc_date;
             $d11Datas->rc_id=$rc_id;
-            $d11Datas->part_id=$request->part_id;
+            $d11Datas->part_id=$picup_part_id;
             $d11Datas->process_id=$request->previous_process_id;
             $d11Datas->product_process_id=$request->previous_product_process_id;
             $d11Datas->next_process_id=$request->next_process_id;
@@ -266,7 +272,7 @@ class StagewiseIssueController extends Controller
             $d12Datas->open_date=$request->rc_date;
             $d12Datas->rc_id=$rc_id;
             $d12Datas->previous_rc_id=$rc_card_id;
-            $d12Datas->part_id=$request->part_id;
+            $d12Datas->part_id=$picup_part_id;
             $d12Datas->process_id=$request->previous_process_id;
             $d12Datas->product_process_id=$request->previous_product_process_id;
             $d12Datas->issue_qty=$request->issue_qty;

@@ -20,10 +20,10 @@
                 {{ session()->get('message')}}
                 </div>
             @endif
-            <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Delivery challan List</b> </span>
-                <a class="btn btn-sm btn-primary text-white" href="{{route('delivery_challan.create')}}">New</a>
+            <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Raw Material Delivery challan List</b> </span>
+                <a class="btn btn-sm btn-primary text-white" href="{{route('rmdc.create')}}">New RM DC</a>
                 <a class="btn btn-sm btn-info text-white" href="{{route('dcprint.index')}}">Multi DC Print</a>
-                <a class="btn btn-sm btn-primary text-white" href="{{route('rmdc.index')}}">RM DC</a>
+                <a class="btn btn-sm btn-primary text-white" href="{{route('delivery_challan.index')}}">DC List</a>
             </div>
             <div class="card-body">
                 <div class="table">
@@ -36,7 +36,7 @@
                                     <th>DC Date</th>
                                     <th>Code</th>
                                     <th>Supplier Name</th>
-                                    <th>Part No</th>
+                                    <th>RM Desc</th>
                                     <th>Quantity</th>
                                     <th>UOM</th>
                                     <th>Unit Rate</th>
@@ -46,20 +46,20 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($dcDatas as $dcData)
+                                @forelse ($rmdcDatas as $dcData)
                                 <tr>
 
                                     <td>{{$loop->iteration}}</td>
-                                    <td>{{$dcData->rcmaster->rc_id}}</td>
-                                    <td>{{date('d-m-Y', strtotime($dcData->issue_date))}}</td>
-                                    <td>{{$dcData->dcmaster->supplier->supplier_code}}</td>
-                                    <td>{{$dcData->dcmaster->supplier->name}}</td>
-                                    <td>{{$dcData->dcmaster->invoicepart->part_no}}</td>
-                                    <td>{{$dcData->issue_qty}}</td>
-                                    <td>{{$dcData->uom->name}}</td>
-                                    <td>{{$dcData->unit_rate}}</td>
-                                    <td>{{$dcData->basic_rate}}</td>
-                                    <td>@if ($dcData->status==0)
+                                    <td>{{$dcData->dc_details->rcmaster->rc_id}}</td>
+                                    <td>{{date('d-m-Y', strtotime($dcData->dc_details->issue_date))}}</td>
+                                    <td>{{$dcData->dc_details->dcmaster->supplier->supplier_code}}</td>
+                                    <td>{{$dcData->dc_details->dcmaster->supplier->name}}</td>
+                                    <td>{{$dcData->rm_details->name}}</td>
+                                    <td>{{$dcData->dc_details->issue_qty}}</td>
+                                    <td>{{$dcData->dc_details->uom->name}}</td>
+                                    <td>{{$dcData->dc_details->unit_rate}}</td>
+                                    <td>{{$dcData->dc_details->basic_rate}}</td>
+                                    <td>@if ($dcData->dc_details->status==0)
                                         <span class="btn btn-sm text-white btn-danger">OPEN</span>
                                         @else
                                         <span class="btn btn-sm text-white btn-success">CLOSE</span>
@@ -68,7 +68,7 @@
                                     <td>
 
                                         {{-- <a href="#" class="edit btn btn-info mx-2 btn-sm text-white">Correction Request</a> --}}
-                                        <a href="{{route('po.print',$dcData->id)}}"  data-toggle="tooltip"  data-id="{{$dcData->id}}" data-original-title="Edit" class="edit btn btn-info mx-2 btn-sm text-white">Print</a>
+                                        {{-- <a href="{{route('po.print',$dcData->id)}}"  data-toggle="tooltip"  data-id="{{$dcData->id}}" data-original-title="Edit" class="edit btn btn-info mx-2 btn-sm text-white">Print</a> --}}
                                     </td>
                                 </tr>
                                 @empty

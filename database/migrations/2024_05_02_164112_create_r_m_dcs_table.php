@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('r_m_dcs', function (Blueprint $table) {
             $table->id();
+            $table->integer('rm_id');
+            $table->integer('dc_id');
+            $table->integer('print_status')->default(0);
+            $table->integer('prepared_by');
+            $table->integer('updated_by')->nullable();
             $table->timestamps();
         });
     }
