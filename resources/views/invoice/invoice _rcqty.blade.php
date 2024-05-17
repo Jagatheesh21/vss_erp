@@ -37,11 +37,12 @@
 <script>
 $(document).ready(function () {
     var route_part_id=$('.route_part_id').val();
-    $('table.part_'+route_part_id+' > tbody  > tr').each(function(index, row) {
-        // var invoice_quantity = 4;
-        var invoice_quantity = $('#ino_qty').val();
-    alert('invoice_quantity');
+            // var invoice_quantity = 4;
+            var invoice_quantity = $('#ino_qty').val();
+    // alert('invoice_quantity');
         var total = invoice_quantity;
+    $('table.part_'+route_part_id+' > tbody  > tr').each(function(index, row) {
+
         $(row).find('.issue_quantity').val('');
         var qty = $(row).find('.available_quantity').val();
         if(total>=qty && total>0){
