@@ -14,6 +14,7 @@ class DcMasterController extends Controller
     public function index()
     {
         return view('dc_master.calculations');
+
     }
 
     /**

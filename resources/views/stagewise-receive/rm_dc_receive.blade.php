@@ -20,7 +20,7 @@
         <div class="row col-md-3"id="res"></div>
 
         <div class="card">
-            <div class="card-header d-flex" style="justify-content:space-between"><span> <b>Semi Finished Store Issue Register</b></span><a class="btn btn-sm btn-primary" href="{{route('sfissue')}}">SF Issue List</a>
+            <div class="card-header d-flex" style="justify-content:space-between"><span> <b>RM DC Receive Register</b></span><a class="btn btn-sm btn-primary" href="{{route('osreceive')}}">Out Store Part Receive List</a>
             </div>
             <div class="card-body">
                 @if ($qrCodes_count!=0)
@@ -40,30 +40,30 @@
                 @else
 
                 @endif
-                <form action="{{route('sfissue.store')}}" id="sfissue_formdata" method="POST">
+                <form action="{{route('fgreceive.store')}}" id="sf_receive_formdata" method="POST">
                     @csrf
                     @method('POST')
                         <div class="row d-flex justify-content-center">
-                            <input type="hidden" name="next_process_id" id="next_process_id">
-                            <input type="hidden" name="next_product_process_id" id="next_product_process_id">
+                            <input type="hidden" name="previous_process_id" id="previous_process_id">
                             <input type="hidden" name="previous_product_process_id" id="previous_product_process_id">
+                            <input type="hidden" name="next_process_id" id="next_process_id">
+                            <input type="hidden" name="fqc_count" id="fqc_count">
                             <input type="hidden" name="qrcodes_count" id="qrcodes_count" value="{{$qrCodes_count}}">
                             <input type="hidden" name="qr_rc_id" id="qr_rc_id">
-                            <input type="hidden" name="pickup_part_count" id="pickup_part_count">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="pre_rc_no">Previous Route Card Number *</label>
-                                    <select name="pre_rc_no" class="form-control @error('pre_rc_no') is-invalid @enderror" @required(true)  @if ($qrCodes_count!=0)
+                                    <label for="rc_no">Route Card Number *</label>
+                                    <select name="rc_no" class="form-control @error('rc_no') is-invalid @enderror" @if ($qrCodes_count!=0)
                                     @disabled(true)
                                 @else
                                     @disabled(false)
-                                @endif id="pre_rc_no">
+                                @endif  id="rc_no">
                                         <option value="" selected></option>
-                                        @foreach ($d11Datas as $d11Data)
-                                            <option value="{{$d11Data->id}}" >{{$d11Data->rc_no}}</option>
+                                        @foreach ($receiveRmDCDatas as $receiveRmDCData)
+                                            <option value="{{$receiveRmDCData->dc_details->rcmaster->id}}" >{{$receiveRmDCData->dc_details->rcmaster->rc_id}}</option>
                                         @endforeach
                                     </select>
-                                    @error('pre_rc_no')
+                                    @error('rc_no')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -94,13 +94,12 @@
                                     @enderror
                                 </div>
                             </div>
-
-                            <div class="col-md-3" id="pickup_part">
+                            <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="pickup_part_id">Change To *</label>
-                                    <select name="pickup_part_id" id="pickup_part_id" class="form-control @error('pickup_part_id') is-invalid @enderror">
+                                    <label for="next_productprocess_id">Stocking Point *</label>
+                                    <select name="next_productprocess_id" id="next_productprocess_id" class="form-control bg-light @error('next_productprocess_id') is-invalid @enderror" @readonly(true)>
                                     </select>
-                                    @error('pickup_part_id')
+                                    @error('next_productprocess_id')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -109,29 +108,17 @@
                             </div>
                         </div>
                         <div class="row d-flex justify-content-center">
-                            <div class="col-md-3">
+                            {{-- <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="previous_process_id">Stocking Point *</label>
-                                    <select name="previous_process_id" id="previous_process_id" class="form-control bg-light @error('previous_process_id') is-invalid @enderror" @readonly(true)>
-                                    </select>
-                                    @error('previous_process_id')
+                                    <label for="avl_kg">Available Stock (In KG) *</label>
+                                    <input type="number" name="avl_kg" id="avl_kg"  class="form-control bg-light @error('avl_kg') is-invalid @enderror" @readonly(true)>
+                                    @error('avl_kg')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                     @enderror
                                 </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="rc_no">Route Card Number *</label>
-                                    <input type="text" name="rc_no" id="rc_no"  class="form-control bg-light @error('rc_no') is-invalid @enderror" @readonly(true)>
-                                    @error('rc_no')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
-                            </div>
+                            </div> --}}
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="avl_qty">Available Stock (In Numbers) *</label>
@@ -143,11 +130,21 @@
                                     @enderror
                                 </div>
                             </div>
-
+                            {{-- <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="receive_kg">Receive Quantity IN KG *</label>
+                                    <input type="number" name="receive_kg" id="receive_kg" required min="0" step="0.0000000000000001" class="form-control @error('receive_kg') is-invalid @enderror">
+                                    @error('receive_kg')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div> --}}
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="receive_qty">Receive Quantity In Numbers*</label>
-                                    <input type="number" name="issue_qty" id="receive_qty" required min="0" class="form-control @error('receive_qty') is-invalid @enderror">
+                                    <input type="number" name="receive_qty" id="receive_qty" required min="0" class="form-control bg-light @error('receive_qty') is-invalid @enderror">
                                     @error('receive_qty')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -156,6 +153,21 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row d-flex justify-content-center mt-3">
+                            <div class="col-md-3">
+                                <p><b>Route Card Close :</b></p>
+                                  <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="rc_close" id="inlineRadio1" value="yes">
+                                    <label class="form-check-label" for="inlineRadio1">Yes</label>
+                                  </div>
+                                  <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="rc_close" id="inlineRadio2" checked value="no">
+                                    <label class="form-check-label" for="inlineRadio2">No</label>
+                                  </div>
+                            </div>
+                        </div>
+
                         <div class="row d-flex justify-content-center ">
                             <div class="col-md-2 mt-4">
                                 <input type="submit" class="btn btn-success  text-white align-center" id="btn" value="Save">
@@ -163,6 +175,8 @@
                             </div>
                         </div>
                 </form>
+
+
             </div>
         </div>
         <div class="card mt-3">
@@ -211,11 +225,10 @@ $(document).ready(function(){
         $('#' + inputId + '-error').remove();
     });
     $('#inlineRadio1').hide();
-    $('#pickup_part').hide();
 
 });
 
-    $("#pre_rc_no").select2({
+    $("#rc_no").select2({
         placeholder:"Select Route Card Number",
         allowedClear:true
     });
@@ -228,90 +241,91 @@ $(document).ready(function(){
 
     $('#scan_rc_id').change(function (e) {
         e.preventDefault();
-        alert();
         var rc_no=$(this).val();
         // alert(rc_no);
         if (rc_no!='') {
             $.ajax({
             type: "POST",
-            url: "{{ route('sfissuepartfetchdata') }}",
+            url: "{{ route('fgpartfetchdata') }}",
             data:{
-                "_token": "{{ csrf_token() }}",
+                "_token": "{{ csrf_token()}}",
                 "rc_no":rc_no,
             },
             success: function (response) {
-                 console.log(response);
+                // console.log(response);
                 if(response.success){
-                    $('#part_id').html(response.part);
-                    $('#avl_qty').val(response.avl_qty);
-                    $('#previous_process_id').html(response.process);
-                    $('#previous_product_process_id').val(response.current_product_process_id);
-                    $('#next_process_id').val(response.next_process_id);
-                    $('#next_product_process_id').val(response.next_productprocess_id);
-                    $('#bom').val(response.bom);
-                    $('#receive_qty').attr('max', response.avl_qty);
-                    $('#receive_qty').attr('min', 0);
-                    $('#rc_no').val(response.rcno);
-                    $('#pre_rc_no').html(response.rc_datas);
-                    console.log('output');
-                    console.log(response.pickup_part);
-                    $('#pickup_part_id').html(response.pickup_part);
-
-                    $('#pickup_part_count').val(response.pickup_part_count);
-                    $('#qr_rc_id').val(response.qr_rc_id);
+                    if (response.process) {
+                        if(response.message){
+                        $('#part_id').html(response.part);
+                        // $('#avl_kg').val(response.avl_kg);
+                        $('#avl_qty').val(response.avl_qty);
+                        $('#receive_qty').attr('max', response.avl_qty);
+                        $('#receive_qty').attr('min', 0);
+                        $('#bom').val(response.bom);
+                        $('#inlineRadio1').hide();
+                        $('#previous_process_id').val(response.process_id);
+                        $('#fqc_count').val(response.fqc_count);
+                        $('#previous_product_process_id').val(response.product_process_id);
+                        $('#next_process_id').val(response.next_process_id);
+                        $('#next_productprocess_id').html(response.next_productprocess_id);
+                        $('#rc_no').html(response.rc_data);
+                        $('#qr_rc_id').val(response.qr_rc_id);
+                        }else{
+                            alert('This Part Number is Not connected Item Process Master..So Please Contact Mr.PPC/ERP Team');
+                        }
+                    } else {
+                        alert('This Part Number Process is Not connected Out Store..So Please Contact Mr.PPC/ERP Team');
+                    }
                 }else{
-                    var msg='Please Follow The FIFO ..Try RC No Is '+response.fifoRcNo;
+                    var msg='Please Follow The FIFO ..Try RC No Is '+response.fifoRcCard;
                     alert(msg);
-                    location.reload(true);
+                    $('#inlineRadio1').hide();
                 }
             }
         });
         }
     });
 
-    $('#pre_rc_no').change(function (e) {
+    $('#rc_no').change(function (e) {
         e.preventDefault();
         var rc_no=$(this).val();
         // alert(rc_no);
         if (rc_no!='') {
             $.ajax({
             type: "POST",
-            url: "{{ route('sfissuepartfetchdata') }}",
+            url: "{{ route('fgpartfetchdata') }}",
             data:{
-                "_token": "{{ csrf_token() }}",
+                "_token": "{{ csrf_token()}}",
                 "rc_no":rc_no,
             },
             success: function (response) {
-                 console.log(response);
+                // console.log(response);
                 if(response.success){
-                    $('#part_id').html(response.part);
-                    $('#avl_qty').val(response.avl_qty);
-                    $('#previous_process_id').html(response.process);
-                    $('#previous_product_process_id').val(response.current_product_process_id);
-                    $('#next_process_id').val(response.next_process_id);
-                    $('#next_product_process_id').val(response.next_productprocess_id);
-                    $('#bom').val(response.bom);
-                    $('#receive_qty').attr('max', response.avl_qty);
-                    $('#receive_qty').attr('min', 0);
-                    $('#rc_no').val(response.rcno);
-                    $('#pickup_part_count').val(response.pickup_part_count);
-                    if (response.pickup_part_count>1) {
-                        $('#pickup_part').show();
-                        $("#pickup_part_id").select2({
-                            placeholder:"Select Pickup Part Number",
-                            allowedClear:true
-                        });
-                        $('#pickup_part_id').html(response.pickup_part);
-                    }else{
-                        $('#pickup_part').hide();
-                        $('#pickup_part_id').html('');
+                    if (response.process) {
+                        if(response.message){
+                        $('#part_id').html(response.part);
+                        // $('#avl_kg').val(response.avl_kg);
+                        $('#avl_qty').val(response.avl_qty);
+                        $('#receive_qty').attr('max', response.avl_qty);
+                        $('#receive_qty').attr('min', 0);
+                        $('#bom').val(response.bom);
+                        $('#inlineRadio1').hide();
+                        $('#previous_process_id').val(response.process_id);
+                        $('#fqc_count').val(response.fqc_count);
+                        $('#previous_product_process_id').val(response.product_process_id);
+                        $('#next_process_id').val(response.next_process_id);
+                        $('#next_productprocess_id').html(response.next_productprocess_id);
 
+                        }else{
+                            alert('This Part Number is Not connected Item Process Master..So Please Contact Mr.PPC/ERP Team');
+                        }
+                    } else {
+                        alert('This Part Number Process is Not connected Out Store..So Please Contact Mr.PPC/ERP Team');
                     }
-
                 }else{
-                    var msg='Please Follow The FIFO ..Try RC No Is '+response.fifoRcNo;
+                    var msg='Please Follow The FIFO ..Try RC No Is '+response.fifoRcCard;
                     alert(msg);
-                    location.reload(true);
+                    $('#inlineRadio1').hide();
                 }
             }
         });
@@ -334,18 +348,20 @@ $(document).ready(function(){
 
     $('#receive_qty').change(function (e) {
         e.preventDefault();
-        var receive_qty=$(this).val();
         var avl_qty=$('#avl_qty').val();
+        var receive_qty=$(this).val();
         if (avl_qty!=''&&receive_qty!='') {
                 var diff=avl_qty-receive_qty;
-                if(diff == 0){
+                // alert(diff);
+                if(diff==0){
                     $('#inlineRadio1').show();
                 }else{
                     $('#inlineRadio1').hide();
                 }
         }else{
-            alert('Please Check The Receive Quantity And Part Available Quantity...');
+            alert('Please Check The Receive Quantity And Available Quantity...');
             $('#inlineRadio1').hide();
+
         }
     });
 

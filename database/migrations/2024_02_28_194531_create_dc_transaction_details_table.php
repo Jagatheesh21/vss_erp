@@ -30,7 +30,7 @@ return new class extends Migration
             $table->string('reason')->nullable();
             $table->string('remarks')->nullable();
             $table->string('trans_mode');
-            $table->string('vehicle_no');
+            $table->string('vehicle_no')->nullable();
             $table->integer('from_unit')->default(1);
             $table->integer('rc_status')->default(1);
             $table->integer('status')->default(1);

@@ -105,6 +105,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('fg-receive/fqc_approval', [StagewiseReceiveController::class,'fgFqcApproval'])->name('fgfqc');
     Route::post('dcfetch-rc', [DcTransactionDetailsController::class,'dcItemRc'])->name('dcitemrc');
     Route::get('/dcpart-data/id', [DcTransactionDetailsController::class,'dcPartData'])->name('dcpartdata');
+    Route::get('/dcrmsupplier-data/id', [RMDcController::class,'dcRmSupplierData'])->name('dcrmsupplierdata');
+    Route::post('dcrmgrn-data', [RMDcController::class,'dcrmGrnData'])->name('dcrmgrndata');
+    Route::post('dcrmgrncoil-data', [RMDcController::class,'dcrmGrnCoilData'])->name('dcrmgrncoildata');
+    Route::post('dcrmgrncoilqty-data', [RMDcController::class,'dcrmGrnCoilQtyData'])->name('dcrmgrncoilqtydata');
     Route::post('dcsupplier-print', [DcPrintController::class,'dcSupplierPrintData'])->name('dcsupplierprintdata');
     Route::post('dcmulti-print', [DcPrintController::class,'dcMultiPrintData'])->name('dcmultiprintdata');
     Route::post('dcmulti-pdf', [DcPrintController::class,'dcMultiPdfData'])->name('dcmultipdf');

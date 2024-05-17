@@ -29,6 +29,10 @@ class DcMaster extends Model
         return $this->belongsTo(ProductMaster::class,'part_id');
     }
 
+    public function rmdetails(){
+        return $this->belongsTo(RawMaterial::class,'rm_id');
+    }
+
 
 
 }

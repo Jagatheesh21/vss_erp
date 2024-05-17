@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('dc_masters', function (Blueprint $table) {
             $table->id();
             $table->integer('supplier_id');
-            $table->integer('part_id');
+            $table->integer('part_id')->default(0);
+            $table->integer('rm_id')->default(0);
+            $table->integer('type_id')->default(1);
             $table->integer('operation_id');
             $table->string('operation_desc');
             $table->string('hsnc');
