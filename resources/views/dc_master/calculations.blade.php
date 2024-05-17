@@ -16,9 +16,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    
-                    @for($i=1;$i<=15;$i++)
-                    
+                    @php
+                        $total=0;
+                    @endphp
+                    @for($i=1;$i<=5;$i++)
+
                     <tr>
                         <td><input type="text" class="form-control part_number" value="{{$i}}" readonly="true"></td>
                         <td><input type="text" class="form-control part_quantity" value="{{$i*12}}" readonly="true"></td>
@@ -26,10 +28,15 @@
                         <td><input type="text" class="form-control quantity" value=""></td>
                         <td><input type="text" class="form-control balance" value="" readonly></td>
                     </tr>
+                    @php $total+=$i*12 @endphp
                     @endfor
+                    <tr>
+                        <td>total</td>
+                        <td>{{$total}}</td>
+                    </tr>
                 </tbody>
             </table>
-        </div>    
+        </div>
     </div>
 @endsection
 @push('scripts')
@@ -40,7 +47,7 @@
             // }
             var dc_quantity = $(this).val();
             var total = dc_quantity;
-            $('table > tbody  > tr').each(function(index, row) { 
+            $('table > tbody  > tr').each(function(index, row) {
             $(row).find('.quantity').val('');
             var qty = $(row).find('.part_quantity').val();
             if(total>=qty && total>0){
@@ -52,7 +59,7 @@
                 //console.log('method 1 qty:'+qty);
             }else if(qty>total){
                $(row).find('.quantity').val(total);
-                
+
                 //console.log('method 2');
                // console.log("qty"+qty);
                 total = 0;
@@ -61,7 +68,7 @@
                 //$(row).find('.total').val(total);
                 // console.log(total);
                 // console.log(qty);
-                
+
             }
             // if(total<qty && total>0){
             //     if(qty>total){

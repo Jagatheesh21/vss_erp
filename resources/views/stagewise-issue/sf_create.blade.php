@@ -253,8 +253,8 @@ $(document).ready(function(){
                     $('#receive_qty').attr('min', 0);
                     $('#rc_no').val(response.rcno);
                     $('#pre_rc_no').html(response.rc_datas);
-                    console.log('output');
-                    console.log(response.pickup_part);
+                    // console.log('output');
+                    // console.log(response.pickup_part);
                     $('#pickup_part_id').html(response.pickup_part);
 
                     $('#pickup_part_count').val(response.pickup_part_count);
