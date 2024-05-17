@@ -40,13 +40,13 @@
                 @else
 
                 @endif
-                <form action="{{route('fgreceive.store')}}" id="sf_receive_formdata" method="POST">
+                <form action="{{route('rmdcreceive.store')}}" id="sf_receive_formdata" method="POST">
                     @csrf
                     @method('POST')
                         <div class="row d-flex justify-content-center">
                             <input type="hidden" name="previous_process_id" id="previous_process_id">
                             <input type="hidden" name="previous_product_process_id" id="previous_product_process_id">
-                            <input type="hidden" name="next_process_id" id="next_process_id">
+                            <input type="hidden" name="next_product_process_id" id="next_product_process_id">
                             <input type="hidden" name="fqc_count" id="fqc_count">
                             <input type="hidden" name="qrcodes_count" id="qrcodes_count" value="{{$qrCodes_count}}">
                             <input type="hidden" name="qr_rc_id" id="qr_rc_id">
@@ -81,7 +81,18 @@
                                     @enderror
                                 </div>
                             </div>
-
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="rm_id">RM Desc *</label>
+                                    <select name="rm_id" id="rm_id" class="form-control bg-light @error('rm_id') is-invalid @enderror" @readonly(true)>
+                                    </select>
+                                    @error('rm_id')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="part_id">Part Number *</label>
@@ -94,23 +105,23 @@
                                     @enderror
                                 </div>
                             </div>
+                        </div>
+                        <div class="row d-flex justify-content-center">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="next_productprocess_id">Stocking Point *</label>
-                                    <select name="next_productprocess_id" id="next_productprocess_id" class="form-control bg-light @error('next_productprocess_id') is-invalid @enderror" @readonly(true)>
+                                    <label for="next_process_id">Stocking Point *</label>
+                                    <select name="next_process_id" id="next_process_id" class="form-control bg-light @error('next_process_id') is-invalid @enderror">
                                     </select>
-                                    @error('next_productprocess_id')
+                                    @error('next_process_id')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                     @enderror
                                 </div>
                             </div>
-                        </div>
-                        <div class="row d-flex justify-content-center">
-                            {{-- <div class="col-md-3">
+                            <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="avl_kg">Available Stock (In KG) *</label>
+                                    <label for="avl_kg">Available Stock (In KGS) *</label>
                                     <input type="number" name="avl_kg" id="avl_kg"  class="form-control bg-light @error('avl_kg') is-invalid @enderror" @readonly(true)>
                                     @error('avl_kg')
                                     <span class="invalid-feedback" role="alert">
@@ -118,7 +129,7 @@
                                     </span>
                                     @enderror
                                 </div>
-                            </div> --}}
+                            </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="avl_qty">Available Stock (In Numbers) *</label>
@@ -130,17 +141,7 @@
                                     @enderror
                                 </div>
                             </div>
-                            {{-- <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="receive_kg">Receive Quantity IN KG *</label>
-                                    <input type="number" name="receive_kg" id="receive_kg" required min="0" step="0.0000000000000001" class="form-control @error('receive_kg') is-invalid @enderror">
-                                    @error('receive_kg')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
-                                </div>
-                            </div> --}}
+
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="receive_qty">Receive Quantity In Numbers*</label>
@@ -267,7 +268,7 @@ $(document).ready(function(){
                         $('#fqc_count').val(response.fqc_count);
                         $('#previous_product_process_id').val(response.product_process_id);
                         $('#next_process_id').val(response.next_process_id);
-                        $('#next_productprocess_id').html(response.next_productprocess_id);
+                        $('#next_process_id').html(response.next_process_id);
                         $('#rc_no').html(response.rc_data);
                         $('#qr_rc_id').val(response.qr_rc_id);
                         }else{
@@ -293,40 +294,61 @@ $(document).ready(function(){
         if (rc_no!='') {
             $.ajax({
             type: "POST",
-            url: "{{ route('fgpartfetchdata') }}",
+            url: "{{ route('rmdcreceivercdata') }}",
             data:{
                 "_token": "{{ csrf_token()}}",
                 "rc_no":rc_no,
             },
             success: function (response) {
                 // console.log(response);
-                if(response.success){
-                    if (response.process) {
-                        if(response.message){
-                        $('#part_id').html(response.part);
-                        // $('#avl_kg').val(response.avl_kg);
-                        $('#avl_qty').val(response.avl_qty);
-                        $('#receive_qty').attr('max', response.avl_qty);
-                        $('#receive_qty').attr('min', 0);
-                        $('#bom').val(response.bom);
-                        $('#inlineRadio1').hide();
-                        $('#previous_process_id').val(response.process_id);
-                        $('#fqc_count').val(response.fqc_count);
-                        $('#previous_product_process_id').val(response.product_process_id);
-                        $('#next_process_id').val(response.next_process_id);
-                        $('#next_productprocess_id').html(response.next_productprocess_id);
-
-                        }else{
-                            alert('This Part Number is Not connected Item Process Master..So Please Contact Mr.PPC/ERP Team');
-                        }
-                    } else {
-                        alert('This Part Number Process is Not connected Out Store..So Please Contact Mr.PPC/ERP Team');
+                if (response.rm_count > 0) {
+                    $('#rm_id').html(response.rm_id);
+                    $('#avl_kg').val(response.rm_avl_qty);
+                    if (response.part_count > 0) {
+                        $('#next_process_id').html(response.operation);
+                        $('#part_id').html(response.part_id);
+                        $('#part_id').select2();
+                    }else{
+                        $('#next_process_id').html(response.operation);
+                        $('#part_id').html(response.part_id);
+                        alert('Sorry Part Number is Not Available..!');
+                        return false;
                     }
-                }else{
-                    var msg='Please Follow The FIFO ..Try RC No Is '+response.fifoRcCard;
-                    alert(msg);
-                    $('#inlineRadio1').hide();
+                } else {
+                    $('#rm_id').html(response.rm_id);
+                    $('#avl_kg').val(response.rm_avl_qty);
+                    $('#part_id').html(response.part_id);
+                    $('#next_process_id').html(response.operation);
+                    alert('Sorry This DC Quantity is Not Available..!');
+                    return false;
                 }
+            }
+        });
+        }
+    });
+
+    $('#part_id').change(function (e) {
+        e.preventDefault();
+        var rc_no=$('#part_id').val();
+        var rm_id=$('#rm_id').val();
+        var avl_kg=$('#avl_kg').val();
+        var part_id=$(this).val();
+        // alert(rc_no);
+        if (rc_no!='') {
+            $.ajax({
+            type: "POST",
+            url: "{{ route('rmdcreceivepartdata') }}",
+            data:{
+                "_token": "{{ csrf_token()}}",
+                "rc_no":rc_no,
+                "rm_id":rm_id,
+                "part_id":part_id,
+                "avl_kg":avl_kg,
+            },
+            success: function (response) {
+                // console.log(response);
+                $('#avl_qty').val(response.avl_qty);
+                $('#bom').val(response.bom);
             }
         });
         }

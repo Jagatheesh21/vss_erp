@@ -106,6 +106,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('dcfetch-rc', [DcTransactionDetailsController::class,'dcItemRc'])->name('dcitemrc');
     Route::get('/dcpart-data/id', [DcTransactionDetailsController::class,'dcPartData'])->name('dcpartdata');
     Route::get('/dcrmsupplier-data/id', [RMDcController::class,'dcRmSupplierData'])->name('dcrmsupplierdata');
+    Route::get('rmdc_receive/create', [RMDcController::class,'rmdcReceiveData'])->name('rmdc_receive');
+    Route::post('rmdcreceiverc-data', [RMDcController::class,'rmdcReceiveRcData'])->name('rmdcreceivercdata');
+    Route::post('rmdcreceivepart-data', [RMDcController::class,'rmdcReceivePartData'])->name('rmdcreceivepartdata');
+    Route::post('rmdcreceive-store', [RMDcController::class,'rmdcReceiveStore'])->name('rmdcreceive.store');
     Route::post('dcrmgrn-data', [RMDcController::class,'dcrmGrnData'])->name('dcrmgrndata');
     Route::post('dcrmgrncoil-data', [RMDcController::class,'dcrmGrnCoilData'])->name('dcrmgrncoildata');
     Route::post('dcrmgrncoilqty-data', [RMDcController::class,'dcrmGrnCoilQtyData'])->name('dcrmgrncoilqtydata');

@@ -40,10 +40,7 @@ class RMDcController extends Controller
     public function index()
     {
         //
-        $value=1;
-        $rmdcDatas=RMDc::with('dc_details','rm_details')->WhereHas('dcmaster', function ($q) use ($value) {
-            $q->where('type_id', '=', $value);
-        })->orderBy('id', 'ASC')->get();
+        $rmdcDatas=RMDc::with('dc_details','rm_details')->orderBy('id', 'ASC')->get();
         // dd($rmdcDatas);
         return view('dc.rc_dc_index',compact('rmdcDatas'));
     }
@@ -311,10 +308,7 @@ class RMDcController extends Controller
     public function rmdcReceiveData(){
         date_default_timezone_set('Asia/Kolkata');
         $current_date=date('Y-m-d');
-        $value=1;
-        $receiveRmDCDatas=RMDc::with('dc_details','rm_details')->WhereHas('dcmaster', function ($q) use ($value) {
-            $q->where('type_id', '=', $value);
-        })->where('status','=',1)->orderBy('id', 'ASC')->get();
+        $receiveRmDCDatas=RMDc::with('dc_details','rm_details')->where('status','=',1)->orderBy('id', 'ASC')->get();
 
         $d11Datas=TransDataD11::where('next_process_id','=',21)->where('status','=',1)->get();
         $activity='RM DC Receive';
@@ -323,6 +317,81 @@ class RMDcController extends Controller
         return view('stagewise-receive.rm_dc_receive',compact('receiveRmDCDatas','d11Datas','current_date','qrCodes_count'));
     }
 
+    public function rmdcReceiveRcData(Request $request){
+        // dd($request->all());
+        $rc_no=$request->rc_no;
+        $value=$rc_no;
+        $rm_count=RMDc::with('dc_details','rm_details')->WhereHas('dc_details', function ($q) use ($value) {
+            $q->where('rc_id', '=', $value);
+        })->count();
+        if ($rm_count>0) {
+            $rmRcDatas=RMDc::with('dc_details','rm_details')->WhereHas('dc_details', function ($q) use ($value) {
+                $q->where('rc_id', '=', $value);
+            })->first();
+            $rm_id='<option value="'.$rmRcDatas->rm_details->id.'">'.$rmRcDatas->rm_details->name.'</option>';
+            $rm_avl_qty=(($rmRcDatas->dc_details->issue_qty)-($rmRcDatas->dc_details->receive_qty));
+            $value2=$rmRcDatas->dc_details->dcmaster->operation_id;
+            $part_count=BomMaster::with('childpart_master')->WhereHas('childpart_master', function ($q2) use ($value2) {
+                $q2->where('stocking_point', '=', $value2);
+            })->where('rm_id','=',$rmRcDatas->rm_details->id)->where('status','=',1)->count();
+            if ($part_count>0) {
+                $partDatas=BomMaster::with('childpart_master')->WhereHas('childpart_master', function ($q2) use ($value2) {
+                    $q2->where('stocking_point', '=', $value2);
+                })->where('rm_id','=',$rmRcDatas->rm_details->id)->where('status','=',1)->get();
+                $part_id='<option value="" selected>Select The Part Number</option>';
+                foreach ($partDatas as $key => $partData) {
+                    $part_id.='<option value="'.$partData->childpart_master->id.'">'.$partData->childpart_master->child_part_no.'</option>';
+                }
+                $operation_id=21;
+                $operation_name='From S/C';
+                $operation='<option value="'.$operation_id.'" selected>'.$operation_name.'</option>';
+
+            } else {
+                $part_id='<option value="" Selected>No Part Number Available</option>';
+            $operation='<option value="" Selected>No Operation</option>';
+
+            }
+        }else{
+            $rm_id='<option value="" Selected>No RM Available</option>';
+            $part_count=0;
+            $rm_avl_qty=0;
+            $part_id='<option value="" Selected>No Part Number Available</option>';
+            $operation='<option value="" Selected>No Operation</option>';
+        }
+        // dd($partDatas);
+        // dd($rmRcDatas);
+        return response()->json(['rm_count'=>$rm_count,'part_count'=>$part_count,'rm_id'=>$rm_id,'part_id'=>$part_id,'rm_avl_qty'=>$rm_avl_qty,'operation'=>$operation]);
+
+    }
+    public function rmdcReceivePartData(Request $request){
+        // dd($request->all());
+        $rc_no=$request->rc_no;
+        $rm_id=$request->rm_id;
+        $part_id=$request->part_id;
+        $avl_kg=$request->avl_kg;
+        $value2=17;
+        $count=BomMaster::with('childpart_master')->WhereHas('childpart_master', function ($q2) use ($value2) {
+            $q2->where('stocking_point', '=', $value2);
+        })->where('rm_id','=',$rm_id)->where('status','=',1)->where('child_part_id','=',$part_id)->count();
+        if ($count>0) {
+            $bomDatas=BomMaster::with('childpart_master')->WhereHas('childpart_master', function ($q2) use ($value2) {
+                $q2->where('stocking_point', '=', $value2);
+            })->where('rm_id','=',$rm_id)->where('status','=',1)->where('child_part_id','=',$part_id)->first();
+            $bom=$bomDatas->input_usage;
+            $avl_qty=floor(($avl_kg/$bom));
+        } else {
+            $bom=0;
+            $avl_qty=0;
+        }
+        // dd($avl_qty);
+        // dd($bomDatas);
+        return response()->json(['bom'=>$bom,'avl_qty'=>$avl_qty]);
+    }
+
+    public function rmdcReceiveStore(Request $request){
+        dd($request->all());
+
+    }
     /**
      * Show the form for editing the specified resource.
      */

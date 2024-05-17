@@ -101,7 +101,7 @@ class StagewiseReceiveController extends Controller
         $rc_data='<option value="'.$d11Datas->rcmaster->id.'">'.$d11Datas->rcmaster->rc_id.'</option>';
         $qr_rc_id=$d11Datas->rcmaster->id;
 
-        $bomDatas=BomMaster::where('child_part_id','=',$part_id)->sum('input_usage');
+        $bomDatas=BomMaster::where('child_part_id','=',$part_id)->where('status','=',1)->sum('input_usage');
         $process_issue_qty=floor(($previous_process_issue_qty/$bomDatas));
 
         $partCheck=ChildProductMaster::find($part_id);

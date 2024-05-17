@@ -47,6 +47,7 @@
                         <li class="list-group-item"><a href="{{route('sfreceive')}}">Semi-Finished Material Receive</a></li>
                         <li class="list-group-item"><a href="{{route('sfissue')}}">Semi-Finished Material Issuance</a></li>
                         <li class="list-group-item"><a href="{{route('osreceive')}}">Out-Store Material Receive</a></li>
+                        <li class="list-group-item"><a href="{{route('rmdc_receive')}}">RM DC Material Receive</a></li>
                         <li class="list-group-item"><a href="{{route('delivery_challan.create')}}">DC Issuance</a></li>
                         <li class="list-group-item"><a href="{{route('ptsinwarddata')}}">PTS Material Receive</a></li>
                         <li class="list-group-item"><a href="{{route('ptsproductionreceive')}}">PTS Production Receive</a></li>

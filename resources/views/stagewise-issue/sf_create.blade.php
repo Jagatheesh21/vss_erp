@@ -305,7 +305,6 @@ $(document).ready(function(){
                     }else{
                         $('#pickup_part').hide();
                         $('#pickup_part_id').html('');
-
                     }
 
                 }else{
