@@ -5,11 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\RawMaterialCategory;
 use App\Http\Requests\StoreRawMaterialCategoryRequest;
 use App\Http\Requests\UpdateRawMaterialCategoryRequest;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Auth;
 
 class RawMaterialCategoryController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('permission:create-rm_category|edit-rm_category', ['only' => ['index','show']]);
+        $this->middleware('permission:create-rm_category', ['only' => ['create','store']]);
+        $this->middleware('permission:edit-rm_category', ['only' => ['edit','update']]);
+    }
     /**
      * Display a listing of the resource.
      */

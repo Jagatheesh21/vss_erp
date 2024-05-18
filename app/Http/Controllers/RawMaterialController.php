@@ -7,7 +7,7 @@ use App\Models\RawMaterialCategory;
 use App\Models\RawMaterial;
 use App\Http\Requests\StoreRawMaterialRequest;
 use App\Http\Requests\UpdateRawMaterialRequest;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Auth;
 
 // use Illuminate\Support\Facades\DB;
